@@ -1,3 +1,6 @@
+import csv
+import io
+import json
 import logging
 import math
 from datetime import datetime, timezone
@@ -28,6 +31,9 @@ from backend.app.schemas import (
     AccountPreview,
     AssessmentRequest,
     AssessmentResponse,
+    BatchRowResult,
+    BatchUploadRequest,
+    BatchUploadResponse,
     CompletenessResponse,
     DecisionRequest,
     DecisionResponse,
@@ -42,6 +48,7 @@ from backend.app.schemas import (
     IntakeResponse,
     OverrideRequest,
     OverrideResponse,
+    normalise_offline_identifier,
 )
 from backend.app.version import APP_VERSION, THRESHOLD_VERSION
 from backend.ml.features import (
@@ -416,6 +423,109 @@ def create_app(
             top_factors=factors,
             recommendation=recommendation,
             warning=warning,
+        )
+
+    @application.post(
+        "/api/v1/batch-assessments",
+        response_model=BatchUploadResponse,
+    )
+    async def create_batch_assessments(
+        request: BatchUploadRequest,
+    ) -> BatchUploadResponse:
+        if not request.filename.lower().endswith(".csv"):
+            raise ApiError(
+                400,
+                "invalid_file_type",
+                "Upload a .csv file using the documented template.",
+            )
+        try:
+            rows = list(csv.DictReader(io.StringIO(request.content)))
+            header = next(csv.reader(io.StringIO(request.content)), [])
+        except csv.Error as exc:
+            raise ApiError(400, "invalid_csv", "The CSV file could not be parsed.") from exc
+        if header != ["account_id"]:
+            raise ApiError(
+                400,
+                "invalid_csv_header",
+                "The CSV header must be exactly: account_id",
+            )
+        if len(rows) > 100:
+            raise ApiError(
+                400,
+                "batch_row_limit_exceeded",
+                "A batch can contain at most 100 account rows.",
+            )
+
+        results: list[BatchRowResult] = []
+        seen: set[str] = set()
+        for row_number, row in enumerate(rows, start=2):
+            raw_identifier = row.get("account_id", "")
+            try:
+                identifier = normalise_offline_identifier(raw_identifier)
+            except ValueError:
+                results.append(
+                    BatchRowResult(
+                        row_number=row_number,
+                        account_id=str(raw_identifier).strip(),
+                        processing_status="failed",
+                        error="Invalid identifier format.",
+                    )
+                )
+                continue
+            if identifier in seen:
+                results.append(
+                    BatchRowResult(
+                        row_number=row_number,
+                        account_id=identifier,
+                        processing_status="failed",
+                        error="Duplicate account identifier.",
+                    )
+                )
+                continue
+            seen.add(identifier)
+            try:
+                assessment = await create_assessment(
+                    AssessmentRequest(platform="x", account_id=identifier)
+                )
+            except ApiError as exc:
+                results.append(
+                    BatchRowResult(
+                        row_number=row_number,
+                        account_id=identifier,
+                        processing_status="failed",
+                        error=exc.message,
+                    )
+                )
+                continue
+            if isinstance(assessment, JSONResponse):
+                assessment_data = json.loads(assessment.body)
+            else:
+                assessment_data = assessment.model_dump(mode="json")
+            results.append(
+                BatchRowResult(
+                    row_number=row_number,
+                    account_id=identifier,
+                    processing_status="completed",
+                    assessment_status=assessment_data["status"],
+                    risk_score=assessment_data.get("risk_score"),
+                    risk_band=assessment_data.get("risk_band"),
+                    completeness_state=(
+                        "insufficient"
+                        if assessment_data["status"] == "insufficient_data"
+                        else "eligible"
+                    ),
+                    review_status="unreviewed",
+                )
+            )
+
+        completed_count = sum(
+            result.processing_status == "completed" for result in results
+        )
+        return BatchUploadResponse(
+            total_rows=len(results),
+            completed_count=completed_count,
+            failed_count=len(results) - completed_count,
+            results=results,
         )
 
     @application.post(

@@ -133,6 +133,36 @@ class AssessmentResponse(BaseModel):
     )
 
 
+class BatchUploadRequest(StrictModel):
+    filename: str = Field(min_length=1, max_length=255)
+    content: str = Field(max_length=100_000)
+
+
+class BatchRowResult(BaseModel):
+    row_number: int = Field(ge=2)
+    account_id: str
+    processing_status: Literal["completed", "failed"]
+    assessment_status: Literal[
+        "completed", "completed_with_warning", "insufficient_data"
+    ] | None = None
+    risk_score: int | None = Field(default=None, ge=0, le=100)
+    risk_band: Literal["low", "medium", "high"] | None = None
+    completeness_state: Literal["eligible", "insufficient"] | None = None
+    review_status: Literal["unreviewed"] | None = None
+    error: str | None = None
+
+
+class BatchUploadResponse(BaseModel):
+    status: Literal["completed"] = "completed"
+    total_rows: int = Field(ge=0)
+    completed_count: int = Field(ge=0)
+    failed_count: int = Field(ge=0)
+    results: list[BatchRowResult]
+    acknowledgement: Literal[
+        "Batch assessed offline. No platform action was taken."
+    ] = "Batch assessed offline. No platform action was taken."
+
+
 class OverrideRequest(StrictModel):
     override_label: Literal["legitimate", "suspicious", "uncertain"]
     reason_code: str = Field(min_length=1, max_length=64, pattern=r"^[a-z0-9_]+$")

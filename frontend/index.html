@@ -77,6 +77,51 @@
           <button id="new-assessment-button" class="secondary-button" type="button">Start new assessment</button>
         </div>
       </section>
+      <section class="workspace-shell" aria-labelledby="batch-title">
+        <div class="workspace-heading">
+          <div>
+            <p class="step-label">Batch assessment</p>
+            <h2 id="batch-title">Upload an offline account queue</h2>
+            <p>Use one <code>account_id</code> column with at most 100 rows.</p>
+          </div>
+          <a class="secondary-link" href="/static/batch-upload-template.csv" download>Download CSV template</a>
+        </div>
+        <form id="batch-form">
+          <div class="field-group">
+            <label for="batch-file">CSV account list</label>
+            <input id="batch-file" type="file" accept=".csv,text/csv" required>
+            <span class="field-hint">
+              Invalid and duplicate rows are reported without stopping valid rows.
+            </span>
+          </div>
+          <button id="batch-submit" type="submit">Assess batch offline</button>
+        </form>
+        <div id="batch-progress" class="batch-progress" role="status" aria-live="polite">
+          <span id="batch-progress-label">No batch is processing.</span>
+          <strong>Completed: <span id="batch-completed-count">0</span></strong>
+          <strong>Failed: <span id="batch-failed-count">0</span></strong>
+        </div>
+        <p class="field-hint">No platform action is performed for any uploaded account.</p>
+        <div id="batch-results-panel" hidden>
+          <h3>Batch results</h3>
+          <div class="table-scroll" tabindex="0" aria-label="Scrollable batch results">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Row</th>
+                  <th scope="col">Account</th>
+                  <th scope="col">Processing</th>
+                  <th scope="col">Assessment</th>
+                  <th scope="col">Risk</th>
+                  <th scope="col">Completeness</th>
+                  <th scope="col">Issue</th>
+                </tr>
+              </thead>
+              <tbody id="batch-results"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
       <section id="preview-panel" class="preview-panel" aria-labelledby="preview-title" hidden>
         <div class="panel-heading">
           <div>

@@ -1,18 +1,19 @@
 # Stage handover
 
-- **Stage:** 10 — US3.2 Model Information
-- **Primary owner:** Xianze Zhang
-- **Branch:** `stage/10-us3.2-model-information`
+- **Stage:** 11 — US5.1 Batch Assessment
+- **Primary owner:** Mingyu Xu
+- **Branch:** `stage/11-us5.1-batch-assessment`
 
-Every scored or Insufficient data assessment result links directly to a concise
-model information page. The page identifies verified scope, features, versions,
-datasets, evaluation evidence and date without inventing missing calibration
-evidence. It also documents unsupported uses and all required known risks.
+The browser accepts the documented one-column CSV template and keeps progress,
+completed count and failed count visible. The API validates file type, exact
+header, 100-row limit, normalised duplicates and identifier format. Invalid or
+unavailable rows are reported independently while valid rows continue through
+the same offline assessment path used by single-account assessment.
 
-All AC1–AC4 map to three tests in `docs/test_mapping.md`.
+All AC1–AC4 map to four tests in `docs/test_mapping.md`.
 
-- **Executed:** 49 automated tests in 4.37 seconds.
-- **Passed:** 49.
+- **Executed:** 53 automated tests in 4.56 seconds.
+- **Passed:** 53.
 - **Failed:** 0.
 
-Stage 11 adds validated CSV batch assessment with partial success and counts.
+Stage 12 adds local sorting and filtering over these returned batch results.

@@ -101,3 +101,12 @@ docstring or in this mapping.
 | AC1–AC2 verified scope, versions, datasets, metrics and dates | `test_ac1_ac2_page_reports_verified_scope_versions_and_evidence` |
 | AC3 exclusions, shift/drift, false positives and enforcement prohibition | `test_ac3_page_discloses_required_risks_and_prohibition` |
 | AC4 direct link from scored and Insufficient data results | `test_ac4_scored_and_insufficient_result_sections_link_directly` |
+
+## Stage 11 — US5.1 Batch assessment
+
+| AC | Automated evidence |
+|---|---|
+| AC1 file type, exact header and row limit | `test_ac1_file_type_header_and_row_limit_are_validated` |
+| AC1–AC2 duplicates, identifiers and partial success | `test_ac1_ac2_duplicates_and_invalid_rows_do_not_block_valid_rows` |
+| AC2 Insufficient data and unavailable-row isolation | `test_ac2_insufficient_and_unknown_rows_are_reported_independently` |
+| AC3–AC4 visible progress/counts and no platform action | `test_ac3_ac4_page_exposes_progress_counts_and_no_action_wording` |

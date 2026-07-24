@@ -1,5 +1,12 @@
 # Changelog
 
+## Stage 11 — US5.1 Batch assessment
+
+- Added documented CSV template upload with a 100-row limit.
+- Validates file type, exact header, identifier format and duplicates.
+- Continues valid offline assessments while reporting row-level failures.
+- Displays persistent processing progress and completed/failed counts.
+
 ## Stage 10 — US3.2 Model information
 
 - Added a directly addressable model information and limitations page.

@@ -1,10 +1,10 @@
 # FIT5238 Team SA34 — Signal Review
 
-**Current delivery branch:** `stage/10-us3.2-model-information`
+**Current delivery branch:** `stage/11-us5.1-batch-assessment`
 
-**Stage owner:** Xianze Zhang
+**Stage owner:** Mingyu Xu
 
-**Current stage:** US3.2 — View model limitations
+**Current stage:** US5.1 — Upload multiple accounts
 
 **Stage status:** implemented; see `STAGE_HANDOVER.md` for executed checks.
 

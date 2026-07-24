@@ -42,6 +42,15 @@ const followUpForm = document.querySelector("#follow-up-form");
 const followUpReason = document.querySelector("#follow-up-reason");
 const followUpStatus = document.querySelector("#follow-up-status");
 const clearFollowUp = document.querySelector("#clear-follow-up");
+const batchForm = document.querySelector("#batch-form");
+const batchFile = document.querySelector("#batch-file");
+const batchSubmit = document.querySelector("#batch-submit");
+const batchProgress = document.querySelector("#batch-progress");
+const batchProgressLabel = document.querySelector("#batch-progress-label");
+const batchCompletedCount = document.querySelector("#batch-completed-count");
+const batchFailedCount = document.querySelector("#batch-failed-count");
+const batchResultsPanel = document.querySelector("#batch-results-panel");
+const batchResults = document.querySelector("#batch-results");
 
 const previewDefinitions = [
   ["Profile", [["Username", "username"], ["Description", "description"], ["Location", "location"]]],
@@ -362,3 +371,63 @@ followUpForm.addEventListener("submit", (event) => {
   updateFollowUp("flagged");
 });
 clearFollowUp.addEventListener("click", () => updateFollowUp("cleared"));
+
+function renderBatchResults(payload) {
+  batchResults.replaceChildren();
+  for (const result of payload.results) {
+    const row = document.createElement("tr");
+    const values = [
+      result.row_number,
+      result.account_id || "Not provided",
+      result.processing_status,
+      result.assessment_status || "Not assessed",
+      result.risk_score === null ? "—" : `${result.risk_score}% ${result.risk_band}`,
+      result.completeness_state || "—",
+      result.error || "—",
+    ];
+    for (const value of values) {
+      const cell = document.createElement("td");
+      cell.textContent = String(value);
+      row.append(cell);
+    }
+    batchResults.append(row);
+  }
+  batchResultsPanel.hidden = false;
+}
+
+batchForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const file = batchFile.files[0];
+  if (!file) return;
+  if (!file.name.toLowerCase().endsWith(".csv")) {
+    batchProgressLabel.textContent = "Upload a .csv file using the template.";
+    return;
+  }
+  batchSubmit.disabled = true;
+  batchProgress.setAttribute("aria-busy", "true");
+  batchProgressLabel.textContent = "Processing valid rows offline…";
+  batchCompletedCount.textContent = "0";
+  batchFailedCount.textContent = "0";
+  batchResultsPanel.hidden = true;
+  try {
+    const response = await fetch("/api/v1/batch-assessments", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ filename: file.name, content: await file.text() }),
+    });
+    const payload = await response.json();
+    if (!response.ok) {
+      throw new Error(payload.error?.message || "The batch could not be assessed.");
+    }
+    batchCompletedCount.textContent = String(payload.completed_count);
+    batchFailedCount.textContent = String(payload.failed_count);
+    batchProgressLabel.textContent =
+      `${payload.total_rows} rows processed. ${payload.acknowledgement}`;
+    renderBatchResults(payload);
+  } catch (error) {
+    batchProgressLabel.textContent = error.message;
+  } finally {
+    batchProgress.removeAttribute("aria-busy");
+    batchSubmit.disabled = false;
+  }
+});

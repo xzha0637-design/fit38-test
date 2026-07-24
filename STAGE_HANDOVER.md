@@ -1,19 +1,19 @@
 # Stage handover
 
-- **Stage:** 11 — US5.1 Batch Assessment
+- **Stage:** 12 — US5.2 Sort and Filter
 - **Primary owner:** Mingyu Xu
-- **Branch:** `stage/11-us5.1-batch-assessment`
+- **Branch:** `stage/12-us5.2-sort-filter`
 
-The browser accepts the documented one-column CSV template and keeps progress,
-completed count and failed count visible. The API validates file type, exact
-header, 100-row limit, normalised duplicates and identifier format. Invalid or
-unavailable rows are reported independently while valid rows continue through
-the same offline assessment path used by single-account assessment.
+Returned batch results can be sorted by risk score and filtered by risk band,
+completeness state and review status. Active controls and matching count remain
+visible. Clear restores the original row order using the existing in-memory
+results; filtering does not fetch, rerun, mutate scores or alter decision data.
+Rows without a risk score remain after scored rows in either sort direction.
 
 All AC1–AC4 map to four tests in `docs/test_mapping.md`.
 
-- **Executed:** 53 automated tests in 4.56 seconds.
-- **Passed:** 53.
+- **Executed:** 57 automated tests in 4.68 seconds.
+- **Passed:** 57.
 - **Failed:** 0.
 
-Stage 12 adds local sorting and filtering over these returned batch results.
+Stage 13 performs final integration, regression and release-candidate evidence.

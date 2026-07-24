@@ -104,6 +104,46 @@
         <p class="field-hint">No platform action is performed for any uploaded account.</p>
         <div id="batch-results-panel" hidden>
           <h3>Batch results</h3>
+          <div class="filter-controls" aria-labelledby="batch-filters-title">
+            <h4 id="batch-filters-title">Sort and filter returned results</h4>
+            <label>
+              Risk score
+              <select id="batch-risk-sort">
+                <option value="none">Original row order</option>
+                <option value="descending">Highest first</option>
+                <option value="ascending">Lowest first</option>
+              </select>
+            </label>
+            <label>
+              Risk band
+              <select id="batch-risk-filter">
+                <option value="all">All bands</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+              </select>
+            </label>
+            <label>
+              Completeness
+              <select id="batch-completeness-filter">
+                <option value="all">All states</option>
+                <option value="eligible">Eligible</option>
+                <option value="insufficient">Insufficient</option>
+              </select>
+            </label>
+            <label>
+              Review status
+              <select id="batch-review-filter">
+                <option value="all">All statuses</option>
+                <option value="unreviewed">Unreviewed</option>
+                <option value="unavailable">Not reviewable</option>
+              </select>
+            </label>
+            <button id="batch-clear-filters" class="secondary-button" type="button">Clear filters</button>
+          </div>
+          <p id="batch-filter-summary" class="filter-summary" role="status">
+            No active filters · 0 matching records
+          </p>
           <div class="table-scroll" tabindex="0" aria-label="Scrollable batch results">
             <table>
               <thead>
@@ -242,6 +282,7 @@
       <span>Twitter/X scope · Offline fixtures · Human oversight</span>
       <span>Application v0.1.0</span>
     </footer>
+    <script src="/static/batch-results.js"></script>
     <script src="/static/app.js" defer></script>
   </body>
 </html>

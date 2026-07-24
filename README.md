@@ -1,10 +1,10 @@
 # FIT5238 Team SA34 — Signal Review
 
-**Current delivery branch:** `stage/11-us5.1-batch-assessment`
+**Current delivery branch:** `stage/12-us5.2-sort-filter`
 
 **Stage owner:** Mingyu Xu
 
-**Current stage:** US5.1 — Upload multiple accounts
+**Current stage:** US5.2 — Sort and filter assessment results
 
 **Stage status:** implemented; see `STAGE_HANDOVER.md` for executed checks.
 

@@ -110,3 +110,12 @@ docstring or in this mapping.
 | AC1–AC2 duplicates, identifiers and partial success | `test_ac1_ac2_duplicates_and_invalid_rows_do_not_block_valid_rows` |
 | AC2 Insufficient data and unavailable-row isolation | `test_ac2_insufficient_and_unknown_rows_are_reported_independently` |
 | AC3–AC4 visible progress/counts and no platform action | `test_ac3_ac4_page_exposes_progress_counts_and_no_action_wording` |
+
+## Stage 12 — US5.2 Sort and filter
+
+| AC | Automated evidence |
+|---|---|
+| AC1 risk sorting and all three filters | `test_ac1_sort_and_all_required_filters` |
+| AC2 active controls and matching count | `test_ac2_active_filters_and_matching_count_are_described` |
+| AC3–AC4 clear restores source order without mutation | `test_ac3_ac4_clear_state_restores_order_without_mutating_source` |
+| AC1–AC3 accessible browser controls | `test_ac1_ac2_ac3_browser_controls_are_present` |

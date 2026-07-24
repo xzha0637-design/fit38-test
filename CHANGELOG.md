@@ -1,5 +1,12 @@
 # Changelog
 
+## Stage 12 — US5.2 Sort and filter
+
+- Added risk-score sorting and risk-band, completeness and review-status filters.
+- Displays active filter descriptions and matching-record counts.
+- Clearing controls restores original row order from the in-memory result set.
+- Uses non-mutating transformations and never reruns assessments.
+
 ## Stage 11 — US5.1 Batch assessment
 
 - Added documented CSV template upload with a 100-row limit.

@@ -51,6 +51,13 @@ const batchCompletedCount = document.querySelector("#batch-completed-count");
 const batchFailedCount = document.querySelector("#batch-failed-count");
 const batchResultsPanel = document.querySelector("#batch-results-panel");
 const batchResults = document.querySelector("#batch-results");
+const batchRiskSort = document.querySelector("#batch-risk-sort");
+const batchRiskFilter = document.querySelector("#batch-risk-filter");
+const batchCompletenessFilter = document.querySelector("#batch-completeness-filter");
+const batchReviewFilter = document.querySelector("#batch-review-filter");
+const batchClearFilters = document.querySelector("#batch-clear-filters");
+const batchFilterSummary = document.querySelector("#batch-filter-summary");
+let batchSourceResults = [];
 
 const previewDefinitions = [
   ["Profile", [["Username", "username"], ["Description", "description"], ["Location", "location"]]],
@@ -372,9 +379,23 @@ followUpForm.addEventListener("submit", (event) => {
 });
 clearFollowUp.addEventListener("click", () => updateFollowUp("cleared"));
 
-function renderBatchResults(payload) {
+function currentBatchControls() {
+  return {
+    sort: batchRiskSort.value,
+    riskBand: batchRiskFilter.value,
+    completeness: batchCompletenessFilter.value,
+    reviewStatus: batchReviewFilter.value,
+  };
+}
+
+function renderBatchResults() {
+  const controls = currentBatchControls();
+  const visibleResults = window.BatchResultTools.filterAndSort(
+    batchSourceResults,
+    controls,
+  );
   batchResults.replaceChildren();
-  for (const result of payload.results) {
+  for (const result of visibleResults) {
     const row = document.createElement("tr");
     const values = [
       result.row_number,
@@ -392,6 +413,10 @@ function renderBatchResults(payload) {
     }
     batchResults.append(row);
   }
+  batchFilterSummary.textContent = window.BatchResultTools.describeFilters(
+    controls,
+    visibleResults.length,
+  );
   batchResultsPanel.hidden = false;
 }
 
@@ -423,11 +448,29 @@ batchForm.addEventListener("submit", async (event) => {
     batchFailedCount.textContent = String(payload.failed_count);
     batchProgressLabel.textContent =
       `${payload.total_rows} rows processed. ${payload.acknowledgement}`;
-    renderBatchResults(payload);
+    batchSourceResults = payload.results.map((result) => ({ ...result }));
+    renderBatchResults();
   } catch (error) {
     batchProgressLabel.textContent = error.message;
   } finally {
     batchProgress.removeAttribute("aria-busy");
     batchSubmit.disabled = false;
   }
+});
+
+for (const control of [
+  batchRiskSort,
+  batchRiskFilter,
+  batchCompletenessFilter,
+  batchReviewFilter,
+]) {
+  control.addEventListener("change", renderBatchResults);
+}
+
+batchClearFilters.addEventListener("click", () => {
+  batchRiskSort.value = "none";
+  batchRiskFilter.value = "all";
+  batchCompletenessFilter.value = "all";
+  batchReviewFilter.value = "all";
+  renderBatchResults();
 });

@@ -1,10 +1,10 @@
 # FIT5238 Team SA34 — Signal Review
 
-**Current delivery branch:** `stage/03-us2.1-completeness`
+**Current delivery branch:** `stage/04-us2.2-risk-scoring`
 
-**Stage owner:** Keliang Chen
+**Stage owner:** Xianze Zhang
 
-**Current stage:** US2.1 — Check feature completeness
+**Current stage:** US2.2 — Generate and interpret the risk result
 
 **Stage status:** implemented; see `STAGE_HANDOVER.md` for executed checks.
 
@@ -14,7 +14,8 @@ shell to the supplied backend foundation. Stage 01 adds validated offline accoun
 intake and representative demonstration selection. Stage 02 adds a whitelisted
 public-data preview with clear missing-value and content-origin labels.
 Stage 03 adds the inclusive 50% evidence-sufficiency gate and names missing
-required features.
+required features. Stage 04 ships the trained `xgb-offline-v1` artifact and
+versioned, accessible risk results.
 
 The current implementation uses a local dataset adapter instead of the live X API.
 An account ID is selected from a generated, label-free demo file. The returned score
@@ -64,8 +65,8 @@ the dataset-backed MVP.
 
 ## Generate local data and train the models
 
-Run this once after cloning, and again whenever the datasets or feature pipeline
-change:
+The approved runtime artifact is included. Run training again only when the
+datasets, feature pipeline, or approved model version change:
 
 ```powershell
 python -m backend.ml.train
@@ -84,16 +85,14 @@ The analyst interface uses the three tracked, curated offline fixtures in
 `data/fixtures/demo_accounts.csv` by default so Low/Medium/High demonstration
 choices remain stable across clean checkouts.
 
-All generated content is local and ignored by Git:
+Generated data splits and runtime state remain local:
 
 ```text
-backend/artifacts/        # model, preprocessor, baseline, metadata and metrics
 backend/data/generated/   # train/validation/test splits and demo candidates
 backend/runtime/          # SQLite feedback store and other runtime files
 ```
 
-Do not force-add these directories. Each developer rebuilds them from the tracked
-source datasets and code.
+The versioned runtime model is tracked at `models/xgb-offline-v1/`.
 
 ## Run the backend
 

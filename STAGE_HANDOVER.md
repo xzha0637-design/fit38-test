@@ -1,33 +1,38 @@
 # Stage handover
 
-- **Stage:** 03 — US2.1 Completeness
-- **User Story:** Check feature completeness
-- **Primary owner:** Keliang Chen
-- **Branch:** `stage/03-us2.1-completeness`
+- **Stage:** 04 — US2.2 Risk Scoring
+- **User Story:** Generate and interpret the risk result
+- **Primary owner:** Xianze Zhang
+- **Branch:** `stage/04-us2.2-risk-scoring`
 
 ## Summary
 
-Added deterministic feature-completeness calculation, an accessible percentage
-meter, the inclusive 50% eligibility boundary, Insufficient data handling, and
-plain-language missing-feature explanations.
+Trained and shipped the real `xgb-offline-v1` XGBoost runtime artifact, added
+versioned thresholds, 0–100 score and accessible risk-band presentation, and
+made scoring failures controlled, retryable, and free of stale/partial output.
 
 ## Files added
 
-- `tests/test_us2_1_completeness.py`
+- `models/xgb-offline-v1/*`
+- `tests/test_us2_2_risk_scoring.py`
 
 ## Files modified
 
+- `.env.example`
 - `README.md`
 - `CHANGELOG.md`
 - `STAGE_HANDOVER.md`
-- `data/fixtures/demo_accounts.csv`
-- `backend/ml/features.py`
+- `backend/app/config.py`
 - `backend/app/main.py`
+- `backend/app/model_service.py`
 - `backend/app/schemas.py`
+- `backend/app/version.py`
+- `backend/ml/train.py`
 - `frontend/index.html`
 - `frontend/styles.css`
 - `frontend/app.js`
 - `docs/data_contract.md`
+- `docs/model_integration.md`
 - `docs/test_mapping.md`
 
 ## Files removed
@@ -36,30 +41,33 @@ None.
 
 ## Acceptance Criteria mapping
 
-All four US2.1 criteria map to named tests in `docs/test_mapping.md`.
+All seven US2.2 criteria map to named tests in `docs/test_mapping.md`.
 
 ## Tests
 
-- **Written:** four US2.1 tests covering AC1–AC4.
+- **Written:** four US2.2 tests covering AC1–AC7.
 - **Executed:** `python -m pytest --basetemp ".pytest-tmp"`.
-- **Passed:** 27 tests in 2.67 seconds.
-- **Failed:** 0.
-- **Not executed:** manual assistive-technology meter announcement check.
+- **Passed:** 31 tests in 3.27 seconds.
+- **Failed:** 0 after correcting the test parser to accept the valid UTC `Z`
+  suffix returned by Pydantic.
+- **Not executed:** external automated WCAG contrast scanner.
 
 ## Known issues
 
-- Eligible accounts are not scored until Stage 04.
-- Completeness measures required model-input availability, not data correctness.
+- Model limitations and full evaluation context are delivered in Stage 10.
+- Score calibration and cross-dataset generalisation remain limited; results are
+  triage evidence only.
 
 ## Manual verification
 
-1. Submit a representative demo and confirm its completeness percentage.
-2. Request `demo_incomplete_01` through the API and confirm Insufficient data with
-   no risk band.
-3. Request `demo_exact_50` and confirm it is eligible while the missing-data
-   caveat and names remain visible.
+1. Run the app from a clean checkout without retraining.
+2. Assess the three representative fixtures and confirm Low, Medium, and High.
+3. Confirm score, band text, model version, threshold version, time, and
+   disclaimer remain visible.
+4. Disable an artifact temporarily in a disposable copy and confirm a controlled
+   retryable error with no partial score.
 
 ## Next-stage notes
 
-Stage 04 connects eligible fixtures to the approved deterministic model artifact,
-versioned thresholds, and accessible Low/Medium/High result presentation.
+Stage 05 enriches the scored result with the strongest plain-language factors,
+observed values, direction, and a completeness/model-aware uncertainty caveat.

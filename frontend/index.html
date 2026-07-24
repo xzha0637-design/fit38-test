@@ -117,6 +117,26 @@
           <ul id="missing-feature-list"></ul>
         </div>
       </section>
+      <section id="risk-panel" class="risk-panel" aria-labelledby="risk-title" hidden>
+        <div class="panel-heading">
+          <div>
+            <p class="step-label">Model-generated output</p>
+            <h2 id="risk-title">Risk assessment</h2>
+          </div>
+          <strong id="risk-band" class="risk-band"></strong>
+        </div>
+        <div class="score-row">
+          <strong id="risk-score" class="risk-score"></strong>
+          <span>risk score</span>
+        </div>
+        <dl class="result-meta">
+          <div><dt>Model version</dt><dd id="model-version"></dd></div>
+          <div><dt>Threshold version</dt><dd id="threshold-version"></dd></div>
+          <div><dt>Assessment time</dt><dd id="assessment-time"></dd></div>
+        </dl>
+        <p id="risk-warning" class="risk-warning"></p>
+        <p class="verdict-warning"><strong>Triage evidence, not a verdict.</strong></p>
+      </section>
     </main>
     <footer>
       <span>Twitter/X scope · Offline fixtures · Human oversight</span>

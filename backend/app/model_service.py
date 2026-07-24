@@ -66,6 +66,10 @@ class ModelService:
     def model_id(self) -> str:
         return str(self.metadata.get("model_id", "unknown_model"))
 
+    @property
+    def threshold_version(self) -> str:
+        return str(self.metadata.get("threshold_version", "unknown_threshold"))
+
     def load(self) -> None:
         missing = self.missing_artifacts
         if missing:

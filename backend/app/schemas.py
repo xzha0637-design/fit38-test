@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -10,7 +11,12 @@ class StrictModel(BaseModel):
 
 class AssessmentRequest(StrictModel):
     platform: Literal["x"]
-    account_id: str = Field(pattern=r"^[0-9]{1,19}$")
+    account_id: str
+
+    @field_validator("account_id", mode="before")
+    @classmethod
+    def validate_account_id(cls, value: str) -> str:
+        return normalise_offline_identifier(value)
 
 
 OFFLINE_IDENTIFIER_PATTERN = re.compile(r"^[A-Za-z0-9_]{1,32}$")
@@ -108,11 +114,19 @@ class AssessmentResponse(BaseModel):
     data_source: Literal["dataset"] = "dataset"
     data_completeness: float = Field(ge=0.0, le=1.0)
     risk_probability: float | None = Field(default=None, ge=0.0, le=1.0)
+    risk_score: int | None = Field(default=None, ge=0, le=100)
     risk_band: Literal["low", "medium", "high"] | None = None
+    risk_band_label: Literal["Low", "Medium", "High"] | None = None
+    model_version: str | None = None
+    threshold_version: str | None = None
+    assessment_time: datetime | None = None
     confidence: Confidence | None = None
     top_factors: list[TopFactor] = Field(default_factory=list)
     recommendation: Literal["no_concern", "monitor", "prioritise"] | None = None
     warning: str
+    disclaimer: Literal["Triage evidence, not a verdict."] = (
+        "Triage evidence, not a verdict."
+    )
 
 
 class OverrideRequest(StrictModel):

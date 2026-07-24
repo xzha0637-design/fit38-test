@@ -19,6 +19,13 @@ const completenessValue = document.querySelector("#completeness-value");
 const featureCaveat = document.querySelector("#feature-caveat");
 const featureCaveatText = document.querySelector("#feature-caveat-text");
 const missingFeatureList = document.querySelector("#missing-feature-list");
+const riskPanel = document.querySelector("#risk-panel");
+const riskBand = document.querySelector("#risk-band");
+const riskScore = document.querySelector("#risk-score");
+const modelVersion = document.querySelector("#model-version");
+const thresholdVersion = document.querySelector("#threshold-version");
+const assessmentTime = document.querySelector("#assessment-time");
+const riskWarning = document.querySelector("#risk-warning");
 
 const previewDefinitions = [
   ["Profile", [["Username", "username"], ["Description", "description"], ["Location", "location"]]],
@@ -106,6 +113,30 @@ function renderCompleteness(result) {
   completenessPanel.hidden = false;
 }
 
+function renderRiskResult(result) {
+  riskBand.textContent = `${result.risk_band_label} risk`;
+  riskBand.className = `risk-band ${result.risk_band}`;
+  riskScore.textContent = `${result.risk_score}%`;
+  modelVersion.textContent = result.model_version;
+  thresholdVersion.textContent = result.threshold_version;
+  assessmentTime.textContent = new Date(result.assessment_time).toLocaleString();
+  riskWarning.textContent = result.warning;
+  riskPanel.hidden = false;
+}
+
+async function scoreAccount(accountId) {
+  const response = await fetch("/api/v1/assessments", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ platform: "x", account_id: accountId }),
+  });
+  const payload = await response.json();
+  if (!response.ok) {
+    throw new Error(payload.error?.message || "Risk scoring is unavailable.");
+  }
+  renderRiskResult(payload);
+}
+
 function validateIdentifier(value) {
   const trimmed = value.trim();
   if (!trimmed) {
@@ -184,7 +215,12 @@ form.addEventListener("submit", async (event) => {
     if (!completenessResponse.ok) {
       throw new Error("Feature completeness could not be calculated.");
     }
-    renderCompleteness(await completenessResponse.json());
+    const completeness = await completenessResponse.json();
+    renderCompleteness(completeness);
+    riskPanel.hidden = true;
+    if (completeness.eligible_for_scoring) {
+      await scoreAccount(payload.account_id);
+    }
   } catch (error) {
     showError(error.message);
   } finally {

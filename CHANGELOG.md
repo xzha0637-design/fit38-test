@@ -1,5 +1,12 @@
 # Changelog
 
+## Stage 04 — US2.2 Risk scoring
+
+- Added the tracked `xgb-offline-v1` runtime model and `threshold-v1` boundaries.
+- Added 0–100 risk score, title-cased band, model/threshold versions, and time.
+- Added text-plus-colour accessible result presentation.
+- Added controlled retryable scoring failures without partial results.
+
 ## Stage 03 — US2.1 Feature completeness
 
 - Added the versioned 12-feature completeness endpoint and UI meter.

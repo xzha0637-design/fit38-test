@@ -42,3 +42,15 @@ docstring or in this mapping.
 | AC2 below 50% is Insufficient data without band | `test_ac2_below_half_is_insufficient_without_risk_band` |
 | AC3 exactly 50% eligible with caveat | `test_ac3_exactly_half_is_eligible_and_keeps_caveat` |
 | AC4 missing features use plain labels | `test_ac4_missing_required_features_use_plain_language` |
+
+## Stage 04 — US2.2 Risk scoring
+
+| Acceptance criterion | Automated evidence |
+|---|---|
+| AC1 0–100 score | `test_ac1_ac2_ac3_real_model_returns_versioned_score_band_and_time` |
+| AC2 exactly one versioned band/boundaries | `test_ac1_ac2_ac3_real_model_returns_versioned_score_band_and_time`, `test_ac2_ac4_representative_fixtures_are_deterministic_across_bands` |
+| AC3 model version and time | `test_ac1_ac2_ac3_real_model_returns_versioned_score_band_and_time` |
+| AC4 deterministic input/model result | `test_ac2_ac4_representative_fixtures_are_deterministic_across_bands` |
+| AC5 text plus accessible colour classes | `test_ac5_ac6_ui_uses_text_plus_contrast_classes_and_no_definitive_label` |
+| AC6 no definitive bot/human label | `test_ac5_ac6_ui_uses_text_plus_contrast_classes_and_no_definitive_label` |
+| AC7 recoverable failure without partial score | `test_ac7_scoring_failure_is_recoverable_without_partial_score` |

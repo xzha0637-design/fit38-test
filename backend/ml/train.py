@@ -14,6 +14,7 @@ from sklearn.linear_model import LogisticRegression
 from xgboost import XGBClassifier
 
 from backend.app.config import PROJECT_ROOT
+from backend.app.version import MODEL_VERSION, THRESHOLD_VERSION
 from backend.ml.data import (
     SOURCE_FILENAMES,
     clean_and_merge,
@@ -101,9 +102,11 @@ def train_pipeline(
 
     transformed_feature_names = preprocessor.get_feature_names_out().tolist()
     created_at = datetime.now(timezone.utc).isoformat()
-    model_id = f"xgb_{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}"
+    model_id = MODEL_VERSION
     metadata: dict[str, Any] = {
         "model_id": model_id,
+        "model_version": MODEL_VERSION,
+        "threshold_version": THRESHOLD_VERSION,
         "created_at": created_at,
         "random_state": random_state,
         "source_files": list(SOURCE_FILENAMES),
@@ -149,7 +152,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--artifact-dir",
         type=Path,
-        default=PROJECT_ROOT / "backend" / "artifacts",
+        default=PROJECT_ROOT / "models" / MODEL_VERSION,
     )
     parser.add_argument(
         "--generated-dir",

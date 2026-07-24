@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, timezone
 from uuid import uuid4
 
 from fastapi import FastAPI, Request
@@ -15,7 +16,7 @@ from backend.app.database import (
     FeedbackStore,
     StoreUnavailableError,
 )
-from backend.app.errors import ApiError, ExplanationUnavailableError, ModelUnavailableError
+from backend.app.errors import ApiError, ExplanationUnavailableError
 from backend.app.model_service import ModelService
 from backend.app.preview import build_public_preview
 from backend.app.schemas import (
@@ -32,7 +33,7 @@ from backend.app.schemas import (
     OverrideRequest,
     OverrideResponse,
 )
-from backend.app.version import APP_VERSION
+from backend.app.version import APP_VERSION, THRESHOLD_VERSION
 from backend.ml.features import (
     build_feature_row,
     is_sufficient,
@@ -295,8 +296,13 @@ def create_app(
 
         try:
             score = model_service.score(feature_result.frame, feature_result.completeness)
-        except ModelUnavailableError as exc:
-            raise ApiError(503, "model_unavailable", "The model is unavailable.") from exc
+        except Exception as exc:
+            raise ApiError(
+                503,
+                "scoring_unavailable",
+                "Risk scoring is temporarily unavailable. Retry this assessment.",
+                retryable=True,
+            ) from exc
 
         status = "completed"
         warning = TRIAGE_WARNING
@@ -336,7 +342,16 @@ def create_app(
             account_id=request.account_id,
             data_completeness=completeness,
             risk_probability=round(score.probability, 6),
+            risk_score=round(score.probability * 100),
             risk_band=score.band,
+            risk_band_label=score.band.title(),
+            model_version=model_service.model_id,
+            threshold_version=getattr(
+                model_service,
+                "threshold_version",
+                THRESHOLD_VERSION,
+            ),
+            assessment_time=datetime.now(timezone.utc),
             confidence=score.confidence,
             top_factors=factors,
             recommendation=recommendation,

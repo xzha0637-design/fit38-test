@@ -56,3 +56,11 @@ metadata, training labels, and internal model features are excluded.
 the versioned 12-feature model input. A value below `0.5` returns `Insufficient
 data`; exactly `0.5` is eligible. Missing features are plain-language labels, and
 the response deliberately carries no risk band.
+
+## Scored assessment
+
+Eligible accounts submitted to `POST /api/v1/assessments` receive both the raw
+0–1 probability and an analyst-facing integer `risk_score` from 0–100. The
+response includes exactly one title-cased band label, model version, threshold
+version, ISO-8601 time, and the required non-verdict disclaimer. A scoring
+failure returns a retryable error object with no partial score fields.

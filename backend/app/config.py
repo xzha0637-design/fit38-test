@@ -15,7 +15,7 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    artifact_dir: Path = PROJECT_ROOT / "backend" / "artifacts"
+    artifact_dir: Path = PROJECT_ROOT / "models" / "xgb-offline-v1"
     demo_data_path: Path = (
         PROJECT_ROOT / "data" / "fixtures" / "demo_accounts.csv"
     )

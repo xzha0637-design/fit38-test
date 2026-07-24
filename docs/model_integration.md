@@ -11,9 +11,19 @@ Training is explicit:
 python -m backend.ml.train
 ```
 
-The command writes ignored local artifacts under `backend/artifacts/`. Runtime
-health is degraded until all required artifacts and the generated demo account
-file exist. This prevents a placeholder score from being presented as AI output.
+The release branch includes the approved runtime artifacts under
+`models/xgb-offline-v1/`, allowing a clean checkout to run without retraining.
+The training command deterministically rebuilds that versioned directory from
+the tracked source data. Runtime health is degraded if an artifact is absent;
+this prevents a placeholder score from being presented as AI output.
 
 The same validated feature vector and model artifact yield the same probability
 and band. Assessment references and timestamps may differ between requests.
+
+Version `xgb-offline-v1` uses thresholds selected on the validation split:
+
+- Low: probability below `0.10`
+- Medium: probability from `0.10` up to but excluding `0.60`
+- High: probability `0.60` or above
+
+The threshold contract is `threshold-v1`.

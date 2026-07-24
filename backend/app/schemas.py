@@ -164,6 +164,20 @@ class DecisionResponse(BaseModel):
     ] = "Decision recorded. No platform action was taken."
 
 
+class DecisionFeedback(BaseModel):
+    assessment_reference: str
+    model_version: str
+    recommendation: str
+    analyst_decision: str
+    reason: str
+    timestamp: datetime
+
+
+class DecisionFeedbackList(BaseModel):
+    count: int
+    records: list[DecisionFeedback]
+
+
 class DemoAccount(BaseModel):
     account_id: str
     source_dataset: str | None = None

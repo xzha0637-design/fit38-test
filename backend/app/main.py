@@ -3,7 +3,7 @@ import math
 from datetime import datetime, timezone
 from uuid import uuid4
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Header, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
@@ -31,6 +31,7 @@ from backend.app.schemas import (
     CompletenessResponse,
     DecisionRequest,
     DecisionResponse,
+    DecisionFeedbackList,
     DemoAccountsResponse,
     ErrorDetail,
     ErrorResponse,
@@ -92,7 +93,7 @@ def create_app(
         allow_origins=settings.cors_origin_list,
         allow_credentials=False,
         allow_methods=["GET", "POST"],
-        allow_headers=["Content-Type"],
+        allow_headers=["Content-Type", "X-Project-Role"],
     )
     application.state.settings = settings
     application.state.model_service = model_service
@@ -132,7 +133,11 @@ def create_app(
     @application.exception_handler(Exception)
     async def unexpected_error_handler(_: Request, exc: Exception) -> JSONResponse:
         correlation_id = uuid4().hex[:12]
-        LOGGER.exception("Unhandled error [%s]: %s", correlation_id, exc)
+        LOGGER.error(
+            "Unhandled error [%s] type=%s",
+            correlation_id,
+            type(exc).__name__,
+        )
         return JSONResponse(
             status_code=500,
             content=_error_content(
@@ -434,6 +439,33 @@ def create_app(
             assessment_id=assessment_id,
             analyst_decision=request.decision,
         )
+
+    @application.get(
+        "/api/v1/feedback",
+        response_model=DecisionFeedbackList,
+    )
+    async def list_feedback(
+        project_role: str | None = Header(default=None, alias="X-Project-Role"),
+    ) -> DecisionFeedbackList:
+        if (
+            project_role is None
+            or project_role.strip().lower() not in settings.authorised_role_set
+        ):
+            raise ApiError(
+                403,
+                "feedback_access_denied",
+                "An authorised project role is required.",
+            )
+        try:
+            records = feedback_store.list_decisions()
+        except StoreUnavailableError as exc:
+            raise ApiError(
+                503,
+                "feedback_store_unavailable",
+                "Feedback is temporarily unavailable.",
+                retryable=True,
+            ) from exc
+        return DecisionFeedbackList(count=len(records), records=records)
 
     @application.post(
         "/api/v1/assessments/{assessment_id}/override",

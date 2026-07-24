@@ -1,5 +1,11 @@
 # Changelog
 
+## Stage 08 — US4.2 Data protection
+
+- Limited persistence to the approved pseudonymous feedback record.
+- Removed exception messages/payload values from application logs.
+- Added authorised project-role access for stored feedback.
+
 ## Stage 07 — US1.3 Recovery and reset
 
 - Added distinct unknown/data-timeout/model-timeout/malformed-response states.

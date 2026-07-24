@@ -22,7 +22,16 @@ class Settings(BaseSettings):
     database_path: Path = PROJECT_ROOT / "backend" / "runtime" / "feedback.sqlite3"
     cors_origins: str = "http://localhost:3000,http://localhost:5173"
     log_level: str = "INFO"
+    authorised_roles: str = "analyst,admin"
 
     @property
     def cors_origin_list(self) -> list[str]:
         return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
+
+    @property
+    def authorised_role_set(self) -> set[str]:
+        return {
+            role.strip().lower()
+            for role in self.authorised_roles.split(",")
+            if role.strip()
+        }

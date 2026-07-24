@@ -1,10 +1,10 @@
 # FIT5238 Team SA34 — Signal Review
 
-**Current delivery branch:** `stage/07-us1.3-recovery-reset`
+**Current delivery branch:** `stage/08-us4.2-data-protection`
 
-**Stage owner:** Keliang Chen
+**Stage owner:** Yetong Zhang
 
-**Current stage:** US1.3 — Recovery and reset
+**Current stage:** US4.2 — Protect assessed account data
 
 **Stage status:** implemented; see `STAGE_HANDOVER.md` for executed checks.
 

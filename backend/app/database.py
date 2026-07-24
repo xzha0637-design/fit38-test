@@ -22,11 +22,11 @@ class FeedbackStore:
         self.database_path = Path(database_path)
         self.ready = False
         self.error: str | None = None
+        self._pending_assessments: dict[str, tuple[str, str]] = {}
         self.initialize()
 
     def _connect(self) -> sqlite3.Connection:
         connection = sqlite3.connect(self.database_path, timeout=5.0)
-        connection.execute("PRAGMA foreign_keys = ON")
         return connection
 
     def initialize(self) -> None:
@@ -35,21 +35,13 @@ class FeedbackStore:
             with self._connect() as connection:
                 connection.executescript(
                     """
-                    CREATE TABLE IF NOT EXISTS assessment_context (
-                        assessment_id TEXT PRIMARY KEY,
-                        created_at TEXT NOT NULL,
-                        model_id TEXT NOT NULL,
-                        recommendation TEXT NOT NULL
-                    );
                     CREATE TABLE IF NOT EXISTS decision_feedback (
                         assessment_reference TEXT PRIMARY KEY,
                         model_version TEXT NOT NULL,
                         recommendation TEXT NOT NULL,
                         analyst_decision TEXT NOT NULL,
                         reason TEXT NOT NULL,
-                        timestamp TEXT NOT NULL,
-                        FOREIGN KEY (assessment_reference)
-                            REFERENCES assessment_context(assessment_id)
+                        timestamp TEXT NOT NULL
                     );
                     """
                 )
@@ -68,16 +60,7 @@ class FeedbackStore:
     ) -> None:
         if not self.ready:
             raise StoreUnavailableError(self.error or "Feedback store is unavailable.")
-        created_at = datetime.now(timezone.utc).isoformat()
-        with self._connect() as connection:
-            connection.execute(
-                """
-                INSERT INTO assessment_context
-                    (assessment_id, created_at, model_id, recommendation)
-                VALUES (?, ?, ?, ?)
-                """,
-                (assessment_id, created_at, model_id, recommendation),
-            )
+        self._pending_assessments[assessment_id] = (model_id, recommendation)
 
     def record_decision(
         self,
@@ -89,16 +72,19 @@ class FeedbackStore:
             raise StoreUnavailableError(self.error or "Feedback store is unavailable.")
         created_at = datetime.now(timezone.utc).isoformat()
         with self._connect() as connection:
-            exists = connection.execute(
+            duplicate = connection.execute(
                 """
-                SELECT model_id, recommendation
-                FROM assessment_context
-                WHERE assessment_id = ?
+                SELECT 1 FROM decision_feedback
+                WHERE assessment_reference = ?
                 """,
                 (assessment_id,),
             ).fetchone()
-            if exists is None:
-                raise AssessmentNotFoundError(assessment_id)
+        if duplicate is not None:
+            raise DuplicateOverrideError(assessment_id)
+        context = self._pending_assessments.get(assessment_id)
+        if context is None:
+            raise AssessmentNotFoundError(assessment_id)
+        with self._connect() as connection:
             try:
                 connection.execute(
                     """
@@ -109,8 +95,8 @@ class FeedbackStore:
                     """,
                     (
                         assessment_id,
-                        exists[0],
-                        exists[1],
+                        context[0],
+                        context[1],
                         analyst_decision,
                         reason,
                         created_at,
@@ -118,6 +104,22 @@ class FeedbackStore:
                 )
             except sqlite3.IntegrityError as exc:
                 raise DuplicateOverrideError(assessment_id) from exc
+        self._pending_assessments.pop(assessment_id, None)
+
+    def list_decisions(self) -> list[dict[str, str]]:
+        if not self.ready:
+            raise StoreUnavailableError(self.error or "Feedback store is unavailable.")
+        with self._connect() as connection:
+            connection.row_factory = sqlite3.Row
+            rows = connection.execute(
+                """
+                SELECT assessment_reference, model_version, recommendation,
+                       analyst_decision, reason, timestamp
+                FROM decision_feedback
+                ORDER BY timestamp DESC
+                """
+            ).fetchall()
+        return [dict(row) for row in rows]
 
     def record_override(
         self,

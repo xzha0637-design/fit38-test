@@ -77,3 +77,11 @@ docstring or in this mapping.
 |---|---|
 | AC1–AC2 controlled/distinct errors and actions | `test_ac1_ac2_controlled_source_timeout_and_unknown_states`, `test_ac1_model_timeout_and_malformed_response_are_controlled` |
 | AC3–AC6 retry, stale-state clearing, reset focus/continuity | `test_ac3_ac4_ac5_ac6_ui_retry_reset_clears_state_and_restores_focus` |
+
+## Stage 08 — US4.2 Data protection
+
+| AC | Automated evidence |
+|---|---|
+| AC1/AC3 no raw profile; minimal persistence only | `test_ac1_ac3_only_minimal_feedback_table_persists` |
+| AC2 safe logs | `test_ac2_unexpected_logs_exclude_payload_token_and_identifier` |
+| AC4 authorised-role access | `test_ac4_feedback_requires_authorised_role` |

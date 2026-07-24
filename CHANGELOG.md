@@ -1,5 +1,12 @@
 # Changelog
 
+## Stage 02 — US1.2 Account preview
+
+- Added a whitelisted public-account preview presenter and endpoint.
+- Added grouped profile, activity, and follower/following evidence.
+- Preserved missing fields as null and named them in plain language.
+- Added explicit source-data and model-output separation in the interface.
+
 ## Stage 01 — US1.1 Account intake
 
 - Added offline identifier validation and optional `@` normalisation.

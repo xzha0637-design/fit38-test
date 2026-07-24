@@ -216,6 +216,107 @@ button:disabled {
   background: var(--brand-soft);
 }
 
+.preview-panel {
+  margin-bottom: 5rem;
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--surface);
+  box-shadow: 0 1rem 3rem rgba(23, 33, 43, 0.06);
+}
+
+.panel-heading {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.preview-panel h2 {
+  max-width: none;
+  margin-bottom: 1.5rem;
+  font-family: inherit;
+  font-size: 1.75rem;
+  font-weight: 750;
+  letter-spacing: -0.03em;
+}
+
+.source-badge {
+  padding: 0.5rem 0.7rem;
+  border-radius: 999px;
+  color: var(--brand);
+  background: var(--brand-soft);
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.preview-identifier {
+  margin-bottom: 1.5rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2rem;
+}
+
+.preview-groups {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.preview-group {
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.7rem;
+}
+
+.preview-group h3 {
+  margin-top: 0;
+}
+
+.preview-group dl {
+  margin-bottom: 0;
+}
+
+.preview-group dt {
+  margin-top: 0.75rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.preview-group dd {
+  margin: 0.2rem 0 0;
+}
+
+.missing-value {
+  color: #8a3b2a;
+  font-style: italic;
+}
+
+.missing-data {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-left: 0.3rem solid var(--accent);
+  background: #fff3ed;
+}
+
+.model-output-placeholder {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px dashed #9aa69f;
+  color: var(--muted);
+}
+
+.model-output-placeholder span {
+  color: var(--ink);
+  font-size: 0.75rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.model-output-placeholder p {
+  margin: 0.35rem 0 0;
+}
+
 .secondary-link {
   flex: 0 0 auto;
   padding: 0.8rem 1rem;
@@ -245,8 +346,13 @@ footer {
 @media (max-width: 700px) {
   .site-header,
   .workspace-heading,
+  .panel-heading,
   footer {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .preview-groups {
+    grid-template-columns: 1fr;
   }
 }

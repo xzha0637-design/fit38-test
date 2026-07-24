@@ -17,7 +17,9 @@ from backend.app.database import (
 )
 from backend.app.errors import ApiError, ExplanationUnavailableError, ModelUnavailableError
 from backend.app.model_service import ModelService
+from backend.app.preview import build_public_preview
 from backend.app.schemas import (
+    AccountPreview,
     AssessmentRequest,
     AssessmentResponse,
     DemoAccountsResponse,
@@ -185,6 +187,27 @@ def create_app(
             normalised_identifier=request.identifier,
             display_identifier=display_identifier,
         )
+
+    @application.get(
+        "/api/v1/accounts/{account_id}/preview",
+        response_model=AccountPreview,
+    )
+    async def preview_account(account_id: str) -> AccountPreview:
+        if not data_adapter.ready:
+            raise ApiError(
+                503,
+                "data_adapter_unavailable",
+                "Offline demonstration accounts are temporarily unavailable.",
+                retryable=True,
+            )
+        record = data_adapter.get_account(account_id)
+        if record is None:
+            raise ApiError(
+                404,
+                "account_not_found",
+                "The account is not available in the offline demonstration dataset.",
+            )
+        return build_public_preview(record)
 
     @application.post(
         "/api/v1/assessments",

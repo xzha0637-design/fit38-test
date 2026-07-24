@@ -42,3 +42,10 @@ human-oversight warning. Raw account profiles are excluded.
 
 Any later interface change must update this document, the relevant schema tests,
 and the corresponding stage handover.
+
+## Public account preview
+
+`GET /api/v1/accounts/{account_id}/preview` returns an explicit `source_data`
+object with three approved groups: profile, activity, and network. Missing source
+values remain JSON `null` and are also listed by a plain-language label. Scenario
+metadata, training labels, and internal model features are excluded.

@@ -73,6 +73,25 @@
         </form>
         <div id="intake-status" class="intake-status" aria-live="polite" hidden></div>
       </section>
+      <section id="preview-panel" class="preview-panel" aria-labelledby="preview-title" hidden>
+        <div class="panel-heading">
+          <div>
+            <p class="step-label">Public account preview</p>
+            <h2 id="preview-title">Confirm the source evidence</h2>
+          </div>
+          <span class="source-badge">Source data · Offline fixture</span>
+        </div>
+        <p id="preview-identifier" class="preview-identifier"></p>
+        <div id="preview-groups" class="preview-groups"></div>
+        <div id="missing-data" class="missing-data" role="note" hidden>
+          <strong>Not available in source data</strong>
+          <ul id="missing-list"></ul>
+        </div>
+        <div class="model-output-placeholder" aria-label="Model-generated output">
+          <span>Model-generated output</span>
+          <p>No model output is displayed in this source-data preview.</p>
+        </div>
+      </section>
     </main>
     <footer>
       <span>Twitter/X scope · Offline fixtures · Human oversight</span>

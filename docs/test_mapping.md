@@ -24,3 +24,12 @@ docstring or in this mapping.
 | AC4 representative Low/Medium/High demos | `test_ac4_ac5_demo_selector_has_representative_deterministic_scenarios` |
 | AC5 deterministic and offline path | `test_ac4_ac5_demo_selector_has_representative_deterministic_scenarios` |
 | AC6 labelled, keyboard-native controls | `test_ac1_ac2_ac6_page_has_loading_validation_and_accessible_labels` |
+
+## Stage 02 — US1.2 Account preview
+
+| Acceptance criterion | Automated evidence |
+|---|---|
+| AC1 grouped identifier/profile/activity/network evidence | `test_ac1_preview_groups_identifier_profile_activity_and_network` |
+| AC2 missing values named and not imputed | `test_ac2_missing_values_are_null_and_named_without_imputation` |
+| AC3 approved public fields only | `test_ac3_only_approved_public_fields_are_exposed` |
+| AC4 source and model content separated | `test_ac4_source_data_is_explicitly_separate_from_model_output` |

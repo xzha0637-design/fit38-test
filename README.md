@@ -1,18 +1,18 @@
 # FIT5238 Team SA34 — Signal Review
 
-**Current delivery branch:** `stage/01-us1.1-account-intake`
+**Current delivery branch:** `stage/02-us1.2-account-preview`
 
 **Stage owner:** Wei Zhang
 
-**Current stage:** US1.1 — Submit or select a single account
+**Current stage:** US1.2 — Preview public account information
 
 **Stage status:** implemented; see `STAGE_HANDOVER.md` for executed checks.
 
 This repository contains the cumulative Iteration 1 implementation for
 account-level Twitter/X risk triage. Stage 00 adds a runnable, accessible browser
 shell to the supplied backend foundation. Stage 01 adds validated offline account
-intake and representative demonstration selection. Later stage branches introduce
-one approved User Story at a time.
+intake and representative demonstration selection. Stage 02 adds a whitelisted
+public-data preview with clear missing-value and content-origin labels.
 
 The current implementation uses a local dataset adapter instead of the live X API.
 An account ID is selected from a generated, label-free demo file. The returned score

@@ -45,6 +45,35 @@ class IntakeResponse(BaseModel):
     assessment_count: Literal[1] = 1
 
 
+class PublicProfile(BaseModel):
+    username: str | None = None
+    description: str | None = None
+    location: str | None = None
+
+
+class PublicActivity(BaseModel):
+    account_age_days: int | None = Field(default=None, ge=0)
+    post_count: int | None = Field(default=None, ge=0)
+    posts_per_day: float | None = Field(default=None, ge=0)
+
+
+class PublicNetwork(BaseModel):
+    followers_count: int | None = Field(default=None, ge=0)
+    following_count: int | None = Field(default=None, ge=0)
+
+
+class AccountPreview(BaseModel):
+    account_id: str
+    display_identifier: str
+    data_source: Literal["offline_fixture"] = "offline_fixture"
+    content_type: Literal["source_data"] = "source_data"
+    model_output_included: Literal[False] = False
+    profile: PublicProfile
+    activity: PublicActivity
+    network: PublicNetwork
+    missing_fields: list[str] = Field(default_factory=list)
+
+
 class Confidence(BaseModel):
     level: Literal["low", "high"]
     basis: Literal[

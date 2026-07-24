@@ -6,6 +6,17 @@ const statusPanel = document.querySelector("#intake-status");
 const submitButton = document.querySelector("#assess-button");
 const buttonLabel = submitButton.querySelector(".button-label");
 const buttonLoading = submitButton.querySelector(".button-loading");
+const previewPanel = document.querySelector("#preview-panel");
+const previewIdentifier = document.querySelector("#preview-identifier");
+const previewGroups = document.querySelector("#preview-groups");
+const missingData = document.querySelector("#missing-data");
+const missingList = document.querySelector("#missing-list");
+
+const previewDefinitions = [
+  ["Profile", [["Username", "username"], ["Description", "description"], ["Location", "location"]]],
+  ["Activity", [["Account age", "account_age_days"], ["Post count", "post_count"], ["Posts per day", "posts_per_day"]]],
+  ["Network", [["Followers", "followers_count"], ["Following", "following_count"]]],
+];
 
 function setLoading(isLoading) {
   submitButton.disabled = isLoading;
@@ -23,6 +34,50 @@ function showError(message) {
 function clearError() {
   errorMessage.textContent = "";
   identifierInput.removeAttribute("aria-invalid");
+}
+
+function displayValue(value) {
+  return value === null || value === undefined || value === ""
+    ? "Not available"
+    : String(value);
+}
+
+function renderPreview(preview) {
+  previewIdentifier.textContent = preview.display_identifier;
+  previewGroups.replaceChildren();
+  const sections = {
+    Profile: preview.profile,
+    Activity: preview.activity,
+    Network: preview.network,
+  };
+  for (const [title, fields] of previewDefinitions) {
+    const group = document.createElement("section");
+    group.className = "preview-group";
+    const heading = document.createElement("h3");
+    heading.textContent = title;
+    const list = document.createElement("dl");
+    for (const [label, key] of fields) {
+      const term = document.createElement("dt");
+      term.textContent = label;
+      const detail = document.createElement("dd");
+      const value = sections[title][key];
+      detail.textContent = displayValue(value);
+      if (value === null || value === undefined || value === "") {
+        detail.className = "missing-value";
+      }
+      list.append(term, detail);
+    }
+    group.append(heading, list);
+    previewGroups.append(group);
+  }
+  missingList.replaceChildren();
+  for (const label of preview.missing_fields) {
+    const item = document.createElement("li");
+    item.textContent = label;
+    missingList.append(item);
+  }
+  missingData.hidden = preview.missing_fields.length === 0;
+  previewPanel.hidden = false;
 }
 
 function validateIdentifier(value) {
@@ -90,6 +145,13 @@ form.addEventListener("submit", async (event) => {
       `${payload.display_identifier} is ready. One offline assessment has started; ` +
       "no live platform connection was made.";
     statusPanel.hidden = false;
+    const previewResponse = await fetch(
+      `/api/v1/accounts/${encodeURIComponent(payload.account_id)}/preview`,
+    );
+    if (!previewResponse.ok) {
+      throw new Error("The public account preview could not be loaded.");
+    }
+    renderPreview(await previewResponse.json());
   } catch (error) {
     showError(error.message);
   } finally {

@@ -4,9 +4,10 @@ from uuid import uuid4
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 
-from backend.app.config import Settings
+from backend.app.config import PROJECT_ROOT, Settings
 from backend.app.data_adapter import DatasetAdapter
 from backend.app.database import (
     AssessmentNotFoundError,
@@ -26,6 +27,7 @@ from backend.app.schemas import (
     OverrideRequest,
     OverrideResponse,
 )
+from backend.app.version import APP_VERSION
 from backend.ml.features import build_feature_row, is_sufficient
 
 
@@ -38,6 +40,7 @@ EXPLANATION_WARNING = (
     "The risk score is available, but its explanation could not be generated. "
     "Human review is required."
 )
+FRONTEND_DIR = PROJECT_ROOT / "frontend"
 
 
 def _error_content(code: str, message: str, retryable: bool = False) -> dict:
@@ -60,8 +63,8 @@ def create_app(
     feedback_store = feedback_store or FeedbackStore(settings.database_path)
 
     application = FastAPI(
-        title="FIT5238 Bot Risk Scoring Backend",
-        version="0.1.0",
+        title="FIT5238 Bot Risk Scoring Tool",
+        version=APP_VERSION,
         description=(
             "Iteration 1 dataset-backed MVP. Results support analyst triage and are "
             "not final bot determinations."
@@ -78,6 +81,15 @@ def create_app(
     application.state.model_service = model_service
     application.state.data_adapter = data_adapter
     application.state.feedback_store = feedback_store
+    application.mount(
+        "/static",
+        StaticFiles(directory=FRONTEND_DIR),
+        name="static",
+    )
+
+    @application.get("/", include_in_schema=False)
+    async def application_shell() -> FileResponse:
+        return FileResponse(FRONTEND_DIR / "index.html")
 
     @application.exception_handler(ApiError)
     async def api_error_handler(_: Request, exc: ApiError) -> JSONResponse:

@@ -1,9 +1,15 @@
-# FIT5238 Team SA34 — Bot Risk Scoring Backend MVP
+# FIT5238 Team SA34 — Signal Review
 
-This repository contains the Iteration 1 backend minimum viable implementation for
-account-level Twitter/X bot-risk triage. It runs the complete path from account
-selection through schema validation, XGBoost inference, SHAP explanation, result
-presentation, and a minimal analyst-override store.
+**Current delivery branch:** `stage/00-project-scaffold`
+
+**Stage owner:** Wei Zhang
+
+**Stage status:** implemented; see `STAGE_HANDOVER.md` for executed checks.
+
+This repository contains the cumulative Iteration 1 implementation for
+account-level Twitter/X risk triage. Stage 00 adds a runnable, accessible browser
+shell to the supplied backend foundation. Later stage branches introduce one
+approved User Story at a time.
 
 The current implementation uses a local dataset adapter instead of the live X API.
 An account ID is selected from a generated, label-free demo file. The returned score
@@ -86,8 +92,15 @@ source datasets and code.
 python -m uvicorn backend.app.main:app --reload
 ```
 
-OpenAPI documentation is available at <http://127.0.0.1:8000/docs>. The health
+Open the application at <http://127.0.0.1:8000/>. OpenAPI documentation is
+available at <http://127.0.0.1:8000/docs>. The health
 endpoint returns HTTP 503 with the missing artifact names until training has run.
+
+The equivalent repository command is:
+
+```powershell
+.\scripts\run_app.ps1
+```
 
 ### Complete PowerShell smoke flow
 
@@ -155,7 +168,13 @@ changing the internal feature, scoring, or response contracts.
 ## Tests
 
 ```powershell
-python -m pytest
+python -m pytest --basetemp ".pytest-tmp"
+```
+
+or:
+
+```powershell
+.\scripts\run_tests.ps1
 ```
 
 Tests use temporary fixtures and do not depend on locally generated model or demo

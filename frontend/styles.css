@@ -1,0 +1,177 @@
+:root {
+  color-scheme: light;
+  --ink: #17212b;
+  --muted: #52616f;
+  --paper: #f4f6f3;
+  --surface: #ffffff;
+  --brand: #174b46;
+  --brand-soft: #dcebe6;
+  --accent: #c65d31;
+  --line: #d5ddd8;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 85% 8%, #d9e9e2 0, transparent 28rem),
+    var(--paper);
+}
+
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 10;
+  padding: 0.75rem 1rem;
+  color: white;
+  background: var(--brand);
+  transform: translateY(-150%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.site-header,
+main,
+footer {
+  width: min(1120px, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 2rem;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 0;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  letter-spacing: -0.04em;
+}
+
+h2 {
+  max-width: 14ch;
+  margin-bottom: 1.25rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.4rem, 7vw, 5.4rem);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+}
+
+.eyebrow,
+.step-label {
+  margin-bottom: 0.4rem;
+  color: var(--brand);
+  font-size: 0.75rem;
+  font-weight: 750;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.offline-badge {
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--brand);
+  border-radius: 999px;
+  color: var(--brand);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.hero {
+  padding-block: clamp(3rem, 8vw, 7rem);
+}
+
+.hero-copy {
+  max-width: 42rem;
+  color: var(--muted);
+  font-size: 1.15rem;
+  line-height: 1.7;
+}
+
+.notice {
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 2rem;
+  padding: 1rem 1.25rem;
+  border-left: 0.3rem solid var(--accent);
+  background: var(--surface);
+  box-shadow: 0 0.75rem 2.5rem rgba(23, 33, 43, 0.08);
+}
+
+.workspace-shell {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5rem;
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.workspace-shell h2 {
+  max-width: none;
+  margin-bottom: 0.5rem;
+  font-family: inherit;
+  font-size: 1.75rem;
+  font-weight: 750;
+  letter-spacing: -0.03em;
+}
+
+.workspace-shell p {
+  margin-bottom: 0;
+  color: var(--muted);
+}
+
+.secondary-link {
+  flex: 0 0 auto;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--brand);
+  border-radius: 0.5rem;
+  color: var(--brand);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.secondary-link:hover,
+.secondary-link:focus-visible {
+  color: white;
+  background: var(--brand);
+}
+
+footer {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  padding-block: 1.5rem 2rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+@media (max-width: 700px) {
+  .site-header,
+  .workspace-shell,
+  footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

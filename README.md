@@ -1,10 +1,10 @@
 # FIT5238 Team SA34 — Signal Review
 
-**Current delivery branch:** `stage/05-us3.1-explanation-uncertainty`
+**Current delivery branch:** `stage/06-us4.1-confirm-override`
 
-**Stage owner:** Zhongyao Zhang
+**Stage owner:** Yetong Zhang
 
-**Current stage:** US3.1 — Risk factors and uncertainty
+**Current stage:** US4.1 — Confirm or override
 
 **Stage status:** implemented; see `STAGE_HANDOVER.md` for executed checks.
 

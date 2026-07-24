@@ -147,6 +147,26 @@
         </div>
         <p class="verdict-warning"><strong>Triage evidence, not a verdict.</strong></p>
       </section>
+      <section id="decision-panel" class="decision-panel" aria-labelledby="decision-title" hidden>
+        <p class="step-label">Human oversight</p>
+        <h2 id="decision-title">Record the analyst decision</h2>
+        <p>
+          Your recorded decision is final for this review. It does not suspend
+          the account or trigger any platform action.
+        </p>
+        <form id="decision-form">
+          <fieldset>
+            <legend>Decision</legend>
+            <label><input type="radio" name="decision" value="confirm" required> Confirm recommendation</label>
+            <label><input type="radio" name="decision" value="override"> Override recommendation</label>
+          </fieldset>
+          <label for="decision-reason">Override reason</label>
+          <input id="decision-reason" name="reason" maxlength="240" aria-describedby="decision-reason-hint">
+          <span id="decision-reason-hint" class="field-hint">Required for Override; use an approved category or concise note.</span>
+          <button id="decision-submit" type="submit">Record decision</button>
+        </form>
+        <p id="decision-acknowledgement" class="intake-status" role="status" hidden></p>
+      </section>
     </main>
     <footer>
       <span>Twitter/X scope · Offline fixtures · Human oversight</span>

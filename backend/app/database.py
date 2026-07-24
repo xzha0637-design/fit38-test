@@ -35,19 +35,21 @@ class FeedbackStore:
             with self._connect() as connection:
                 connection.executescript(
                     """
-                    CREATE TABLE IF NOT EXISTS assessments (
+                    CREATE TABLE IF NOT EXISTS assessment_context (
                         assessment_id TEXT PRIMARY KEY,
                         created_at TEXT NOT NULL,
                         model_id TEXT NOT NULL,
-                        risk_band TEXT NOT NULL,
-                        status TEXT NOT NULL
+                        recommendation TEXT NOT NULL
                     );
-                    CREATE TABLE IF NOT EXISTS overrides (
-                        assessment_id TEXT PRIMARY KEY,
-                        created_at TEXT NOT NULL,
-                        override_label TEXT NOT NULL,
-                        reason_code TEXT NOT NULL,
-                        FOREIGN KEY (assessment_id) REFERENCES assessments(assessment_id)
+                    CREATE TABLE IF NOT EXISTS decision_feedback (
+                        assessment_reference TEXT PRIMARY KEY,
+                        model_version TEXT NOT NULL,
+                        recommendation TEXT NOT NULL,
+                        analyst_decision TEXT NOT NULL,
+                        reason TEXT NOT NULL,
+                        timestamp TEXT NOT NULL,
+                        FOREIGN KEY (assessment_reference)
+                            REFERENCES assessment_context(assessment_id)
                     );
                     """
                 )
@@ -62,8 +64,7 @@ class FeedbackStore:
         self,
         assessment_id: str,
         model_id: str,
-        risk_band: str,
-        status: str,
+        recommendation: str,
     ) -> None:
         if not self.ready:
             raise StoreUnavailableError(self.error or "Feedback store is unavailable.")
@@ -71,25 +72,29 @@ class FeedbackStore:
         with self._connect() as connection:
             connection.execute(
                 """
-                INSERT INTO assessments
-                    (assessment_id, created_at, model_id, risk_band, status)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO assessment_context
+                    (assessment_id, created_at, model_id, recommendation)
+                VALUES (?, ?, ?, ?)
                 """,
-                (assessment_id, created_at, model_id, risk_band, status),
+                (assessment_id, created_at, model_id, recommendation),
             )
 
-    def record_override(
+    def record_decision(
         self,
         assessment_id: str,
-        override_label: str,
-        reason_code: str,
+        analyst_decision: str,
+        reason: str,
     ) -> None:
         if not self.ready:
             raise StoreUnavailableError(self.error or "Feedback store is unavailable.")
         created_at = datetime.now(timezone.utc).isoformat()
         with self._connect() as connection:
             exists = connection.execute(
-                "SELECT 1 FROM assessments WHERE assessment_id = ?",
+                """
+                SELECT model_id, recommendation
+                FROM assessment_context
+                WHERE assessment_id = ?
+                """,
                 (assessment_id,),
             ).fetchone()
             if exists is None:
@@ -97,11 +102,33 @@ class FeedbackStore:
             try:
                 connection.execute(
                     """
-                    INSERT INTO overrides
-                        (assessment_id, created_at, override_label, reason_code)
-                    VALUES (?, ?, ?, ?)
+                    INSERT INTO decision_feedback
+                        (assessment_reference, model_version, recommendation,
+                         analyst_decision, reason, timestamp)
+                    VALUES (?, ?, ?, ?, ?, ?)
                     """,
-                    (assessment_id, created_at, override_label, reason_code),
+                    (
+                        assessment_id,
+                        exists[0],
+                        exists[1],
+                        analyst_decision,
+                        reason,
+                        created_at,
+                    ),
                 )
             except sqlite3.IntegrityError as exc:
                 raise DuplicateOverrideError(assessment_id) from exc
+
+    def record_override(
+        self,
+        assessment_id: str,
+        override_label: str,
+        reason_code: str,
+    ) -> None:
+        """Backward-compatible wrapper for the supplied baseline endpoint."""
+
+        self.record_decision(
+            assessment_id=assessment_id,
+            analyst_decision=f"override:{override_label}",
+            reason=reason_code,
+        )

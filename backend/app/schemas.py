@@ -2,7 +2,7 @@ import re
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 class StrictModel(BaseModel):
@@ -141,6 +141,27 @@ class OverrideRequest(StrictModel):
 class OverrideResponse(BaseModel):
     status: Literal["recorded"] = "recorded"
     assessment_id: str
+
+
+class DecisionRequest(StrictModel):
+    decision: Literal["confirm", "override"]
+    reason: str = Field(default="", max_length=240)
+
+    @model_validator(mode="after")
+    def require_override_reason(self):
+        self.reason = self.reason.strip()
+        if self.decision == "override" and not self.reason:
+            raise ValueError("An override reason is required.")
+        return self
+
+
+class DecisionResponse(BaseModel):
+    status: Literal["recorded"] = "recorded"
+    assessment_id: str
+    analyst_decision: Literal["confirm", "override"]
+    acknowledgement: Literal[
+        "Decision recorded. No platform action was taken."
+    ] = "Decision recorded. No platform action was taken."
 
 
 class DemoAccount(BaseModel):

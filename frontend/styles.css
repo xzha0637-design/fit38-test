@@ -242,6 +242,43 @@ button:disabled {
   color: white;
 }
 
+.decision-panel {
+  margin-bottom: 5rem;
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--surface);
+}
+
+.decision-panel h2 {
+  max-width: none;
+  font-family: inherit;
+  font-size: 1.75rem;
+  font-weight: 750;
+}
+
+.decision-panel form,
+.decision-panel fieldset {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.decision-panel fieldset {
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 1px solid var(--line);
+}
+
+.decision-panel input[type="radio"] {
+  min-height: auto;
+  width: auto;
+}
+
+.decision-panel button {
+  width: fit-content;
+  margin-top: 1rem;
+}
+
 .risk-panel h2 {
   max-width: none;
   margin-bottom: 1.5rem;

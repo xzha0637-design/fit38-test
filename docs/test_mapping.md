@@ -62,3 +62,11 @@ docstring or in this mapping.
 | AC1–AC3 top factors/order/direction/plain values | `test_ac1_ac2_ac3_top_three_are_ordered_plain_and_observed` |
 | AC4–AC6 shared context/disclaimer/uncertainty | `test_ac4_ac5_ac6_factors_uncertainty_and_score_share_result_context` |
 | AC7 prohibited certainty/enforcement wording | `test_ac7_ui_avoids_certainty_guilt_and_enforcement_claims` |
+
+## Stage 06 — US4.1 Confirm or override
+
+| AC | Automated evidence |
+|---|---|
+| AC1–AC2 completed assessment and override reason | `test_ac1_ac2_decision_requires_assessment_and_override_reason` |
+| AC3–AC4 human final/no action/minimal fields | `test_ac3_ac4_minimal_feedback_and_no_platform_action` |
+| AC5 acknowledgement/duplicate prevention | `test_ac5_acknowledgement_and_duplicate_prevention` |

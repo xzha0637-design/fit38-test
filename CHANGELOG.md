@@ -1,5 +1,11 @@
 # Changelog
 
+## Stage 06 — US4.1 Confirm or override
+
+- Added accountable Confirm/Override decisions with required override reason.
+- Added minimal pseudonymous feedback storage and duplicate prevention.
+- Added explicit human-final/no-platform-action acknowledgement.
+
 ## Stage 05 — US3.1 Explanation and uncertainty
 
 - Added ordered top-three SHAP factors with plain labels, direction, and values.

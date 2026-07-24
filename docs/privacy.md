@@ -10,3 +10,7 @@
 - No endpoint suspends, moderates, reports, or otherwise acts on a platform.
 
 Later feedback and follow-up stages must preserve this minimum-data boundary.
+
+Decision feedback contains exactly the pseudonymous assessment reference, model
+version, recommendation, analyst decision, reason, and timestamp. No decision
+endpoint is connected to Twitter/X or any moderation action.

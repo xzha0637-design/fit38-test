@@ -28,6 +28,12 @@ const assessmentTime = document.querySelector("#assessment-time");
 const riskWarning = document.querySelector("#risk-warning");
 const factorList = document.querySelector("#factor-list");
 const uncertaintyText = document.querySelector("#uncertainty-text");
+const decisionPanel = document.querySelector("#decision-panel");
+const decisionForm = document.querySelector("#decision-form");
+const decisionReason = document.querySelector("#decision-reason");
+const decisionSubmit = document.querySelector("#decision-submit");
+const decisionAcknowledgement = document.querySelector("#decision-acknowledgement");
+let currentAssessmentId = null;
 
 const previewDefinitions = [
   ["Profile", [["Username", "username"], ["Description", "description"], ["Location", "location"]]],
@@ -116,6 +122,7 @@ function renderCompleteness(result) {
 }
 
 function renderRiskResult(result) {
+  currentAssessmentId = result.assessment_id;
   riskBand.textContent = `${result.risk_band_label} risk`;
   riskBand.className = `risk-band ${result.risk_band}`;
   riskScore.textContent = `${result.risk_score}%`;
@@ -138,6 +145,9 @@ function renderRiskResult(result) {
   }
   uncertaintyText.textContent = result.uncertainty;
   riskPanel.hidden = false;
+  decisionPanel.hidden = false;
+  decisionForm.hidden = false;
+  decisionAcknowledgement.hidden = true;
 }
 
 async function scoreAccount(accountId) {
@@ -245,3 +255,40 @@ form.addEventListener("submit", async (event) => {
 });
 
 loadDemoAccounts();
+
+decisionForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const decision = new FormData(decisionForm).get("decision");
+  if (!decision || !currentAssessmentId) {
+    return;
+  }
+  const reason = decisionReason.value.trim();
+  if (decision === "override" && !reason) {
+    decisionReason.setCustomValidity("Enter a reason before recording an override.");
+    decisionReason.reportValidity();
+    return;
+  }
+  decisionReason.setCustomValidity("");
+  decisionSubmit.disabled = true;
+  try {
+    const response = await fetch(
+      `/api/v1/assessments/${encodeURIComponent(currentAssessmentId)}/decision`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ decision, reason }),
+      },
+    );
+    const payload = await response.json();
+    if (!response.ok) {
+      throw new Error(payload.error?.message || "The decision could not be recorded.");
+    }
+    decisionAcknowledgement.textContent = payload.acknowledgement;
+    decisionAcknowledgement.hidden = false;
+    decisionForm.hidden = true;
+  } catch (error) {
+    decisionAcknowledgement.textContent = error.message;
+    decisionAcknowledgement.hidden = false;
+    decisionSubmit.disabled = false;
+  }
+});

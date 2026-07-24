@@ -24,6 +24,8 @@ from backend.app.schemas import (
     AssessmentRequest,
     AssessmentResponse,
     CompletenessResponse,
+    DecisionRequest,
+    DecisionResponse,
     DemoAccountsResponse,
     ErrorDetail,
     ErrorResponse,
@@ -342,8 +344,7 @@ def create_app(
             feedback_store.record_assessment(
                 assessment_id=assessment_id,
                 model_id=model_service.model_id,
-                risk_band=score.band,
-                status=status,
+                recommendation=recommendation,
             )
         except StoreUnavailableError as exc:
             raise ApiError(
@@ -373,6 +374,46 @@ def create_app(
             top_factors=factors,
             recommendation=recommendation,
             warning=warning,
+        )
+
+    @application.post(
+        "/api/v1/assessments/{assessment_id}/decision",
+        response_model=DecisionResponse,
+        status_code=201,
+    )
+    async def create_decision(
+        assessment_id: str,
+        request: DecisionRequest,
+    ) -> DecisionResponse:
+        if not assessment_id.startswith("asmt_") or len(assessment_id) != 13:
+            raise ApiError(400, "invalid_request", "Invalid assessment ID.")
+        try:
+            feedback_store.record_decision(
+                assessment_id=assessment_id,
+                analyst_decision=request.decision,
+                reason=request.reason,
+            )
+        except AssessmentNotFoundError as exc:
+            raise ApiError(
+                404,
+                "assessment_not_found",
+                "Complete an assessment before recording a decision.",
+            ) from exc
+        except DuplicateOverrideError as exc:
+            raise ApiError(
+                409,
+                "decision_already_recorded",
+                "A decision has already been recorded for this assessment.",
+            ) from exc
+        except StoreUnavailableError as exc:
+            raise ApiError(
+                500,
+                "feedback_store_unavailable",
+                "The decision could not be recorded safely.",
+            ) from exc
+        return DecisionResponse(
+            assessment_id=assessment_id,
+            analyst_decision=request.decision,
         )
 
     @application.post(

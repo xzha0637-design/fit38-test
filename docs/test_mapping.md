@@ -33,3 +33,12 @@ docstring or in this mapping.
 | AC2 missing values named and not imputed | `test_ac2_missing_values_are_null_and_named_without_imputation` |
 | AC3 approved public fields only | `test_ac3_only_approved_public_fields_are_exposed` |
 | AC4 source and model content separated | `test_ac4_source_data_is_explicitly_separate_from_model_output` |
+
+## Stage 03 — US2.1 Feature completeness
+
+| Acceptance criterion | Automated evidence |
+|---|---|
+| AC1 completeness calculated/displayed before score | `test_ac1_completeness_is_calculated_and_displayed_before_scoring` |
+| AC2 below 50% is Insufficient data without band | `test_ac2_below_half_is_insufficient_without_risk_band` |
+| AC3 exactly 50% eligible with caveat | `test_ac3_exactly_half_is_eligible_and_keeps_caveat` |
+| AC4 missing features use plain labels | `test_ac4_missing_required_features_use_plain_language` |

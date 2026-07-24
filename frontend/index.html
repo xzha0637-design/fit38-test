@@ -92,6 +92,31 @@
           <p>No model output is displayed in this source-data preview.</p>
         </div>
       </section>
+      <section id="completeness-panel" class="completeness-panel" aria-labelledby="completeness-title" hidden>
+        <div class="panel-heading">
+          <div>
+            <p class="step-label">Evidence check</p>
+            <h2 id="completeness-title">Feature completeness</h2>
+          </div>
+          <strong id="completeness-status" class="completeness-status"></strong>
+        </div>
+        <div
+          id="completeness-meter"
+          class="completeness-meter"
+          role="progressbar"
+          aria-label="Feature completeness"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+        >
+          <span id="completeness-bar"></span>
+        </div>
+        <p id="completeness-value" class="completeness-value"></p>
+        <div id="feature-caveat" class="missing-data" role="note" hidden>
+          <strong id="feature-caveat-text"></strong>
+          <ul id="missing-feature-list"></ul>
+        </div>
+      </section>
     </main>
     <footer>
       <span>Twitter/X scope · Offline fixtures · Human oversight</span>

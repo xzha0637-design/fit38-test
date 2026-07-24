@@ -20,6 +20,20 @@ NUMERIC_FEATURES = [
 BOOLEAN_FEATURES = ["verified", "uses_default_profile_image", "has_description"]
 FEATURE_NAMES = NUMERIC_FEATURES + BOOLEAN_FEATURES
 MINIMUM_COMPLETENESS = 0.5
+FEATURE_LABELS = {
+    "account_age_days": "Account age",
+    "followers_count": "Follower count",
+    "following_count": "Following count",
+    "follower_following_ratio": "Follower-to-following pattern",
+    "tweet_count": "Post count",
+    "posting_frequency": "Posting frequency",
+    "description_length": "Profile description",
+    "username_length": "Username",
+    "profile_completeness": "Public profile completeness",
+    "verified": "Verification status",
+    "uses_default_profile_image": "Profile image status",
+    "has_description": "Profile description availability",
+}
 
 
 @dataclass(frozen=True)
@@ -166,3 +180,14 @@ def build_feature_matrix(frame: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
 
 def is_sufficient(completeness: float) -> bool:
     return completeness >= MINIMUM_COMPLETENESS
+
+
+def missing_feature_labels(result: FeatureResult) -> list[str]:
+    """Name unavailable model inputs without exposing technical feature keys."""
+
+    row = result.frame.iloc[0]
+    return [
+        FEATURE_LABELS[name]
+        for name in FEATURE_NAMES
+        if pd.isna(row[name])
+    ]

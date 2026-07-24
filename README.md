@@ -1,10 +1,10 @@
 # FIT5238 Team SA34 — Signal Review
 
-**Current delivery branch:** `stage/02-us1.2-account-preview`
+**Current delivery branch:** `stage/03-us2.1-completeness`
 
-**Stage owner:** Wei Zhang
+**Stage owner:** Keliang Chen
 
-**Current stage:** US1.2 — Preview public account information
+**Current stage:** US2.1 — Check feature completeness
 
 **Stage status:** implemented; see `STAGE_HANDOVER.md` for executed checks.
 
@@ -13,6 +13,8 @@ account-level Twitter/X risk triage. Stage 00 adds a runnable, accessible browse
 shell to the supplied backend foundation. Stage 01 adds validated offline account
 intake and representative demonstration selection. Stage 02 adds a whitelisted
 public-data preview with clear missing-value and content-origin labels.
+Stage 03 adds the inclusive 50% evidence-sufficiency gate and names missing
+required features.
 
 The current implementation uses a local dataset adapter instead of the live X API.
 An account ID is selected from a generated, label-free demo file. The returned score

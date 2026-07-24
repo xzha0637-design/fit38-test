@@ -49,3 +49,10 @@ and the corresponding stage handover.
 object with three approved groups: profile, activity, and network. Missing source
 values remain JSON `null` and are also listed by a plain-language label. Scenario
 metadata, training labels, and internal model features are excluded.
+
+## Feature completeness
+
+`GET /api/v1/accounts/{account_id}/completeness` calculates availability across
+the versioned 12-feature model input. A value below `0.5` returns `Insufficient
+data`; exactly `0.5` is eligible. Missing features are plain-language labels, and
+the response deliberately carries no risk band.

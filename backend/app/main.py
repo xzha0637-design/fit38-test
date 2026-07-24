@@ -22,6 +22,7 @@ from backend.app.schemas import (
     AccountPreview,
     AssessmentRequest,
     AssessmentResponse,
+    CompletenessResponse,
     DemoAccountsResponse,
     ErrorDetail,
     ErrorResponse,
@@ -32,7 +33,11 @@ from backend.app.schemas import (
     OverrideResponse,
 )
 from backend.app.version import APP_VERSION
-from backend.ml.features import build_feature_row, is_sufficient
+from backend.ml.features import (
+    build_feature_row,
+    is_sufficient,
+    missing_feature_labels,
+)
 
 
 LOGGER = logging.getLogger("bot_risk_backend")
@@ -208,6 +213,44 @@ def create_app(
                 "The account is not available in the offline demonstration dataset.",
             )
         return build_public_preview(record)
+
+    @application.get(
+        "/api/v1/accounts/{account_id}/completeness",
+        response_model=CompletenessResponse,
+    )
+    async def account_completeness(account_id: str) -> CompletenessResponse:
+        if not data_adapter.ready:
+            raise ApiError(
+                503,
+                "data_adapter_unavailable",
+                "Offline demonstration accounts are temporarily unavailable.",
+                retryable=True,
+            )
+        record = data_adapter.get_account(account_id)
+        if record is None:
+            raise ApiError(
+                404,
+                "account_not_found",
+                "The account is not available in the offline demonstration dataset.",
+            )
+        feature_result = build_feature_row(record)
+        eligible = is_sufficient(feature_result.completeness)
+        missing = missing_feature_labels(feature_result)
+        caveat = None
+        if missing:
+            caveat = (
+                "Some required public features are missing. Interpret any later "
+                "score with additional caution."
+            )
+        return CompletenessResponse(
+            account_id=str(record["account_id"]),
+            completeness=round(feature_result.completeness, 3),
+            completeness_percentage=round(feature_result.completeness * 100),
+            status="Eligible for scoring" if eligible else "Insufficient data",
+            eligible_for_scoring=eligible,
+            missing_features=missing,
+            missing_data_caveat=caveat,
+        )
 
     @application.post(
         "/api/v1/assessments",

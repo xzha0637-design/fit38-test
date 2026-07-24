@@ -74,6 +74,17 @@ class AccountPreview(BaseModel):
     missing_fields: list[str] = Field(default_factory=list)
 
 
+class CompletenessResponse(BaseModel):
+    account_id: str
+    completeness: float = Field(ge=0, le=1)
+    completeness_percentage: int = Field(ge=0, le=100)
+    status: Literal["Eligible for scoring", "Insufficient data"]
+    eligible_for_scoring: bool
+    missing_features: list[str] = Field(default_factory=list)
+    missing_data_caveat: str | None = None
+    risk_band: None = None
+
+
 class Confidence(BaseModel):
     level: Literal["low", "high"]
     basis: Literal[

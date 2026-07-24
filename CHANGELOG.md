@@ -1,5 +1,12 @@
 # Changelog
 
+## Stage 03 — US2.1 Feature completeness
+
+- Added the versioned 12-feature completeness endpoint and UI meter.
+- Enforced the inclusive 50% scoring boundary.
+- Added Insufficient data handling without a risk band.
+- Added plain-language missing-feature labels and persistent caveat.
+
 ## Stage 02 — US1.2 Account preview
 
 - Added a whitelisted public-account preview presenter and endpoint.

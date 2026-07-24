@@ -11,6 +11,14 @@ const previewIdentifier = document.querySelector("#preview-identifier");
 const previewGroups = document.querySelector("#preview-groups");
 const missingData = document.querySelector("#missing-data");
 const missingList = document.querySelector("#missing-list");
+const completenessPanel = document.querySelector("#completeness-panel");
+const completenessStatus = document.querySelector("#completeness-status");
+const completenessMeter = document.querySelector("#completeness-meter");
+const completenessBar = document.querySelector("#completeness-bar");
+const completenessValue = document.querySelector("#completeness-value");
+const featureCaveat = document.querySelector("#feature-caveat");
+const featureCaveatText = document.querySelector("#feature-caveat-text");
+const missingFeatureList = document.querySelector("#missing-feature-list");
 
 const previewDefinitions = [
   ["Profile", [["Username", "username"], ["Description", "description"], ["Location", "location"]]],
@@ -78,6 +86,24 @@ function renderPreview(preview) {
   }
   missingData.hidden = preview.missing_fields.length === 0;
   previewPanel.hidden = false;
+}
+
+function renderCompleteness(result) {
+  const percentage = result.completeness_percentage;
+  completenessStatus.textContent = result.status;
+  completenessStatus.classList.toggle("insufficient", !result.eligible_for_scoring);
+  completenessMeter.setAttribute("aria-valuenow", String(percentage));
+  completenessBar.style.width = `${percentage}%`;
+  completenessValue.textContent = `${percentage}% of required features are available.`;
+  missingFeatureList.replaceChildren();
+  for (const label of result.missing_features) {
+    const item = document.createElement("li");
+    item.textContent = label;
+    missingFeatureList.append(item);
+  }
+  featureCaveatText.textContent = result.missing_data_caveat || "";
+  featureCaveat.hidden = result.missing_features.length === 0;
+  completenessPanel.hidden = false;
 }
 
 function validateIdentifier(value) {
@@ -152,6 +178,13 @@ form.addEventListener("submit", async (event) => {
       throw new Error("The public account preview could not be loaded.");
     }
     renderPreview(await previewResponse.json());
+    const completenessResponse = await fetch(
+      `/api/v1/accounts/${encodeURIComponent(payload.account_id)}/completeness`,
+    );
+    if (!completenessResponse.ok) {
+      throw new Error("Feature completeness could not be calculated.");
+    }
+    renderCompleteness(await completenessResponse.json());
   } catch (error) {
     showError(error.message);
   } finally {

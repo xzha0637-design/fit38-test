@@ -116,15 +116,20 @@ h2 {
 }
 
 .workspace-shell {
-  display: flex;
+  display: grid;
   gap: 2rem;
-  align-items: center;
-  justify-content: space-between;
   margin-bottom: 5rem;
   padding: clamp(1.5rem, 4vw, 2.75rem);
   border: 1px solid var(--line);
   border-radius: 1rem;
   background: rgba(255, 255, 255, 0.78);
+}
+
+.workspace-heading {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  justify-content: space-between;
 }
 
 .workspace-shell h2 {
@@ -139,6 +144,76 @@ h2 {
 .workspace-shell p {
   margin-bottom: 0;
   color: var(--muted);
+}
+
+.field-group {
+  display: grid;
+  gap: 0.45rem;
+  margin-bottom: 1.25rem;
+}
+
+label {
+  font-weight: 750;
+}
+
+.field-hint,
+.field-error {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.field-error {
+  min-height: 1.1rem;
+  color: #9d2f21;
+  font-weight: 700;
+}
+
+input,
+select,
+button {
+  min-height: 2.9rem;
+  border: 1px solid #8b9891;
+  border-radius: 0.5rem;
+  font: inherit;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  color: var(--ink);
+  background: white;
+}
+
+input[aria-invalid="true"] {
+  border-color: #9d2f21;
+  outline-color: #9d2f21;
+}
+
+button {
+  padding: 0.7rem 1.1rem;
+  border-color: var(--brand);
+  color: white;
+  background: var(--brand);
+  cursor: pointer;
+  font-weight: 750;
+}
+
+button:hover,
+button:focus-visible {
+  background: #0e3733;
+}
+
+button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.intake-status {
+  padding: 1rem 1.25rem;
+  border: 1px solid #8eb8aa;
+  border-radius: 0.65rem;
+  background: var(--brand-soft);
 }
 
 .secondary-link {
@@ -169,7 +244,7 @@ footer {
 
 @media (max-width: 700px) {
   .site-header,
-  .workspace-shell,
+  .workspace-heading,
   footer {
     align-items: flex-start;
     flex-direction: column;

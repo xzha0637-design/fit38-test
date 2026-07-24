@@ -1,76 +1,70 @@
 # Stage handover
 
-- **Stage:** 00 — Project Scaffold
-- **User Story:** Foundation (no full User Story implemented)
+- **Stage:** 01 — US1.1 Account Intake
+- **User Story:** Submit or select a single account
 - **Primary owner:** Wei Zhang
-- **Branch:** `stage/00-project-scaffold`
+- **Branch:** `stage/01-us1.1-account-intake`
 
 ## Summary
 
-Created a runnable browser application shell around the supplied FastAPI/ML
-backend, centralised stable version constants, added the required technical
-documentation and reproducible run/test scripts, and preserved the existing
-offline XGBoost/SHAP pipeline.
+Added an offline intake workflow with validated identifiers, optional `@`
+normalisation, deterministic representative Low/Medium/High fixtures, visible
+loading and adjacent error states, and keyboard-native labelled controls.
 
 ## Files added
 
-- `frontend/index.html`
-- `frontend/styles.css`
-- `backend/app/version.py`
-- `tests/test_scaffold.py`
-- `scripts/run_app.ps1`
-- `scripts/run_tests.ps1`
-- `docs/architecture.md`
-- `docs/data_contract.md`
-- `docs/model_integration.md`
-- `docs/privacy.md`
-- `docs/known_limitations.md`
-- `docs/test_mapping.md`
-- `CHANGELOG.md`
-- `STAGE_HANDOVER.md`
+- `data/fixtures/demo_accounts.csv`
+- `frontend/app.js`
+- `tests/test_us1_1_account_intake.py`
 
 ## Files modified
 
-- `.gitignore`
 - `README.md`
+- `.env.example`
+- `CHANGELOG.md`
+- `STAGE_HANDOVER.md`
+- `backend/app/config.py`
+- `backend/app/data_adapter.py`
 - `backend/app/main.py`
+- `backend/app/schemas.py`
+- `frontend/index.html`
+- `frontend/styles.css`
+- `docs/data_contract.md`
+- `docs/test_mapping.md`
 
 ## Files removed
 
 None.
 
-## Requirement mapping
+## Acceptance Criteria mapping
 
-- Application shell: root route and `frontend/`.
-- Offline fixture loader and model interface: supplied `DatasetAdapter` and
-  `ModelService`, retained and documented.
-- Input/output schemas: supplied Pydantic schemas, retained and documented.
-- Error foundation: supplied exception handlers plus scaffold 404 regression.
-- Stable configuration/version constants: `config.py` and `version.py`.
-- Run/test commands: `scripts/run_app.ps1` and `scripts/run_tests.ps1`.
+All six US1.1 criteria map to named tests in `docs/test_mapping.md`. The intake
+endpoint only resolves tracked offline fixtures and never makes a platform call.
 
 ## Tests
 
-- **Written:** two scaffold tests.
+- **Written:** four US1.1 tests covering AC1–AC6.
 - **Executed:** `python -m pytest --basetemp ".pytest-tmp"`.
-- **Passed:** 15 tests in 2.20 seconds.
+- **Passed:** 19 tests in 2.34 seconds.
 - **Failed:** 0.
-- **Not executed:** browser visual inspection.
+- **Not executed:** manual browser keyboard walkthrough.
 
 ## Known issues
 
-- Model artifacts and demo fixtures must be generated before the full API health
-  check becomes ready.
-- Account intake controls intentionally begin in Stage 01.
+- Risk scoring and account attribute preview are intentionally delivered by later
+  stages.
+- The Low/Medium/High selector text describes representative test scenarios; it
+  is not a definitive label for an account.
 
 ## Manual verification
 
-1. Activate the `fit5238-backend` Conda environment.
-2. Run `python -m backend.ml.train`.
-3. Run `.\scripts\run_app.ps1`.
-4. Open `http://127.0.0.1:8000/` and verify the shell and API documentation link.
+1. Run `.\scripts\run_app.ps1`.
+2. Tab through the input, selector, and Begin assessment button.
+3. Submit blank and invalid values and confirm the adjacent actionable message.
+4. Select each demonstration scenario and confirm the input is populated.
+5. Submit `@CIVIC_UPDATES` and `civic_updates`; confirm the same canonical account.
 
 ## Next-stage notes
 
-Stage 01 adds validated offline account input, representative demo selection,
-loading state, normalisation, and keyboard/programmatic labels.
+Stage 02 displays approved public profile, activity, and network fields while
+visually separating source evidence from future model-generated output.

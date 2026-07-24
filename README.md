@@ -1,15 +1,18 @@
 # FIT5238 Team SA34 — Signal Review
 
-**Current delivery branch:** `stage/00-project-scaffold`
+**Current delivery branch:** `stage/01-us1.1-account-intake`
 
 **Stage owner:** Wei Zhang
+
+**Current stage:** US1.1 — Submit or select a single account
 
 **Stage status:** implemented; see `STAGE_HANDOVER.md` for executed checks.
 
 This repository contains the cumulative Iteration 1 implementation for
 account-level Twitter/X risk triage. Stage 00 adds a runnable, accessible browser
-shell to the supplied backend foundation. Later stage branches introduce one
-approved User Story at a time.
+shell to the supplied backend foundation. Stage 01 adds validated offline account
+intake and representative demonstration selection. Later stage branches introduce
+one approved User Story at a time.
 
 The current implementation uses a local dataset adapter instead of the live X API.
 An account ID is selected from a generated, label-free demo file. The returned score
@@ -73,13 +76,17 @@ The command:
 2. removes invalid rows, every label-conflict account, and deterministic duplicates;
 3. creates stratified train, validation, and test splits;
 4. trains the baseline and XGBoost models and selects risk thresholds; and
-5. creates 100 label-free demo accounts from the test split.
+5. creates 100 label-free research demo candidates from the test split.
+
+The analyst interface uses the three tracked, curated offline fixtures in
+`data/fixtures/demo_accounts.csv` by default so Low/Medium/High demonstration
+choices remain stable across clean checkouts.
 
 All generated content is local and ignored by Git:
 
 ```text
 backend/artifacts/        # model, preprocessor, baseline, metadata and metrics
-backend/data/generated/   # train/validation/test splits and demo accounts
+backend/data/generated/   # train/validation/test splits and demo candidates
 backend/runtime/          # SQLite feedback store and other runtime files
 ```
 

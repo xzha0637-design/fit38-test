@@ -31,17 +31,53 @@
         </div>
       </section>
       <section class="workspace-shell" aria-labelledby="workspace-title">
-        <div>
-          <p class="step-label">Project scaffold</p>
-          <h2 id="workspace-title">Assessment workspace</h2>
-          <p>Account intake controls are introduced in Stage 01.</p>
+        <div class="workspace-heading">
+          <div>
+            <p class="step-label">Step 1 · Account intake</p>
+            <h2 id="workspace-title">Choose an offline account</h2>
+            <p>Enter a supported identifier or select a representative scenario.</p>
+          </div>
+          <a class="secondary-link" href="/docs">View API documentation</a>
         </div>
-        <a class="secondary-link" href="/docs">View API documentation</a>
+        <form id="intake-form" novalidate>
+          <div class="field-group">
+            <label for="account-identifier">Twitter/X account identifier</label>
+            <span id="identifier-hint" class="field-hint">
+              Use letters, numbers, and underscores. An optional @ prefix is accepted.
+            </span>
+            <input
+              id="account-identifier"
+              name="identifier"
+              type="text"
+              inputmode="text"
+              autocomplete="off"
+              aria-describedby="identifier-hint identifier-error"
+              maxlength="33"
+              required
+            >
+            <span id="identifier-error" class="field-error" role="alert"></span>
+          </div>
+          <div class="field-group">
+            <label for="demo-account">Demonstration scenario</label>
+            <select id="demo-account" name="demo-account" aria-describedby="demo-hint">
+              <option value="">Select Low, Medium, or High example</option>
+            </select>
+            <span id="demo-hint" class="field-hint">
+              Scenario names support testing and are not definitive account labels.
+            </span>
+          </div>
+          <button id="assess-button" type="submit">
+            <span class="button-label">Begin assessment</span>
+            <span class="button-loading" hidden>Preparing offline data…</span>
+          </button>
+        </form>
+        <div id="intake-status" class="intake-status" aria-live="polite" hidden></div>
       </section>
     </main>
     <footer>
       <span>Twitter/X scope · Offline fixtures · Human oversight</span>
       <span>Application v0.1.0</span>
     </footer>
+    <script src="/static/app.js" defer></script>
   </body>
 </html>

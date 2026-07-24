@@ -12,6 +12,7 @@ class DatasetAdapter:
         self.ready = False
         self.error: str | None = None
         self._accounts: pd.DataFrame | None = None
+        self._identifier_index: dict[str, str] = {}
         self.load()
 
     def load(self) -> None:
@@ -30,10 +31,22 @@ class DatasetAdapter:
             if frame["account_id"].duplicated().any():
                 raise ValueError("Demo data contains duplicate account IDs.")
             self._accounts = frame.set_index("account_id", drop=False)
+            self._identifier_index = {}
+            for record in frame.to_dict(orient="records"):
+                account_id = str(record["account_id"]).strip()
+                aliases = {account_id.lower()}
+                username = self._optional_text(record.get("username"))
+                if username:
+                    aliases.add(username.lower().removeprefix("@"))
+                for alias in aliases:
+                    if alias in self._identifier_index:
+                        raise ValueError("Demo data contains duplicate identifiers.")
+                    self._identifier_index[alias] = account_id
             self.ready = True
             self.error = None
         except Exception as exc:
             self._accounts = None
+            self._identifier_index = {}
             self.ready = False
             self.error = str(exc)
 
@@ -44,9 +57,11 @@ class DatasetAdapter:
     def get_account(self, account_id: str) -> dict[str, Any] | None:
         if not self.ready or self._accounts is None:
             return None
-        if account_id not in self._accounts.index:
+        lookup = str(account_id).strip().lower().removeprefix("@")
+        canonical_id = self._identifier_index.get(lookup)
+        if canonical_id is None:
             return None
-        row = self._accounts.loc[account_id]
+        row = self._accounts.loc[canonical_id]
         return row.to_dict()
 
     def list_accounts(self, limit: int) -> list[dict[str, str | None]]:
@@ -59,6 +74,8 @@ class DatasetAdapter:
                     "account_id": str(record["account_id"]),
                     "source_dataset": self._optional_text(record.get("source_dataset")),
                     "username": self._optional_text(record.get("username")),
+                    "scenario": self._optional_text(record.get("scenario")),
+                    "display_label": self._optional_text(record.get("display_label")),
                 }
             )
         return output

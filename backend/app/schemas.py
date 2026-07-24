@@ -1,6 +1,7 @@
+import re
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class StrictModel(BaseModel):
@@ -10,6 +11,38 @@ class StrictModel(BaseModel):
 class AssessmentRequest(StrictModel):
     platform: Literal["x"]
     account_id: str = Field(pattern=r"^[0-9]{1,19}$")
+
+
+OFFLINE_IDENTIFIER_PATTERN = re.compile(r"^[A-Za-z0-9_]{1,32}$")
+
+
+def normalise_offline_identifier(value: str) -> str:
+    if not isinstance(value, str):
+        raise ValueError("Enter an offline account identifier.")
+    normalised = value.strip().removeprefix("@").lower()
+    if not normalised:
+        raise ValueError("Enter an offline account identifier.")
+    if not OFFLINE_IDENTIFIER_PATTERN.fullmatch(normalised):
+        raise ValueError("Use only letters, numbers, or underscores.")
+    return normalised
+
+
+class IntakeRequest(StrictModel):
+    identifier: str
+
+    @field_validator("identifier", mode="before")
+    @classmethod
+    def validate_identifier(cls, value: str) -> str:
+        return normalise_offline_identifier(value)
+
+
+class IntakeResponse(BaseModel):
+    status: Literal["ready"] = "ready"
+    account_id: str
+    normalised_identifier: str
+    display_identifier: str
+    data_source: Literal["offline_fixture"] = "offline_fixture"
+    assessment_count: Literal[1] = 1
 
 
 class Confidence(BaseModel):
@@ -56,6 +89,8 @@ class DemoAccount(BaseModel):
     account_id: str
     source_dataset: str | None = None
     username: str | None = None
+    scenario: Literal["low", "medium", "high"] | None = None
+    display_label: str | None = None
 
 
 class DemoAccountsResponse(BaseModel):

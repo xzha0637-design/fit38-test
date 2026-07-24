@@ -2,6 +2,18 @@
 
 ## Account input
 
+`POST /api/v1/intake`
+
+```json
+{
+  "identifier": "@civic_updates"
+}
+```
+
+The endpoint removes one optional `@`, normalises case, validates supported
+characters, and resolves the value against the offline fixture index. It returns
+one canonical account reference and does not score or retain a raw profile.
+
 `POST /api/v1/assessments`
 
 ```json

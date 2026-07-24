@@ -1,0 +1,4 @@
+source_dataset,account_id,username,display_label,scenario,description,location,account_age_days,followers_count,following_count,tweet_count,verified,default_profile_image,description_length,username_length
+offline_fixture,demo_low_01,civic_updates,Civic updates — lower-risk example,low,Local service and community updates,Melbourne,3200,25000,420,5200,True,False,35,13
+offline_fixture,demo_medium_01,market_watch_au,Market watch — medium-risk example,medium,Market headlines and public summaries,Sydney,820,920,1100,8400,False,False,36,15
+offline_fixture,demo_high_01,rapid_signal_feed,Rapid signal feed — higher-risk example,high,,Unknown,90,18,1800,9000,False,True,0,17

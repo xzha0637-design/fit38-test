@@ -24,6 +24,8 @@ from backend.app.schemas import (
     ErrorDetail,
     ErrorResponse,
     HealthResponse,
+    IntakeRequest,
+    IntakeResponse,
     OverrideRequest,
     OverrideResponse,
 )
@@ -155,6 +157,34 @@ def create_app(
             )
         accounts = data_adapter.list_accounts(limit)
         return DemoAccountsResponse(count=len(accounts), accounts=accounts)
+
+    @application.post(
+        "/api/v1/intake",
+        response_model=IntakeResponse,
+    )
+    async def prepare_account_intake(request: IntakeRequest) -> IntakeResponse:
+        if not data_adapter.ready:
+            raise ApiError(
+                503,
+                "data_adapter_unavailable",
+                "Offline demonstration accounts are temporarily unavailable.",
+                retryable=True,
+            )
+        record = data_adapter.get_account(request.identifier)
+        if record is None:
+            raise ApiError(
+                404,
+                "account_not_found",
+                "Choose a preloaded demonstration account or enter a supported "
+                "offline identifier.",
+            )
+        username = DatasetAdapter._optional_text(record.get("username"))
+        display_identifier = f"@{username}" if username else str(record["account_id"])
+        return IntakeResponse(
+            account_id=str(record["account_id"]),
+            normalised_identifier=request.identifier,
+            display_identifier=display_identifier,
+        )
 
     @application.post(
         "/api/v1/assessments",

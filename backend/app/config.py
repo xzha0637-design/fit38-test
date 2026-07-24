@@ -17,7 +17,7 @@ class Settings(BaseSettings):
 
     artifact_dir: Path = PROJECT_ROOT / "backend" / "artifacts"
     demo_data_path: Path = (
-        PROJECT_ROOT / "backend" / "data" / "generated" / "demo_accounts.csv"
+        PROJECT_ROOT / "data" / "fixtures" / "demo_accounts.csv"
     )
     database_path: Path = PROJECT_ROOT / "backend" / "runtime" / "feedback.sqlite3"
     cors_origins: str = "http://localhost:3000,http://localhost:5173"

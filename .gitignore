@@ -1,0 +1,18 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.env
+
+# Locally generated ML and runtime data. Rebuild with `python -m backend.ml.train`.
+backend/artifacts/
+backend/data/generated/
+backend/runtime/
+
+# MGTAB embeddings are not used by the account-level MVP and the source file is
+# too large for normal Git handover. It remains available locally for research.
+dataset/mgtab_cleaned.csv

@@ -216,6 +216,16 @@ button:disabled {
   background: var(--brand-soft);
 }
 
+.recovery-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.secondary-button {
+  color: var(--brand);
+  background: white;
+}
+
 .preview-panel {
   margin-bottom: 5rem;
   padding: clamp(1.5rem, 4vw, 2.75rem);

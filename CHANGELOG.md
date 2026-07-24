@@ -1,5 +1,11 @@
 # Changelog
 
+## Stage 07 — US1.3 Recovery and reset
+
+- Added distinct unknown/data-timeout/model-timeout/malformed-response states.
+- Added Retry and Start new assessment controls.
+- Added full stale-result clearing and focus restoration.
+
 ## Stage 06 — US4.1 Confirm or override
 
 - Added accountable Confirm/Override decisions with required override reason.

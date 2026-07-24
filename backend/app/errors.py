@@ -19,3 +19,7 @@ class ModelUnavailableError(RuntimeError):
 
 class ExplanationUnavailableError(RuntimeError):
     """Raised after scoring succeeds but a SHAP explanation cannot be produced."""
+
+
+class MalformedModelResponseError(RuntimeError):
+    """Raised when a model response does not satisfy the scoring contract."""

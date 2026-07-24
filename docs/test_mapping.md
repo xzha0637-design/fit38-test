@@ -70,3 +70,10 @@ docstring or in this mapping.
 | AC1–AC2 completed assessment and override reason | `test_ac1_ac2_decision_requires_assessment_and_override_reason` |
 | AC3–AC4 human final/no action/minimal fields | `test_ac3_ac4_minimal_feedback_and_no_platform_action` |
 | AC5 acknowledgement/duplicate prevention | `test_ac5_acknowledgement_and_duplicate_prevention` |
+
+## Stage 07 — US1.3 Recovery and reset
+
+| AC | Automated evidence |
+|---|---|
+| AC1–AC2 controlled/distinct errors and actions | `test_ac1_ac2_controlled_source_timeout_and_unknown_states`, `test_ac1_model_timeout_and_malformed_response_are_controlled` |
+| AC3–AC6 retry, stale-state clearing, reset focus/continuity | `test_ac3_ac4_ac5_ac6_ui_retry_reset_clears_state_and_restores_focus` |

@@ -1,4 +1,5 @@
 import logging
+import math
 from datetime import datetime, timezone
 from uuid import uuid4
 
@@ -16,7 +17,11 @@ from backend.app.database import (
     FeedbackStore,
     StoreUnavailableError,
 )
-from backend.app.errors import ApiError, ExplanationUnavailableError
+from backend.app.errors import (
+    ApiError,
+    ExplanationUnavailableError,
+    MalformedModelResponseError,
+)
 from backend.app.model_service import ModelService
 from backend.app.preview import build_public_preview
 from backend.app.schemas import (
@@ -136,6 +141,25 @@ def create_app(
             ),
         )
 
+    def get_offline_record(identifier: str) -> dict:
+        try:
+            record = data_adapter.get_account(identifier)
+        except TimeoutError as exc:
+            raise ApiError(
+                503,
+                "data_source_timeout",
+                "Offline account data timed out. Retry or start a new assessment.",
+                retryable=True,
+            ) from exc
+        if record is None:
+            raise ApiError(
+                404,
+                "account_not_found",
+                "The account is not available in the offline demonstration dataset. "
+                "Choose a preloaded account.",
+            )
+        return record
+
     @application.get("/api/v1/health", response_model=HealthResponse)
     async def health() -> JSONResponse:
         all_ready = model_service.ready and data_adapter.ready and feedback_store.ready
@@ -180,14 +204,7 @@ def create_app(
                 "Offline demonstration accounts are temporarily unavailable.",
                 retryable=True,
             )
-        record = data_adapter.get_account(request.identifier)
-        if record is None:
-            raise ApiError(
-                404,
-                "account_not_found",
-                "Choose a preloaded demonstration account or enter a supported "
-                "offline identifier.",
-            )
+        record = get_offline_record(request.identifier)
         username = DatasetAdapter._optional_text(record.get("username"))
         display_identifier = f"@{username}" if username else str(record["account_id"])
         return IntakeResponse(
@@ -208,13 +225,7 @@ def create_app(
                 "Offline demonstration accounts are temporarily unavailable.",
                 retryable=True,
             )
-        record = data_adapter.get_account(account_id)
-        if record is None:
-            raise ApiError(
-                404,
-                "account_not_found",
-                "The account is not available in the offline demonstration dataset.",
-            )
+        record = get_offline_record(account_id)
         return build_public_preview(record)
 
     @application.get(
@@ -229,13 +240,7 @@ def create_app(
                 "Offline demonstration accounts are temporarily unavailable.",
                 retryable=True,
             )
-        record = data_adapter.get_account(account_id)
-        if record is None:
-            raise ApiError(
-                404,
-                "account_not_found",
-                "The account is not available in the offline demonstration dataset.",
-            )
+        record = get_offline_record(account_id)
         feature_result = build_feature_row(record)
         eligible = is_sufficient(feature_result.completeness)
         missing = missing_feature_labels(feature_result)
@@ -272,13 +277,7 @@ def create_app(
                 "data_adapter_unavailable",
                 "Demo account data is unavailable. Run the local training command first.",
             )
-        record = data_adapter.get_account(request.account_id)
-        if record is None:
-            raise ApiError(
-                404,
-                "account_not_found",
-                "The account is not available in the local demo dataset.",
-            )
+        record = get_offline_record(request.account_id)
 
         assessment_id = f"asmt_{uuid4().hex[:8]}"
         feature_result = build_feature_row(record)
@@ -298,6 +297,26 @@ def create_app(
 
         try:
             score = model_service.score(feature_result.frame, feature_result.completeness)
+            if (
+                score is None
+                or not math.isfinite(float(score.probability))
+                or score.band not in {"low", "medium", "high"}
+            ):
+                raise MalformedModelResponseError("Invalid score contract.")
+        except TimeoutError as exc:
+            raise ApiError(
+                503,
+                "model_timeout",
+                "Risk scoring timed out. Retry or start a new assessment.",
+                retryable=True,
+            ) from exc
+        except MalformedModelResponseError as exc:
+            raise ApiError(
+                502,
+                "malformed_model_response",
+                "The model returned an invalid response. No score was displayed.",
+                retryable=True,
+            ) from exc
         except Exception as exc:
             raise ApiError(
                 503,

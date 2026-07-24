@@ -34,6 +34,9 @@ const decisionReason = document.querySelector("#decision-reason");
 const decisionSubmit = document.querySelector("#decision-submit");
 const decisionAcknowledgement = document.querySelector("#decision-acknowledgement");
 let currentAssessmentId = null;
+const recoveryActions = document.querySelector("#recovery-actions");
+const retryButton = document.querySelector("#retry-button");
+const newAssessmentButton = document.querySelector("#new-assessment-button");
 
 const previewDefinitions = [
   ["Profile", [["Username", "username"], ["Description", "description"], ["Location", "location"]]],
@@ -52,6 +55,26 @@ function showError(message) {
   errorMessage.textContent = message;
   identifierInput.setAttribute("aria-invalid", "true");
   statusPanel.hidden = true;
+}
+
+function showRecovery(canRetry = true) {
+  retryButton.hidden = !canRetry;
+  recoveryActions.hidden = false;
+}
+
+function startNewAssessment() {
+  form.reset();
+  decisionForm.reset();
+  currentAssessmentId = null;
+  errorMessage.textContent = "";
+  statusPanel.hidden = true;
+  previewPanel.hidden = true;
+  completenessPanel.hidden = true;
+  riskPanel.hidden = true;
+  decisionPanel.hidden = true;
+  recoveryActions.hidden = true;
+  identifierInput.removeAttribute("aria-invalid");
+  identifierInput.focus();
 }
 
 function clearError() {
@@ -247,14 +270,19 @@ form.addEventListener("submit", async (event) => {
     if (completeness.eligible_for_scoring) {
       await scoreAccount(payload.account_id);
     }
+    showRecovery(false);
   } catch (error) {
     showError(error.message);
+    showRecovery(true);
   } finally {
     setLoading(false);
   }
 });
 
 loadDemoAccounts();
+
+retryButton.addEventListener("click", () => form.requestSubmit());
+newAssessmentButton.addEventListener("click", startNewAssessment);
 
 decisionForm.addEventListener("submit", async (event) => {
   event.preventDefault();

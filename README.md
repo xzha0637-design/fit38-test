@@ -1,10 +1,10 @@
 # FIT5238 Team SA34 — Signal Review
 
-**Current delivery branch:** `stage/06-us4.1-confirm-override`
+**Current delivery branch:** `stage/07-us1.3-recovery-reset`
 
-**Stage owner:** Yetong Zhang
+**Stage owner:** Keliang Chen
 
-**Current stage:** US4.1 — Confirm or override
+**Current stage:** US1.3 — Recovery and reset
 
 **Stage status:** implemented; see `STAGE_HANDOVER.md` for executed checks.
 

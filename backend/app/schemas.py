@@ -178,6 +178,26 @@ class DecisionFeedbackList(BaseModel):
     records: list[DecisionFeedback]
 
 
+class FollowUpRequest(StrictModel):
+    status: Literal["flagged", "cleared"]
+    reason: str = Field(default="", max_length=240)
+
+    @model_validator(mode="after")
+    def require_flag_reason(self):
+        self.reason = self.reason.strip()
+        if self.status == "flagged" and not self.reason:
+            raise ValueError("A follow-up reason is required.")
+        return self
+
+
+class FollowUpResponse(BaseModel):
+    assessment_id: str
+    status: Literal["flagged", "cleared"]
+    acknowledgement: Literal[
+        "Follow-up updated. No platform action was taken."
+    ] = "Follow-up updated. No platform action was taken."
+
+
 class DemoAccount(BaseModel):
     account_id: str
     source_dataset: str | None = None

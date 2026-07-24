@@ -35,6 +35,8 @@ from backend.app.schemas import (
     DemoAccountsResponse,
     ErrorDetail,
     ErrorResponse,
+    FollowUpRequest,
+    FollowUpResponse,
     HealthResponse,
     IntakeRequest,
     IntakeResponse,
@@ -288,6 +290,18 @@ def create_app(
         feature_result = build_feature_row(record)
         completeness = round(feature_result.completeness, 3)
         if not is_sufficient(feature_result.completeness):
+            try:
+                feedback_store.record_assessment(
+                    assessment_id=assessment_id,
+                    model_id=model_service.model_id,
+                    recommendation="insufficient_data",
+                )
+            except StoreUnavailableError as exc:
+                raise ApiError(
+                    500,
+                    "feedback_store_unavailable",
+                    "The assessment could not be recorded safely.",
+                ) from exc
             response = AssessmentResponse(
                 assessment_id=assessment_id,
                 status="insufficient_data",
@@ -466,6 +480,41 @@ def create_app(
                 retryable=True,
             ) from exc
         return DecisionFeedbackList(count=len(records), records=records)
+
+    @application.put(
+        "/api/v1/assessments/{assessment_id}/follow-up",
+        response_model=FollowUpResponse,
+    )
+    async def update_follow_up(
+        assessment_id: str,
+        request: FollowUpRequest,
+        project_role: str | None = Header(default=None, alias="X-Project-Role"),
+    ) -> FollowUpResponse:
+        if (
+            project_role is None
+            or project_role.strip().lower() not in settings.authorised_role_set
+        ):
+            raise ApiError(
+                403,
+                "follow_up_access_denied",
+                "An authorised analyst role is required.",
+            )
+        try:
+            feedback_store.set_follow_up(
+                assessment_id=assessment_id,
+                status=request.status,
+                reason=request.reason,
+            )
+        except AssessmentNotFoundError as exc:
+            raise ApiError(
+                404,
+                "assessment_not_found",
+                "Only a completed or Insufficient data assessment can be flagged.",
+            ) from exc
+        return FollowUpResponse(
+            assessment_id=assessment_id,
+            status=request.status,
+        )
 
     @application.post(
         "/api/v1/assessments/{assessment_id}/override",

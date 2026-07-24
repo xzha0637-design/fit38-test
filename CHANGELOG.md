@@ -1,5 +1,11 @@
 # Changelog
 
+## Stage 09 — US4.3 Follow-up
+
+- Added authorised follow-up flag, update and clear workflows.
+- Supports completed and Insufficient data assessments.
+- Persists only a minimal pseudonymous follow-up record.
+
 ## Stage 08 — US4.2 Data protection
 
 - Limited persistence to the approved pseudonymous feedback record.

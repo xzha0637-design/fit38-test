@@ -171,6 +171,20 @@
         </form>
         <p id="decision-acknowledgement" class="intake-status" role="status" hidden></p>
       </section>
+      <section id="follow-up-panel" class="decision-panel" aria-labelledby="follow-up-title" hidden>
+        <p class="step-label">Follow-up review</p>
+        <h2 id="follow-up-title">Flag for another human review</h2>
+        <form id="follow-up-form">
+          <label for="follow-up-reason">Reason category or concise note</label>
+          <input id="follow-up-reason" maxlength="240" required>
+          <div class="recovery-actions">
+            <button type="submit">Save / update flag</button>
+            <button id="clear-follow-up" class="secondary-button" type="button">Clear flag</button>
+          </div>
+        </form>
+        <p id="follow-up-status" class="intake-status" role="status" hidden></p>
+        <p class="field-hint">Follow-up never triggers moderation or platform action.</p>
+      </section>
     </main>
     <footer>
       <span>Twitter/X scope · Offline fixtures · Human oversight</span>

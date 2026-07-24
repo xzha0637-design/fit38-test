@@ -42,7 +42,7 @@ def test_ac1_ac3_only_minimal_feedback_table_persists(tmp_path) -> None:
         columns = [
             row[1] for row in connection.execute("PRAGMA table_info(decision_feedback)")
         ]
-    assert tables == {"decision_feedback"}
+    assert tables == {"decision_feedback", "follow_up_records"}
     assert columns == [
         "assessment_reference",
         "model_version",

@@ -1,10 +1,10 @@
 # FIT5238 Team SA34 — Signal Review
 
-**Current delivery branch:** `stage/08-us4.2-data-protection`
+**Current delivery branch:** `stage/09-us4.3-follow-up`
 
-**Stage owner:** Yetong Zhang
+**Stage owner:** Zhongyao Zhang
 
-**Current stage:** US4.2 — Protect assessed account data
+**Current stage:** US4.3 — Flag for follow-up review
 
 **Stage status:** implemented; see `STAGE_HANDOVER.md` for executed checks.
 

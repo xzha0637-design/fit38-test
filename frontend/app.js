@@ -37,6 +37,11 @@ let currentAssessmentId = null;
 const recoveryActions = document.querySelector("#recovery-actions");
 const retryButton = document.querySelector("#retry-button");
 const newAssessmentButton = document.querySelector("#new-assessment-button");
+const followUpPanel = document.querySelector("#follow-up-panel");
+const followUpForm = document.querySelector("#follow-up-form");
+const followUpReason = document.querySelector("#follow-up-reason");
+const followUpStatus = document.querySelector("#follow-up-status");
+const clearFollowUp = document.querySelector("#clear-follow-up");
 
 const previewDefinitions = [
   ["Profile", [["Username", "username"], ["Description", "description"], ["Location", "location"]]],
@@ -72,6 +77,7 @@ function startNewAssessment() {
   completenessPanel.hidden = true;
   riskPanel.hidden = true;
   decisionPanel.hidden = true;
+  followUpPanel.hidden = true;
   recoveryActions.hidden = true;
   identifierInput.removeAttribute("aria-invalid");
   identifierInput.focus();
@@ -169,6 +175,7 @@ function renderRiskResult(result) {
   uncertaintyText.textContent = result.uncertainty;
   riskPanel.hidden = false;
   decisionPanel.hidden = false;
+  followUpPanel.hidden = false;
   decisionForm.hidden = false;
   decisionAcknowledgement.hidden = true;
 }
@@ -180,6 +187,12 @@ async function scoreAccount(accountId) {
     body: JSON.stringify({ platform: "x", account_id: accountId }),
   });
   const payload = await response.json();
+  if (response.status === 422 && payload.status === "insufficient_data") {
+    currentAssessmentId = payload.assessment_id;
+    decisionPanel.hidden = true;
+    followUpPanel.hidden = false;
+    return;
+  }
   if (!response.ok) {
     throw new Error(payload.error?.message || "Risk scoring is unavailable.");
   }
@@ -267,9 +280,7 @@ form.addEventListener("submit", async (event) => {
     const completeness = await completenessResponse.json();
     renderCompleteness(completeness);
     riskPanel.hidden = true;
-    if (completeness.eligible_for_scoring) {
-      await scoreAccount(payload.account_id);
-    }
+    await scoreAccount(payload.account_id);
     showRecovery(false);
   } catch (error) {
     showError(error.message);
@@ -320,3 +331,34 @@ decisionForm.addEventListener("submit", async (event) => {
     decisionSubmit.disabled = false;
   }
 });
+
+async function updateFollowUp(status) {
+  if (!currentAssessmentId) return;
+  const reason = followUpReason.value.trim();
+  if (status === "flagged" && !reason) {
+    followUpReason.reportValidity();
+    return;
+  }
+  const response = await fetch(
+    `/api/v1/assessments/${encodeURIComponent(currentAssessmentId)}/follow-up`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Project-Role": "analyst",
+      },
+      body: JSON.stringify({ status, reason }),
+    },
+  );
+  const payload = await response.json();
+  followUpStatus.textContent = response.ok
+    ? `${payload.status === "flagged" ? "Flagged" : "Cleared"}. ${payload.acknowledgement}`
+    : payload.error?.message;
+  followUpStatus.hidden = false;
+}
+
+followUpForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  updateFollowUp("flagged");
+});
+clearFollowUp.addEventListener("click", () => updateFollowUp("cleared"));

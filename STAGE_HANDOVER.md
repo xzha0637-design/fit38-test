@@ -1,17 +1,17 @@
 # Stage handover
 
-- **Stage:** 08 — US4.2 Data Protection
-- **Primary owner:** Yetong Zhang
-- **Branch:** `stage/08-us4.2-data-protection`
+- **Stage:** 09 — US4.3 Follow-up Review
+- **Primary owner:** Zhongyao Zhang
+- **Branch:** `stage/09-us4.3-follow-up`
 
-Only approved pseudonymous feedback persists; pending context is memory-only,
-logs exclude exception payloads/identifiers, and feedback reads require an
-authorised project role.
+Completed and Insufficient data assessments can be flagged, updated or cleared
+by an authorised analyst with a reason. Persistence is minimal and no platform
+action exists.
 
-All AC1–AC4 map to three tests in `docs/test_mapping.md`.
+All AC1–AC5 map to three tests in `docs/test_mapping.md`.
 
-- **Executed:** `python -m pytest --basetemp ".pytest-tmp"`.
-- **Passed:** 43 tests in 4.31 seconds.
-- **Failed:** 0 after retaining duplicate-decision detection post-minimisation.
+- **Executed:** 46 automated tests in 4.68 seconds.
+- **Passed:** 46.
+- **Failed:** 0.
 
-Stage 09 adds minimal follow-up flags with update/clear behaviour.
+Stage 10 adds the directly linked model information and limitations page.

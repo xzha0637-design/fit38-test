@@ -85,3 +85,11 @@ docstring or in this mapping.
 | AC1/AC3 no raw profile; minimal persistence only | `test_ac1_ac3_only_minimal_feedback_table_persists` |
 | AC2 safe logs | `test_ac2_unexpected_logs_exclude_payload_token_and_identifier` |
 | AC4 authorised-role access | `test_ac4_feedback_requires_authorised_role` |
+
+## Stage 09 — US4.3 Follow-up
+
+| AC | Automated evidence |
+|---|---|
+| AC1 completed/insufficient eligibility | `test_ac1_completed_and_insufficient_assessments_can_be_flagged` |
+| AC2–AC3 reason, status, update/clear, role | `test_ac2_ac3_reason_update_clear_and_authorisation` |
+| AC4–AC5 minimal record/no platform action | `test_ac4_ac5_minimal_record_and_no_platform_action` |

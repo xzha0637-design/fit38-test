@@ -43,6 +43,13 @@ class FeedbackStore:
                         reason TEXT NOT NULL,
                         timestamp TEXT NOT NULL
                     );
+                    CREATE TABLE IF NOT EXISTS follow_up_records (
+                        assessment_reference TEXT PRIMARY KEY,
+                        model_version TEXT NOT NULL,
+                        follow_up_status TEXT NOT NULL,
+                        reason TEXT NOT NULL,
+                        timestamp TEXT NOT NULL
+                    );
                     """
                 )
                 connection.execute("SELECT 1")
@@ -104,7 +111,6 @@ class FeedbackStore:
                 )
             except sqlite3.IntegrityError as exc:
                 raise DuplicateOverrideError(assessment_id) from exc
-        self._pending_assessments.pop(assessment_id, None)
 
     def list_decisions(self) -> list[dict[str, str]]:
         if not self.ready:
@@ -120,6 +126,42 @@ class FeedbackStore:
                 """
             ).fetchall()
         return [dict(row) for row in rows]
+
+    def set_follow_up(
+        self,
+        assessment_id: str,
+        status: str,
+        reason: str,
+    ) -> None:
+        context = self._pending_assessments.get(assessment_id)
+        if context is None:
+            raise AssessmentNotFoundError(assessment_id)
+        with self._connect() as connection:
+            if status == "cleared":
+                connection.execute(
+                    "DELETE FROM follow_up_records WHERE assessment_reference = ?",
+                    (assessment_id,),
+                )
+                return
+            connection.execute(
+                """
+                INSERT INTO follow_up_records
+                    (assessment_reference, model_version, follow_up_status,
+                     reason, timestamp)
+                VALUES (?, ?, ?, ?, ?)
+                ON CONFLICT(assessment_reference) DO UPDATE SET
+                    follow_up_status = excluded.follow_up_status,
+                    reason = excluded.reason,
+                    timestamp = excluded.timestamp
+                """,
+                (
+                    assessment_id,
+                    context[0],
+                    status,
+                    reason,
+                    datetime.now(timezone.utc).isoformat(),
+                ),
+            )
 
     def record_override(
         self,

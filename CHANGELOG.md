@@ -1,5 +1,11 @@
 # Changelog
 
+## Stage 05 — US3.1 Explanation and uncertainty
+
+- Added ordered top-three SHAP factors with plain labels, direction, and values.
+- Added completeness/threshold-aware uncertainty copy.
+- Kept the non-verdict disclaimer visible with every scored result.
+
 ## Stage 04 — US2.2 Risk scoring
 
 - Added the tracked `xgb-offline-v1` runtime model and `threshold-v1` boundaries.

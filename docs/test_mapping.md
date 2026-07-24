@@ -54,3 +54,11 @@ docstring or in this mapping.
 | AC5 text plus accessible colour classes | `test_ac5_ac6_ui_uses_text_plus_contrast_classes_and_no_definitive_label` |
 | AC6 no definitive bot/human label | `test_ac5_ac6_ui_uses_text_plus_contrast_classes_and_no_definitive_label` |
 | AC7 recoverable failure without partial score | `test_ac7_scoring_failure_is_recoverable_without_partial_score` |
+
+## Stage 05 — US3.1 Explanation and uncertainty
+
+| AC | Automated evidence |
+|---|---|
+| AC1–AC3 top factors/order/direction/plain values | `test_ac1_ac2_ac3_top_three_are_ordered_plain_and_observed` |
+| AC4–AC6 shared context/disclaimer/uncertainty | `test_ac4_ac5_ac6_factors_uncertainty_and_score_share_result_context` |
+| AC7 prohibited certainty/enforcement wording | `test_ac7_ui_avoids_certainty_guilt_and_enforcement_claims` |

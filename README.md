@@ -1,10 +1,10 @@
 # FIT5238 Team SA34 — Signal Review
 
-**Current delivery branch:** `stage/04-us2.2-risk-scoring`
+**Current delivery branch:** `stage/05-us3.1-explanation-uncertainty`
 
-**Stage owner:** Xianze Zhang
+**Stage owner:** Zhongyao Zhang
 
-**Current stage:** US2.2 — Generate and interpret the risk result
+**Current stage:** US3.1 — Risk factors and uncertainty
 
 **Stage status:** implemented; see `STAGE_HANDOVER.md` for executed checks.
 

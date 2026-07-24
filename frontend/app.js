@@ -26,6 +26,8 @@ const modelVersion = document.querySelector("#model-version");
 const thresholdVersion = document.querySelector("#threshold-version");
 const assessmentTime = document.querySelector("#assessment-time");
 const riskWarning = document.querySelector("#risk-warning");
+const factorList = document.querySelector("#factor-list");
+const uncertaintyText = document.querySelector("#uncertainty-text");
 
 const previewDefinitions = [
   ["Profile", [["Username", "username"], ["Description", "description"], ["Location", "location"]]],
@@ -121,6 +123,20 @@ function renderRiskResult(result) {
   thresholdVersion.textContent = result.threshold_version;
   assessmentTime.textContent = new Date(result.assessment_time).toLocaleString();
   riskWarning.textContent = result.warning;
+  factorList.replaceChildren();
+  for (const factor of result.top_factors) {
+    const item = document.createElement("li");
+    const label = document.createElement("strong");
+    label.textContent = factor.label;
+    const detail = document.createElement("span");
+    detail.className = "factor-direction";
+    const direction =
+      factor.direction === "increases_risk" ? "Increases risk" : "Decreases risk";
+    detail.textContent = `${direction} · Observed value: ${factor.observed_value ?? "Not available"}`;
+    item.append(label, detail);
+    factorList.append(item);
+  }
+  uncertaintyText.textContent = result.uncertainty;
   riskPanel.hidden = false;
 }
 

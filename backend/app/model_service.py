@@ -161,10 +161,19 @@ class ModelService:
                 direction = "increases_risk" if contribution >= 0 else "decreases_risk"
                 verb = "increased" if contribution >= 0 else "reduced"
                 label = FEATURE_LABELS.get(feature, feature.replace("_", " ").title())
+                observed = features.iloc[0].get(feature)
+                observed_value = None
+                if observed is not None and pd.notna(observed):
+                    observed_value = (
+                        f"{float(observed):.2f}".rstrip("0").rstrip(".")
+                    )
                 factors.append(
                     TopFactor(
                         feature=feature,
+                        label=label,
                         direction=direction,
+                        observed_value=observed_value,
+                        contribution_magnitude=round(abs(contribution), 6),
                         evidence=f"{label} {verb} the estimated risk.",
                     )
                 )

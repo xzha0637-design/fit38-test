@@ -322,6 +322,22 @@ def create_app(
                 "high": "prioritise",
             }[score.band]
 
+        if feature_result.completeness < 0.75:
+            uncertainty = (
+                "Confidence is limited because several required public features "
+                "are missing and model limitations still apply."
+            )
+        elif score.confidence.level == "low":
+            uncertainty = (
+                "The score is close to a decision threshold; small evidence changes "
+                "could change the risk band."
+            )
+        else:
+            uncertainty = (
+                "The score is clear of current thresholds, but cross-dataset and "
+                "time-based model limitations still apply."
+            )
+
         try:
             feedback_store.record_assessment(
                 assessment_id=assessment_id,
@@ -353,6 +369,7 @@ def create_app(
             ),
             assessment_time=datetime.now(timezone.utc),
             confidence=score.confidence,
+            uncertainty=uncertainty,
             top_factors=factors,
             recommendation=recommendation,
             warning=warning,

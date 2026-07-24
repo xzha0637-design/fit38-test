@@ -102,7 +102,10 @@ class Confidence(BaseModel):
 
 class TopFactor(BaseModel):
     feature: str
+    label: str | None = None
     direction: Literal["increases_risk", "decreases_risk"]
+    observed_value: str | None = None
+    contribution_magnitude: float = Field(default=0, ge=0)
     evidence: str
 
 
@@ -121,6 +124,7 @@ class AssessmentResponse(BaseModel):
     threshold_version: str | None = None
     assessment_time: datetime | None = None
     confidence: Confidence | None = None
+    uncertainty: str | None = None
     top_factors: list[TopFactor] = Field(default_factory=list)
     recommendation: Literal["no_concern", "monitor", "prioritise"] | None = None
     warning: str

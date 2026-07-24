@@ -1,12 +1,12 @@
 # FIT5238 Team SA34 — Signal Review
 
-**Current delivery branch:** `stage/12-us5.2-sort-filter`
+**Current delivery branch:** `stage/13-integrated-mvp-rc1`
 
-**Stage owner:** Mingyu Xu
+**Stage owner:** Wei Zhang
 
-**Current stage:** US5.2 — Sort and filter assessment results
+**Current stage:** Iteration 1 Integrated MVP Release Candidate
 
-**Stage status:** implemented; see `STAGE_HANDOVER.md` for executed checks.
+**Stage status:** release-candidate verified; see `STAGE_HANDOVER.md`.
 
 This repository contains the cumulative Iteration 1 implementation for
 account-level Twitter/X risk triage. Stage 00 adds a runnable, accessible browser
@@ -15,7 +15,10 @@ intake and representative demonstration selection. Stage 02 adds a whitelisted
 public-data preview with clear missing-value and content-origin labels.
 Stage 03 adds the inclusive 50% evidence-sufficiency gate and names missing
 required features. Stage 04 ships the trained `xgb-offline-v1` artifact and
-versioned, accessible risk results.
+versioned, accessible risk results. Stages 05–10 add explanations, uncertainty,
+human decisions, recovery, protected persistence, follow-up and model
+information. Stages 11–12 add validated batch assessment and non-mutating result
+sorting/filtering. Stage 13 integrates and verifies the complete MVP.
 
 The current implementation uses a local dataset adapter instead of the live X API.
 An account ID is selected from a generated, label-free demo file. The returned score
@@ -29,9 +32,13 @@ is triage evidence for human review, not a bot verdict and not an enforcement ac
 - Validation-selected Low, Medium, and High risk thresholds with a false-negative
   cost preference.
 - TreeSHAP top-three explanations with a safe degraded result if SHAP fails.
-- FastAPI endpoints for health, demo accounts, assessment, and analyst override.
-- SQLite storage containing only assessment references and minimal override data.
-- Automated data, feature, artifact, API, and degradation tests.
+- FastAPI endpoints for health, intake, preview, completeness, single/batch
+  assessment, analyst decisions, follow-up and authorised feedback reads.
+- SQLite storage containing only pseudonymous assessment references and minimal
+  decision/follow-up records.
+- Accessible browser paths for single and CSV-batch review.
+- Automated data, feature, artifact, API, privacy, accessibility, error,
+  consistency and integration tests.
 
 MGTAB is intentionally excluded from this MVP because its anonymous embedding
 columns cannot be reproduced from public account fields at inference time.
@@ -157,8 +164,16 @@ Invoke-RestMethod `
 |---|---|---|
 | `GET` | `/api/v1/health` | Model, demo adapter, and SQLite readiness |
 | `GET` | `/api/v1/demo/accounts?limit=20` | Label-free account IDs for local demonstration |
+| `POST` | `/api/v1/intake` | Validate and normalise one offline identifier |
+| `GET` | `/api/v1/accounts/{account_id}/preview` | Approved public-data preview |
+| `GET` | `/api/v1/accounts/{account_id}/completeness` | Evidence-sufficiency result |
 | `POST` | `/api/v1/assessments` | Validate, score, explain, and present one account |
+| `POST` | `/api/v1/batch-assessments` | Validate and assess up to 100 CSV rows |
+| `POST` | `/api/v1/assessments/{assessment_id}/decision` | Record confirm/override |
+| `PUT` | `/api/v1/assessments/{assessment_id}/follow-up` | Flag, update or clear follow-up |
 | `POST` | `/api/v1/assessments/{assessment_id}/override` | Record one minimal analyst override |
+| `GET` | `/api/v1/feedback/decisions` | Authorised pseudonymous feedback read |
+| `GET` | `/model-information` | Model evidence, limitations and prohibited uses |
 
 Assessment request:
 
@@ -188,3 +203,19 @@ or:
 Tests use temporary fixtures and do not depend on locally generated model or demo
 files. To verify a clean first-run state, remove only the ignored generated
 directories, run training again, and repeat the smoke flow.
+
+## Release evidence
+
+- [MVP definition](docs/mvp_definition.md)
+- [Product Backlog and User Stories](docs/product_backlog.md)
+- [Testing plan](docs/testing_plan.md)
+- [UX and technical design](docs/ux_technical_design.md)
+- [Run Sheet](docs/run_sheet.md)
+- [Demo script](docs/demo_script.md)
+- [Test results](docs/test_results.md)
+- [Bug log](docs/bug_log.md)
+- [Feedback and retrospective](docs/feedback_retrospective.md)
+- [Trello handover](docs/trello_handover.md)
+- [Acceptance-test mapping](docs/test_mapping.md)
+- [Evidence summary](docs/evidence_summary.md)
+- [Known limitations](docs/known_limitations.md)

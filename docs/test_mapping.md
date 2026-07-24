@@ -119,3 +119,14 @@ docstring or in this mapping.
 | AC2 active controls and matching count | `test_ac2_active_filters_and_matching_count_are_described` |
 | AC3–AC4 clear restores source order without mutation | `test_ac3_ac4_clear_state_restores_order_without_mutating_source` |
 | AC1–AC3 accessible browser controls | `test_ac1_ac2_ac3_browser_controls_are_present` |
+
+## Stage 13 — Integration and regression
+
+| Release check | Automated evidence |
+|---|---|
+| Main demo and human review path | `test_release_main_demo_path_and_human_review_contract` |
+| Batch/single consistency | `test_release_batch_and_single_account_results_are_consistent` |
+| Minimal pseudonymous persistence | `test_release_persistence_remains_minimal_and_pseudonymous` |
+| Accessibility landmarks and labels | `test_release_shell_has_required_accessibility_landmarks_and_labels` |
+| Controlled error matrix | `test_release_controlled_error_matrix_has_no_traceback` |
+| No stale single/batch UI state | `test_release_reset_code_clears_single_and_batch_stale_state` |

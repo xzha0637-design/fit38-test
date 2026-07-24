@@ -1,16 +1,16 @@
 # System architecture
 
-## Stage 00 baseline
+## Iteration 1 Release Candidate
 
-The application is a single offline FastAPI service with a static browser shell.
-It has four explicit boundaries:
+The application is a single offline FastAPI service with a static browser
+interface. It has four explicit boundaries:
 
 1. `frontend/` presents analyst-facing information.
 2. `backend/app/` validates requests, coordinates assessment work, and exposes
    versioned HTTP interfaces.
 3. `backend/ml/` cleans offline research data, constructs the approved feature
    vector, trains the XGBoost model, and generates SHAP explanations.
-4. `backend/app/database.py` stores only pseudonymous assessment and feedback
+4. `backend/app/database.py` stores only pseudonymous decision and follow-up
    references in a local SQLite database.
 
 The dataset adapter is the only account-data source in Iteration 1. There is no
@@ -25,5 +25,12 @@ Browser shell
         -> minimal pseudonymous feedback store
 ```
 
-Generated model artifacts, demo fixtures, and runtime data are rebuilt locally
-and are excluded from Git.
+Single-account and batch assessment share the same assessment orchestration,
+ensuring one fixture produces the same completeness, score and band. Batch
+sorting and filtering happen only in the browser over a copied result array; no
+assessment endpoint is called and no stored decision is changed.
+
+The model-information page presents verified values from the tracked model
+contract. Runtime SQLite data and generated training splits remain ignored.
+Approved model artifacts and curated demo fixtures are tracked for reproducible
+offline execution.

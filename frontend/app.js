@@ -86,9 +86,14 @@ function showRecovery(canRetry = true) {
 function startNewAssessment() {
   form.reset();
   decisionForm.reset();
+  followUpForm.reset();
   currentAssessmentId = null;
   errorMessage.textContent = "";
   statusPanel.hidden = true;
+  decisionAcknowledgement.textContent = "";
+  decisionAcknowledgement.hidden = true;
+  followUpStatus.textContent = "";
+  followUpStatus.hidden = true;
   previewPanel.hidden = true;
   completenessPanel.hidden = true;
   riskPanel.hidden = true;
@@ -388,6 +393,13 @@ function currentBatchControls() {
   };
 }
 
+function resetBatchControls() {
+  batchRiskSort.value = "none";
+  batchRiskFilter.value = "all";
+  batchCompletenessFilter.value = "all";
+  batchReviewFilter.value = "all";
+}
+
 function renderBatchResults() {
   const controls = currentBatchControls();
   const visibleResults = window.BatchResultTools.filterAndSort(
@@ -428,6 +440,8 @@ batchForm.addEventListener("submit", async (event) => {
     batchProgressLabel.textContent = "Upload a .csv file using the template.";
     return;
   }
+  resetBatchControls();
+  batchSourceResults = [];
   batchSubmit.disabled = true;
   batchProgress.setAttribute("aria-busy", "true");
   batchProgressLabel.textContent = "Processing valid rows offline…";
@@ -468,9 +482,6 @@ for (const control of [
 }
 
 batchClearFilters.addEventListener("click", () => {
-  batchRiskSort.value = "none";
-  batchRiskFilter.value = "all";
-  batchCompletenessFilter.value = "all";
-  batchReviewFilter.value = "all";
+  resetBatchControls();
   renderBatchResults();
 });

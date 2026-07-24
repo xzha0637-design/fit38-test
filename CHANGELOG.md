@@ -1,5 +1,14 @@
 # Changelog
 
+## Stage 13 — Integrated MVP RC1
+
+- Added cross-story integration, batch/single consistency, privacy,
+  accessibility, error-matrix and stale-state regression tests.
+- Fixed stale follow-up state and inherited batch filters between workflows.
+- Added a repeatable Run Sheet check, main demo script, Bug Log, test results
+  and final evidence summary.
+- Refreshed architecture, data contracts, README and final handover.
+
 ## Stage 12 — US5.2 Sort and filter
 
 - Added risk-score sorting and risk-band, completeness and review-status filters.

@@ -23,8 +23,8 @@ one canonical account reference and does not score or retain a raw profile.
 }
 ```
 
-The Stage 00 backend accepts a numeric, offline demonstration account identifier.
-No authentication token or live platform payload is accepted.
+The backend accepts a validated offline demonstration identifier. No
+authentication token or live platform payload is accepted.
 
 ## Assessment output
 
@@ -37,8 +37,8 @@ human-oversight warning. Raw account profiles are excluded.
 
 - API path version: `v1`
 - Application version: `0.1.0`
-- Model contract: `model-contract-v1`
-- Threshold contract: `threshold-contract-v1`
+- Model contract: `xgb-offline-v1`
+- Threshold contract: `threshold-v1`
 
 Any later interface change must update this document, the relevant schema tests,
 and the corresponding stage handover.
@@ -64,3 +64,23 @@ Eligible accounts submitted to `POST /api/v1/assessments` receive both the raw
 response includes exactly one title-cased band label, model version, threshold
 version, ISO-8601 time, and the required non-verdict disclaimer. A scoring
 failure returns a retryable error object with no partial score fields.
+
+## Batch assessment
+
+`POST /api/v1/batch-assessments` accepts JSON containing the original `.csv`
+filename and text content. The CSV header must be exactly `account_id` and the
+limit is 100 data rows. `BatchUploadResponse` includes total, completed and
+failed counts plus one ordered `BatchRowResult` per input row. Invalid,
+duplicate and unavailable rows have `processing_status: "failed"` and do not
+prevent other rows from completing. Raw CSV content is not persisted.
+
+## Human decision and follow-up
+
+`POST /api/v1/assessments/{assessment_id}/decision` records confirm or override;
+override requires a reason. `PUT /api/v1/assessments/{assessment_id}/follow-up`
+requires an authorised `X-Project-Role` and can flag, update or clear a record.
+Both contracts explicitly acknowledge that no platform action occurred.
+
+SQLite is restricted to `decision_feedback` and `follow_up_records`. These tables
+contain pseudonymous assessment references, model version, workflow state,
+reason and timestamp. Raw profile or uploaded CSV fields are excluded.

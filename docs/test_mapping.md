@@ -93,3 +93,11 @@ docstring or in this mapping.
 | AC1 completed/insufficient eligibility | `test_ac1_completed_and_insufficient_assessments_can_be_flagged` |
 | AC2–AC3 reason, status, update/clear, role | `test_ac2_ac3_reason_update_clear_and_authorisation` |
 | AC4–AC5 minimal record/no platform action | `test_ac4_ac5_minimal_record_and_no_platform_action` |
+
+## Stage 10 — US3.2 Model information
+
+| AC | Automated evidence |
+|---|---|
+| AC1–AC2 verified scope, versions, datasets, metrics and dates | `test_ac1_ac2_page_reports_verified_scope_versions_and_evidence` |
+| AC3 exclusions, shift/drift, false positives and enforcement prohibition | `test_ac3_page_discloses_required_risks_and_prohibition` |
+| AC4 direct link from scored and Insufficient data results | `test_ac4_scored_and_insufficient_result_sections_link_directly` |

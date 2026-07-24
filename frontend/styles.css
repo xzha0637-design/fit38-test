@@ -548,6 +548,50 @@ button:disabled {
   background: var(--brand);
 }
 
+.result-resource {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.result-resource a,
+.text-link {
+  color: var(--brand);
+  font-weight: 700;
+}
+
+.information-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.information-card {
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: 0.7rem;
+  background: white;
+}
+
+.information-card h2 {
+  margin-top: 0;
+}
+
+.information-card dl {
+  margin-bottom: 0;
+}
+
+.information-card dt {
+  margin-top: 0.75rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.information-card dd {
+  margin: 0.2rem 0 0;
+}
+
 footer {
   display: flex;
   gap: 1rem;
@@ -576,6 +620,10 @@ footer {
   }
 
   .explanation-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .information-grid {
     grid-template-columns: 1fr;
   }
 }

@@ -1,17 +1,18 @@
 # Stage handover
 
-- **Stage:** 09 — US4.3 Follow-up Review
-- **Primary owner:** Zhongyao Zhang
-- **Branch:** `stage/09-us4.3-follow-up`
+- **Stage:** 10 — US3.2 Model Information
+- **Primary owner:** Xianze Zhang
+- **Branch:** `stage/10-us3.2-model-information`
 
-Completed and Insufficient data assessments can be flagged, updated or cleared
-by an authorised analyst with a reason. Persistence is minimal and no platform
-action exists.
+Every scored or Insufficient data assessment result links directly to a concise
+model information page. The page identifies verified scope, features, versions,
+datasets, evaluation evidence and date without inventing missing calibration
+evidence. It also documents unsupported uses and all required known risks.
 
-All AC1–AC5 map to three tests in `docs/test_mapping.md`.
+All AC1–AC4 map to three tests in `docs/test_mapping.md`.
 
-- **Executed:** 46 automated tests in 4.68 seconds.
-- **Passed:** 46.
+- **Executed:** 49 automated tests in 4.37 seconds.
+- **Passed:** 49.
 - **Failed:** 0.
 
-Stage 10 adds the directly linked model information and limitations page.
+Stage 11 adds validated CSV batch assessment with partial success and counts.

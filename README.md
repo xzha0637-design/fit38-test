@@ -1,10 +1,10 @@
 # FIT5238 Team SA34 — Signal Review
 
-**Current delivery branch:** `stage/09-us4.3-follow-up`
+**Current delivery branch:** `stage/10-us3.2-model-information`
 
-**Stage owner:** Zhongyao Zhang
+**Stage owner:** Xianze Zhang
 
-**Current stage:** US4.3 — Flag for follow-up review
+**Current stage:** US3.2 — View model limitations
 
 **Stage status:** implemented; see `STAGE_HANDOVER.md` for executed checks.
 

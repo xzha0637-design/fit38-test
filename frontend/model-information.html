@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Verified model information, evaluation evidence, and limitations for Signal Review.">
+    <title>Model information | Signal Review</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <header class="site-header">
+      <div>
+        <p class="eyebrow">Group 34 · Iteration 1</p>
+        <h1>Signal Review</h1>
+      </div>
+      <a class="secondary-link" href="/">Return to assessment</a>
+    </header>
+    <main id="main-content" tabindex="-1">
+      <section class="hero" aria-labelledby="model-info-title">
+        <p class="eyebrow">Model card · Offline demonstration</p>
+        <h2 id="model-info-title">Model information and limitations</h2>
+        <p class="hero-copy">
+          Read this evidence before relying on an assessment. Signal Review is a
+          human-review aid for public Twitter/X account data, not an enforcement
+          or account-classification system.
+        </p>
+        <div class="notice" role="note">
+          <strong>Automated enforcement is prohibited.</strong>
+          Results must not suspend, restrict, report, or otherwise act on an account.
+        </div>
+      </section>
+
+      <div class="information-grid">
+        <section class="information-card" aria-labelledby="identity-title">
+          <h2 id="identity-title">Scope and identity</h2>
+          <dl>
+            <dt>Platform scope</dt>
+            <dd>Twitter/X public account data, demonstrated with offline fixtures only.</dd>
+            <dt>Model version</dt>
+            <dd><code>xgb-offline-v1</code></dd>
+            <dt>Threshold version</dt>
+            <dd><code>threshold-v1</code></dd>
+            <dt>Evaluation datasets</dt>
+            <dd><code>twitter_human_bots_cleaned.csv</code> and <code>twitter_bot_training_data2_cleaned.csv</code>.</dd>
+            <dt>Evaluation date</dt>
+            <dd>24 July 2026 (artifact creation and recorded test evaluation).</dd>
+          </dl>
+        </section>
+
+        <section class="information-card" aria-labelledby="schema-title">
+          <h2 id="schema-title">Public-data feature schema</h2>
+          <p>The model uses twelve derived or public-profile fields:</p>
+          <ul>
+            <li>account age, follower count, following count, and their ratio;</li>
+            <li>tweet count and posting frequency;</li>
+            <li>description length, username length, and profile completeness;</li>
+            <li>verified status, default-profile-image use, and description presence.</li>
+          </ul>
+          <p>
+            Full follower/following graph features, graph topology, private data,
+            and content-semantic features are excluded.
+          </p>
+        </section>
+
+        <section class="information-card" aria-labelledby="performance-title">
+          <h2 id="performance-title">Available evaluation evidence</h2>
+          <p>
+            Held-out test split: 5,929 records. At the recorded XGBoost binary
+            threshold of 0.10:
+          </p>
+          <dl>
+            <dt>F1</dt>
+            <dd>0.5859</dd>
+            <dt>Precision</dt>
+            <dd>0.4158</dd>
+            <dt>Recall</dt>
+            <dd>0.9915</dd>
+            <dt>Calibration evidence</dt>
+            <dd>
+              Low/Medium/High boundaries were selected on a separate validation
+              split of 5,929 records (recorded validation mean cost: 0.266149).
+              No formal probability-calibration or reliability metric is
+              currently available.
+            </dd>
+          </dl>
+          <p class="field-hint">
+            These figures describe the bundled datasets and are not evidence of
+            performance on current live or external populations.
+          </p>
+        </section>
+
+        <section class="information-card" aria-labelledby="risks-title">
+          <h2 id="risks-title">Known risks and unsupported uses</h2>
+          <ul>
+            <li><strong>Cross-dataset limits:</strong> performance has not been validated on an independent external dataset.</li>
+            <li><strong>Prevalence shift:</strong> different bot/human proportions can change precision and error rates.</li>
+            <li><strong>Concept drift:</strong> account behaviour and platform conventions can change after the evaluation data period.</li>
+            <li><strong>False positives:</strong> legitimate accounts may receive elevated scores; the recorded precision shows this risk is material.</li>
+            <li><strong>Excluded graph evidence:</strong> coordinated-network signals cannot be inferred from this feature set.</li>
+          </ul>
+          <p>
+            Do not use the output as proof that an account is automated, harmful,
+            fraudulent, or policy-violating. Do not use it for automated
+            moderation, sanctions, reporting, or enforcement.
+          </p>
+        </section>
+      </div>
+    </main>
+    <footer>
+      <span>Twitter/X scope · Offline fixtures · Human oversight</span>
+      <span>Model information for <code>xgb-offline-v1</code></span>
+    </footer>
+  </body>
+</html>

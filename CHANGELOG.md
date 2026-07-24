@@ -1,5 +1,12 @@
 # Changelog
 
+## Stage 10 — US3.2 Model information
+
+- Added a directly addressable model information and limitations page.
+- Published verified model versions, dataset names, metrics and evaluation date.
+- Disclosed unsupported uses, missing calibration evidence and known shift risks.
+- Linked scored and Insufficient data result sections directly to the page.
+
 ## Stage 09 — US4.3 Follow-up
 
 - Added authorised follow-up flag, update and clear workflows.

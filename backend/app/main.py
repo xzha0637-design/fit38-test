@@ -111,6 +111,10 @@ def create_app(
     async def application_shell() -> FileResponse:
         return FileResponse(FRONTEND_DIR / "index.html")
 
+    @application.get("/model-information", include_in_schema=False)
+    async def model_information_page() -> FileResponse:
+        return FileResponse(FRONTEND_DIR / "model-information.html")
+
     @application.exception_handler(ApiError)
     async def api_error_handler(_: Request, exc: ApiError) -> JSONResponse:
         return JSONResponse(

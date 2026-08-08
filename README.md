@@ -1,13 +1,13 @@
 # FIT5238 Team SA34 — Signal Review
 
-**Current delivery branch:** `fix/tutor-feedback-real-accounts-ux`
+**Current delivery branch:** `fix/tutor-screenshot-feedback-follow-up`
 
 **Update owner:** Team SA34
 
-**Current update:** Tutor-feedback usability hardening for the Iteration 1 MVP
+**Current update:** Tutor screenshot-feedback traceability follow-up
 
-**Update status:** verified; 70 automated tests, Run Sheet, browser walkthrough,
-JavaScript syntax and black-and-white PDF checks passed on 8 August 2026.
+**Update status:** the six supplied screenshot findings are implemented and
+verified; this follow-up records their visible outcomes for review.
 
 This repository contains the cumulative Iteration 1 implementation for
 account-level Twitter/X risk triage. Stage 00 adds a runnable, accessible browser
@@ -24,6 +24,21 @@ sorting/filtering. Stage 13 integrates and verifies the complete MVP.
 The current implementation uses a local dataset adapter instead of the live X API.
 An account ID is selected from a generated, label-free demo file. The returned score
 is triage evidence for human review, not a bot verdict and not an enforcement action.
+
+## Tutor screenshot follow-up
+
+| Screenshot item | Visible outcome in the current interface |
+|---:|---|
+| 1 | The first three selector choices are static, label-free project-dataset accounts: `@DeFotis` (2% Low), `@OGLexa` (30% Medium), and `@everyletterbot` (91% High). |
+| 2 | The landing page directly states that the tool reviews Twitter/X accounts for possible bot activity and names the score, risk level, factors, warnings, human decision boundary, and no-enforcement rule. |
+| 3 | Model Information begins with three ordinary-language sections; exact versions, feature names, datasets, metrics, and limitations remain available in a collapsed technical record. |
+| 4 | **Return to assessment** restores the same account, score, band, assessment time, and contributing factors in the current browser tab. |
+| 14 | **Understand this review tool** is permanently visible in the landing-page hero before an assessment starts. |
+| 15 | The unclear “Evidence for careful human review” headline is replaced by **Review Twitter/X accounts for possible bot activity.** |
+
+These outcomes were delivered in commit `c4543a5` and checked through the
+70-test suite, Run Sheet, JavaScript syntax checks, and a real browser
+walkthrough. Detailed results are recorded in [Iteration 1 Test Results](docs/test_results.md).
 
 ## What is included
 

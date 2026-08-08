@@ -46,6 +46,8 @@ def train_pipeline(
     demo_per_class: int = 50,
     random_state: int = 42,
 ) -> dict[str, Any]:
+    """Clean data, train both models, select thresholds, and save artifacts."""
+
     frames = load_source_data(dataset_dir)
     clean, cleaning_summary = clean_and_merge(frames)
     splits = split_accounts(clean, random_state=random_state)
@@ -145,6 +147,8 @@ def train_pipeline(
 
 
 def parse_args() -> argparse.Namespace:
+    """Parse reproducible training paths and demo-sample options."""
+
     parser = argparse.ArgumentParser(
         description="Prepare local data and train the FIT5238 backend models."
     )
@@ -164,6 +168,8 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
+    """Run training from the command line and print a concise JSON summary."""
+
     args = parse_args()
     metadata = train_pipeline(
         dataset_dir=args.dataset_dir,

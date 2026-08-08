@@ -43,6 +43,14 @@ is triage evidence for human review, not a bot verdict and not an enforcement ac
 MGTAB is intentionally excluded from this MVP because its anonymous embedding
 columns cannot be reproduced from public account fields at inference time.
 
+## AI assistance disclosure
+
+Generative AI assistance, including OpenAI Codex, was used for parts of the
+code, tests, documentation and verification workflow. Team members retain
+responsibility for reviewing and validating every submitted change. See the
+[AI Usage Statement](docs/ai_usage_statement.md) for scope, safeguards and
+verification responsibilities.
+
 ## Environment setup
 
 Use the project-specific Conda environment so the backend is reproducible on another
@@ -208,7 +216,9 @@ directories, run training again, and repeat the smoke flow.
 
 - [MVP definition](docs/mvp_definition.md)
 - [Product Backlog and User Stories](docs/product_backlog.md)
+- [AI Usage Statement](docs/ai_usage_statement.md)
 - [Testing plan](docs/testing_plan.md)
+- [Printable monochrome Testing Plan (PDF)](output/pdf/Iteration1_Testing_Plan.pdf)
 - [UX and technical design](docs/ux_technical_design.md)
 - [Run Sheet](docs/run_sheet.md)
 - [Demo script](docs/demo_script.md)

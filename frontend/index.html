@@ -89,8 +89,19 @@
         <form id="batch-form">
           <div class="field-group">
             <label for="batch-file">CSV account list</label>
-            <input id="batch-file" type="file" accept=".csv,text/csv" required>
-            <span class="field-hint">
+            <div class="file-picker">
+              <input
+                id="batch-file"
+                class="file-picker-input"
+                type="file"
+                accept=".csv,text/csv"
+                aria-describedby="batch-file-hint batch-file-name"
+                required
+              >
+              <span class="file-picker-button" aria-hidden="true">Choose file</span>
+              <span id="batch-file-name" class="file-picker-name" aria-live="polite">No file selected</span>
+            </div>
+            <span id="batch-file-hint" class="field-hint">
               Invalid and duplicate rows are reported without stopping valid rows.
             </span>
           </div>

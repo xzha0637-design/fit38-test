@@ -82,6 +82,8 @@ def create_app(
     data_adapter: DatasetAdapter | None = None,
     feedback_store: FeedbackStore | None = None,
 ) -> FastAPI:
+    """Build the FastAPI app with injectable services for isolated testing."""
+
     settings = settings or Settings()
     logging.basicConfig(level=getattr(logging, settings.log_level.upper(), logging.INFO))
 
@@ -116,14 +118,20 @@ def create_app(
 
     @application.get("/", include_in_schema=False)
     async def application_shell() -> FileResponse:
+        """Serve the main browser assessment workspace."""
+
         return FileResponse(FRONTEND_DIR / "index.html")
 
     @application.get("/model-information", include_in_schema=False)
     async def model_information_page() -> FileResponse:
+        """Serve the plain-language model evidence and limitations page."""
+
         return FileResponse(FRONTEND_DIR / "model-information.html")
 
     @application.exception_handler(ApiError)
     async def api_error_handler(_: Request, exc: ApiError) -> JSONResponse:
+        """Translate controlled domain errors into the public error contract."""
+
         return JSONResponse(
             status_code=exc.status_code,
             content=_error_content(exc.code, exc.message, exc.retryable),
@@ -133,6 +141,8 @@ def create_app(
     async def validation_error_handler(
         _: Request, exc: RequestValidationError
     ) -> JSONResponse:
+        """Return one safe field-level message for invalid request payloads."""
+
         first_error = exc.errors()[0] if exc.errors() else {}
         location = ".".join(str(part) for part in first_error.get("loc", [])[1:])
         message = "The request is invalid."
@@ -145,6 +155,8 @@ def create_app(
 
     @application.exception_handler(Exception)
     async def unexpected_error_handler(_: Request, exc: Exception) -> JSONResponse:
+        """Hide internal details while returning a traceable correlation ID."""
+
         correlation_id = uuid4().hex[:12]
         LOGGER.error(
             "Unhandled error [%s] type=%s",
@@ -160,6 +172,8 @@ def create_app(
         )
 
     def get_offline_record(identifier: str) -> dict:
+        """Fetch one demo record and normalise source failures to API errors."""
+
         try:
             record = data_adapter.get_account(identifier)
         except TimeoutError as exc:
@@ -180,6 +194,8 @@ def create_app(
 
     @application.get("/api/v1/health", response_model=HealthResponse)
     async def health() -> JSONResponse:
+        """Report readiness of the model, demo adapter, and feedback store."""
+
         all_ready = model_service.ready and data_adapter.ready and feedback_store.ready
         response = HealthResponse(
             status="ok" if all_ready else "degraded",
@@ -199,6 +215,8 @@ def create_app(
         response_model=DemoAccountsResponse,
     )
     async def demo_accounts(limit: int = 20) -> DemoAccountsResponse:
+        """Return label-free account choices for the offline demonstration."""
+
         if limit < 1 or limit > 100:
             raise ApiError(400, "invalid_request", "Limit must be between 1 and 100.")
         if not data_adapter.ready:
@@ -215,6 +233,8 @@ def create_app(
         response_model=IntakeResponse,
     )
     async def prepare_account_intake(request: IntakeRequest) -> IntakeResponse:
+        """Validate one identifier and return its canonical display context."""
+
         if not data_adapter.ready:
             raise ApiError(
                 503,
@@ -236,6 +256,8 @@ def create_app(
         response_model=AccountPreview,
     )
     async def preview_account(account_id: str) -> AccountPreview:
+        """Return only the approved public fields for analyst confirmation."""
+
         if not data_adapter.ready:
             raise ApiError(
                 503,
@@ -251,6 +273,8 @@ def create_app(
         response_model=CompletenessResponse,
     )
     async def account_completeness(account_id: str) -> CompletenessResponse:
+        """Calculate evidence coverage before any model score is requested."""
+
         if not data_adapter.ready:
             raise ApiError(
                 503,
@@ -283,6 +307,8 @@ def create_app(
         response_model=AssessmentResponse,
     )
     async def create_assessment(request: AssessmentRequest):
+        """Run completeness, scoring, explanation, and safe feedback setup."""
+
         if not model_service.ready:
             raise ApiError(
                 503,
@@ -432,6 +458,8 @@ def create_app(
     async def create_batch_assessments(
         request: BatchUploadRequest,
     ) -> BatchUploadResponse:
+        """Validate and assess a CSV queue with independent row outcomes."""
+
         if not request.filename.lower().endswith(".csv"):
             raise ApiError(
                 400,
@@ -537,6 +565,8 @@ def create_app(
         assessment_id: str,
         request: DecisionRequest,
     ) -> DecisionResponse:
+        """Record one final confirm/override decision for an assessment."""
+
         if not assessment_id.startswith("asmt_") or len(assessment_id) != 13:
             raise ApiError(400, "invalid_request", "Invalid assessment ID.")
         try:
@@ -575,6 +605,8 @@ def create_app(
     async def list_feedback(
         project_role: str | None = Header(default=None, alias="X-Project-Role"),
     ) -> DecisionFeedbackList:
+        """Return minimal decision feedback to an authorised project role."""
+
         if (
             project_role is None
             or project_role.strip().lower() not in settings.authorised_role_set
@@ -604,6 +636,8 @@ def create_app(
         request: FollowUpRequest,
         project_role: str | None = Header(default=None, alias="X-Project-Role"),
     ) -> FollowUpResponse:
+        """Create, update, or clear an authorised human follow-up flag."""
+
         if (
             project_role is None
             or project_role.strip().lower() not in settings.authorised_role_set
@@ -639,6 +673,8 @@ def create_app(
         assessment_id: str,
         request: OverrideRequest,
     ) -> OverrideResponse:
+        """Support the legacy override endpoint through the decision store."""
+
         if not assessment_id.startswith("asmt_") or len(assessment_id) != 13:
             raise ApiError(400, "invalid_request", "Invalid assessment ID.")
         try:

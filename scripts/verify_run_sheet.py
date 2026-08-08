@@ -10,11 +10,15 @@ from backend.app.main import create_app
 
 
 def require(condition: bool, message: str) -> None:
+    """Raise a clear release-check error when a required condition fails."""
+
     if not condition:
         raise RuntimeError(message)
 
 
 def main() -> None:
+    """Exercise the offline browser, model, single, and batch release paths."""
+
     with TemporaryDirectory(prefix="fit5238-run-sheet-") as temporary:
         settings = Settings(
             demo_data_path=PROJECT_ROOT / "data" / "fixtures" / "demo_accounts.csv",

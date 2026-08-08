@@ -30,6 +30,8 @@ class FeedbackStore:
         return connection
 
     def initialize(self) -> None:
+        """Create the minimal feedback tables and publish store readiness."""
+
         try:
             self.database_path.parent.mkdir(parents=True, exist_ok=True)
             with self._connect() as connection:
@@ -65,6 +67,8 @@ class FeedbackStore:
         model_id: str,
         recommendation: str,
     ) -> None:
+        """Keep transient model context needed for a later human action."""
+
         if not self.ready:
             raise StoreUnavailableError(self.error or "Feedback store is unavailable.")
         self._pending_assessments[assessment_id] = (model_id, recommendation)
@@ -75,6 +79,8 @@ class FeedbackStore:
         analyst_decision: str,
         reason: str,
     ) -> None:
+        """Persist one final analyst decision without storing raw profile data."""
+
         if not self.ready:
             raise StoreUnavailableError(self.error or "Feedback store is unavailable.")
         created_at = datetime.now(timezone.utc).isoformat()
@@ -113,6 +119,8 @@ class FeedbackStore:
                 raise DuplicateOverrideError(assessment_id) from exc
 
     def list_decisions(self) -> list[dict[str, str]]:
+        """Return persisted decision records in reverse chronological order."""
+
         if not self.ready:
             raise StoreUnavailableError(self.error or "Feedback store is unavailable.")
         with self._connect() as connection:
@@ -133,6 +141,8 @@ class FeedbackStore:
         status: str,
         reason: str,
     ) -> None:
+        """Create, update, or clear the follow-up flag for an assessment."""
+
         context = self._pending_assessments.get(assessment_id)
         if context is None:
             raise AssessmentNotFoundError(assessment_id)

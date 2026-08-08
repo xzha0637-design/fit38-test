@@ -11,6 +11,8 @@ from backend.ml.features import BOOLEAN_FEATURES, NUMERIC_FEATURES
 
 
 def make_preprocessor() -> ColumnTransformer:
+    """Build the versioned numeric and Boolean preprocessing pipeline."""
+
     numeric_pipeline = Pipeline(
         steps=[
             ("imputer", SimpleImputer(strategy="median", keep_empty_features=True)),
@@ -50,6 +52,8 @@ def probability_to_band(
     medium_threshold: float,
     high_threshold: float,
 ) -> str:
+    """Map one model output to Low, Medium, or High using saved thresholds."""
+
     if probability < medium_threshold:
         return "low"
     if probability < high_threshold:
@@ -97,6 +101,8 @@ def classification_metrics(
     probabilities: np.ndarray,
     threshold: float = 0.5,
 ) -> dict[str, Any]:
+    """Calculate the recorded binary evaluation metrics at one threshold."""
+
     labels = np.asarray(labels, dtype=int)
     probabilities = np.asarray(probabilities, dtype=float)
     predictions = (probabilities >= threshold).astype(int)

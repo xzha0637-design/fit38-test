@@ -1,3 +1,5 @@
+/** Browser controller for the single-account and CSV assessment workflows. */
+
 const form = document.querySelector("#intake-form");
 const identifierInput = document.querySelector("#account-identifier");
 const demoSelect = document.querySelector("#demo-account");
@@ -44,6 +46,7 @@ const followUpStatus = document.querySelector("#follow-up-status");
 const clearFollowUp = document.querySelector("#clear-follow-up");
 const batchForm = document.querySelector("#batch-form");
 const batchFile = document.querySelector("#batch-file");
+const batchFileName = document.querySelector("#batch-file-name");
 const batchSubmit = document.querySelector("#batch-submit");
 const batchProgress = document.querySelector("#batch-progress");
 const batchProgressLabel = document.querySelector("#batch-progress-label");
@@ -65,6 +68,7 @@ const previewDefinitions = [
   ["Network", [["Followers", "followers_count"], ["Following", "following_count"]]],
 ];
 
+/** Toggle the intake form's visual and accessible busy state. */
 function setLoading(isLoading) {
   submitButton.disabled = isLoading;
   buttonLabel.hidden = isLoading;
@@ -72,17 +76,20 @@ function setLoading(isLoading) {
   form.setAttribute("aria-busy", String(isLoading));
 }
 
+/** Show an adjacent intake error and mark the identifier as invalid. */
 function showError(message) {
   errorMessage.textContent = message;
   identifierInput.setAttribute("aria-invalid", "true");
   statusPanel.hidden = true;
 }
 
+/** Reveal recovery actions and optionally offer the same-request retry. */
 function showRecovery(canRetry = true) {
   retryButton.hidden = !canRetry;
   recoveryActions.hidden = false;
 }
 
+/** Clear all single-assessment state and return focus to the first input. */
 function startNewAssessment() {
   form.reset();
   decisionForm.reset();
@@ -104,17 +111,20 @@ function startNewAssessment() {
   identifierInput.focus();
 }
 
+/** Remove the current validation message after the user corrects input. */
 function clearError() {
   errorMessage.textContent = "";
   identifierInput.removeAttribute("aria-invalid");
 }
 
+/** Convert missing source values to the visible, non-imputed placeholder. */
 function displayValue(value) {
   return value === null || value === undefined || value === ""
     ? "Not available"
     : String(value);
 }
 
+/** Render approved public fields while preserving explicit missing values. */
 function renderPreview(preview) {
   previewIdentifier.textContent = preview.display_identifier;
   previewGroups.replaceChildren();
@@ -153,6 +163,7 @@ function renderPreview(preview) {
   previewPanel.hidden = false;
 }
 
+/** Present evidence completeness before any risk output is shown. */
 function renderCompleteness(result) {
   const percentage = result.completeness_percentage;
   completenessStatus.textContent = result.status;
@@ -171,6 +182,7 @@ function renderCompleteness(result) {
   completenessPanel.hidden = false;
 }
 
+/** Render a scored result, its context, factors, and human-review controls. */
 function renderRiskResult(result) {
   currentAssessmentId = result.assessment_id;
   riskBand.textContent = `${result.risk_band_label} risk`;
@@ -201,6 +213,7 @@ function renderRiskResult(result) {
   decisionAcknowledgement.hidden = true;
 }
 
+/** Request one score and handle the valid Insufficient-data response path. */
 async function scoreAccount(accountId) {
   const response = await fetch("/api/v1/assessments", {
     method: "POST",
@@ -220,6 +233,7 @@ async function scoreAccount(accountId) {
   renderRiskResult(payload);
 }
 
+/** Return a user-facing validation message, or an empty string when valid. */
 function validateIdentifier(value) {
   const trimmed = value.trim();
   if (!trimmed) {
@@ -231,6 +245,7 @@ function validateIdentifier(value) {
   return "";
 }
 
+/** Populate deterministic demonstration scenarios from the offline API. */
 async function loadDemoAccounts() {
   try {
     const response = await fetch("/api/v1/demo/accounts?limit=3");
@@ -353,6 +368,7 @@ decisionForm.addEventListener("submit", async (event) => {
   }
 });
 
+/** Persist or clear the current assessment's authorised follow-up state. */
 async function updateFollowUp(status) {
   if (!currentAssessmentId) return;
   const reason = followUpReason.value.trim();
@@ -384,6 +400,7 @@ followUpForm.addEventListener("submit", (event) => {
 });
 clearFollowUp.addEventListener("click", () => updateFollowUp("cleared"));
 
+/** Snapshot the non-mutating sort and filter control values. */
 function currentBatchControls() {
   return {
     sort: batchRiskSort.value,
@@ -393,6 +410,7 @@ function currentBatchControls() {
   };
 }
 
+/** Restore batch controls to the documented unfiltered source order. */
 function resetBatchControls() {
   batchRiskSort.value = "none";
   batchRiskFilter.value = "all";
@@ -400,6 +418,7 @@ function resetBatchControls() {
   batchReviewFilter.value = "all";
 }
 
+/** Render a derived batch view without mutating the API source results. */
 function renderBatchResults() {
   const controls = currentBatchControls();
   const visibleResults = window.BatchResultTools.filterAndSort(
@@ -431,6 +450,10 @@ function renderBatchResults() {
   );
   batchResultsPanel.hidden = false;
 }
+
+batchFile.addEventListener("change", () => {
+  batchFileName.textContent = batchFile.files[0]?.name || "No file selected";
+});
 
 batchForm.addEventListener("submit", async (event) => {
   event.preventDefault();

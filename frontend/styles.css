@@ -168,6 +168,60 @@ label {
   font-weight: 700;
 }
 
+.file-picker {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+}
+
+input.file-picker-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 8.5rem;
+  height: 2.9rem;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-picker-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 8.5rem;
+  min-height: 2.9rem;
+  padding: 0.7rem 1.1rem;
+  border: 1px solid var(--brand);
+  border-radius: 0.5rem;
+  color: white;
+  background: var(--brand);
+  font-weight: 750;
+}
+
+.file-picker-name {
+  max-width: min(32rem, calc(100vw - 4rem));
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.file-picker:hover .file-picker-button,
+.file-picker:focus-within .file-picker-button {
+  background: #0e3733;
+}
+
+.file-picker:focus-within .file-picker-button {
+  outline: 3px solid #6b9f93;
+  outline-offset: 2px;
+}
+
 input,
 select,
 button {
@@ -560,10 +614,96 @@ button:disabled {
   font-weight: 700;
 }
 
+.model-information-page .hero {
+  padding-block: clamp(2.5rem, 6vw, 5rem);
+}
+
+.model-information-page .hero h2 {
+  max-width: 18ch;
+  font-size: clamp(2.7rem, 6vw, 4.8rem);
+}
+
+.page-orientation {
+  max-width: 52rem;
+  margin-top: 1.25rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  background: var(--brand-soft);
+  line-height: 1.55;
+}
+
+.reading-guide {
+  margin-bottom: 1rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.reading-guide h2,
+.information-card h2 {
+  max-width: none;
+  margin-bottom: 0.65rem;
+  font-family: inherit;
+  font-size: clamp(1.35rem, 2.5vw, 1.8rem);
+  font-weight: 750;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.reading-guide > p:not(.eyebrow) {
+  max-width: 52rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.reading-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: reading-step;
+}
+
+.reading-steps li {
+  display: grid;
+  gap: 0.35rem;
+  align-content: start;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  background: white;
+  counter-increment: reading-step;
+}
+
+.reading-steps li::before {
+  content: "Step " counter(reading-step);
+  color: var(--brand);
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.reading-steps a {
+  color: var(--ink);
+  font-weight: 750;
+}
+
+.reading-steps span {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
 .information-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
+  margin-block: 1rem 3rem;
 }
 
 .information-card {
@@ -575,6 +715,71 @@ button:disabled {
 
 .information-card h2 {
   margin-top: 0;
+}
+
+.information-card--wide {
+  grid-column: 1 / -1;
+}
+
+.information-card p,
+.information-card li,
+.information-card dd {
+  line-height: 1.55;
+}
+
+.information-card code {
+  overflow-wrap: anywhere;
+}
+
+.section-intro {
+  max-width: 52rem;
+  color: var(--muted);
+}
+
+.feature-glossary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 1rem 0 1.25rem;
+}
+
+.feature-glossary > div {
+  padding: 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  background: var(--paper);
+}
+
+.information-card .feature-glossary dt {
+  margin-top: 0;
+  color: var(--ink);
+  font-size: 0.95rem;
+}
+
+.feature-glossary dd {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.plain-language-note {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border-left: 0.25rem solid var(--brand);
+  background: var(--brand-soft);
+}
+
+.plain-language-note h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1.05rem;
+}
+
+.plain-language-note ul {
+  padding-left: 1.2rem;
+}
+
+.plain-language-note p:last-child,
+.plain-language-note li:last-child {
+  margin-bottom: 0;
 }
 
 .information-card dl {
@@ -690,6 +895,11 @@ footer {
   }
 
   .information-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .reading-steps,
+  .feature-glossary {
     grid-template-columns: 1fr;
   }
 

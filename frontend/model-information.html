@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Verified model information, evaluation evidence, and limitations for Signal Review.">
     <title>Model information | Signal Review</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/styles.css?v=20260808-feedback">
   </head>
-  <body>
+  <body class="model-information-page">
     <a class="skip-link" href="#main-content">Skip to main content</a>
     <header class="site-header">
       <div>
@@ -25,10 +25,39 @@
           human-review aid for public Twitter/X account data, not an enforcement
           or account-classification system.
         </p>
+        <p class="page-orientation">
+          <strong>This reference page does not change your assessment.</strong>
+          Use the guide below to understand the result, then select
+          <strong>Return to assessment</strong> to go back to the main page.
+        </p>
         <div class="notice" role="note">
           <strong>Automated enforcement is prohibited.</strong>
           Results must not suspend, restrict, report, or otherwise act on an account.
         </div>
+      </section>
+
+      <section class="reading-guide" aria-labelledby="reading-guide-title">
+        <p class="eyebrow">Start here</p>
+        <h2 id="reading-guide-title">How to use this page</h2>
+        <p>
+          You do not need technical or machine-learning knowledge. Read these
+          three sections in order before using a risk result to prioritise a
+          human review.
+        </p>
+        <ol class="reading-steps">
+          <li>
+            <a href="#feature-guide">Understand what the model looks at</a>
+            <span>See a plain-language meaning for each of the 12 public-data features.</span>
+          </li>
+          <li>
+            <a href="#performance-guide">Understand what the numbers mean</a>
+            <span>Read F1, precision, recall and the risk score without treating them as certainty.</span>
+          </li>
+          <li>
+            <a href="#risks-title">Check the limits before acting</a>
+            <span>Confirm why the result needs human judgement and cannot trigger enforcement.</span>
+          </li>
+        </ol>
       </section>
 
       <div class="information-grid">
@@ -48,22 +77,81 @@
           </dl>
         </section>
 
-        <section class="information-card" aria-labelledby="schema-title">
-          <h2 id="schema-title">Public-data feature schema</h2>
-          <p>The model uses twelve derived or public-profile fields:</p>
-          <ul>
-            <li>account age, follower count, following count, and their ratio;</li>
-            <li>tweet count and posting frequency;</li>
-            <li>description length, username length, and profile completeness;</li>
-            <li>verified status, default-profile-image use, and description presence.</li>
-          </ul>
+        <section
+          id="feature-guide"
+          class="information-card information-card--wide"
+          aria-labelledby="schema-title"
+        >
+          <p class="eyebrow">
+            What the model looks at (Public-data feature schema)
+          </p>
+          <h2 id="schema-title">What the 12 public-data features mean</h2>
+          <p class="section-intro">
+            These are signals used together by the model. No single feature
+            proves that an account is automated, harmful or genuine.
+          </p>
+          <dl class="feature-glossary">
+            <div>
+              <dt>Account age</dt>
+              <dd>Days since the public account creation date. A newer or older account is context, not proof.</dd>
+            </div>
+            <div>
+              <dt>Follower count</dt>
+              <dd>How many accounts follow this account. It gives scale but does not show follower quality.</dd>
+            </div>
+            <div>
+              <dt>Following count</dt>
+              <dd>How many accounts this account follows. The model compares it with other activity signals.</dd>
+            </div>
+            <div>
+              <dt>Follower-to-following ratio</dt>
+              <dd>Follower count divided by following count. It shows balance between audience and connections.</dd>
+            </div>
+            <div>
+              <dt>Tweet count</dt>
+              <dd>The recorded total number of public posts made by the account.</dd>
+            </div>
+            <div>
+              <dt>Posting frequency</dt>
+              <dd>Average public posts per day over the account's recorded age.</dd>
+            </div>
+            <div>
+              <dt>Description length</dt>
+              <dd>Number of characters in the public biography, not an analysis of what the biography says.</dd>
+            </div>
+            <div>
+              <dt>Username length</dt>
+              <dd>Number of characters in the public username. The wording of the username is not analysed.</dd>
+            </div>
+            <div>
+              <dt>Profile completeness</dt>
+              <dd>How many required model fields are available. Below 50% stops scoring as Insufficient data.</dd>
+            </div>
+            <div>
+              <dt>Verified status</dt>
+              <dd>Whether the public verified flag is present. Verification alone does not determine risk.</dd>
+            </div>
+            <div>
+              <dt>Default profile image</dt>
+              <dd>Whether the account still uses the platform's default profile image.</dd>
+            </div>
+            <div>
+              <dt>Description present</dt>
+              <dd>Whether a public biography is present, without judging its content.</dd>
+            </div>
+          </dl>
           <p>
             Full follower/following graph features, graph topology, private data,
             and content-semantic features are excluded.
           </p>
         </section>
 
-        <section class="information-card" aria-labelledby="performance-title">
+        <section
+          id="performance-guide"
+          class="information-card"
+          aria-labelledby="performance-title"
+        >
+          <p class="eyebrow">What the numbers mean</p>
           <h2 id="performance-title">Available evaluation evidence</h2>
           <p>
             Held-out test split: 5,929 records. At the recorded XGBoost binary
@@ -84,6 +172,19 @@
               currently available.
             </dd>
           </dl>
+          <div class="plain-language-note" role="note">
+            <h3>Plain-language reading</h3>
+            <ul>
+              <li><strong>F1:</strong> one summary of the balance between precision and recall; higher is better, but it does not show which errors occurred.</li>
+              <li><strong>Precision:</strong> about 42 of every 100 accounts assigned the recorded positive class matched the positive label in this test data.</li>
+              <li><strong>Recall:</strong> about 99 of every 100 positive-labelled accounts in this test data were found at the recorded threshold.</li>
+            </ul>
+            <p>
+              <strong>A risk score is a ranking signal, not a probability.</strong>
+              For example, a score of 91% does not mean there is a 91% chance
+              that the account is a bot.
+            </p>
+          </div>
           <p class="field-hint">
             These figures describe the bundled datasets and are not evidence of
             performance on current live or external populations.

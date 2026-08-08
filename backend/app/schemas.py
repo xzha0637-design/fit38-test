@@ -16,6 +16,8 @@ class AssessmentRequest(StrictModel):
     @field_validator("account_id", mode="before")
     @classmethod
     def validate_account_id(cls, value: str) -> str:
+        """Normalise and validate one assessment account identifier."""
+
         return normalise_offline_identifier(value)
 
 
@@ -23,6 +25,8 @@ OFFLINE_IDENTIFIER_PATTERN = re.compile(r"^[A-Za-z0-9_]{1,32}$")
 
 
 def normalise_offline_identifier(value: str) -> str:
+    """Convert supported offline identifiers to a safe canonical form."""
+
     if not isinstance(value, str):
         raise ValueError("Enter an offline account identifier.")
     normalised = value.strip().removeprefix("@").lower()
@@ -39,6 +43,8 @@ class IntakeRequest(StrictModel):
     @field_validator("identifier", mode="before")
     @classmethod
     def validate_identifier(cls, value: str) -> str:
+        """Normalise and validate an account-intake identifier."""
+
         return normalise_offline_identifier(value)
 
 
@@ -179,6 +185,8 @@ class DecisionRequest(StrictModel):
 
     @model_validator(mode="after")
     def require_override_reason(self):
+        """Require a concise reason only when the analyst overrides."""
+
         self.reason = self.reason.strip()
         if self.decision == "override" and not self.reason:
             raise ValueError("An override reason is required.")
@@ -214,6 +222,8 @@ class FollowUpRequest(StrictModel):
 
     @model_validator(mode="after")
     def require_flag_reason(self):
+        """Require a reason while allowing a cleared flag to omit one."""
+
         self.reason = self.reason.strip()
         if self.status == "flagged" and not self.reason:
             raise ValueError("A follow-up reason is required.")

@@ -1,4 +1,5 @@
 (function exposeBatchResultTools(globalObject) {
+  /** Return cloned rows that match the controls, with unscored rows kept last. */
   function filterAndSort(results, controls) {
     const filtered = results.filter((result) => {
       const reviewStatus = result.review_status || "unavailable";
@@ -30,6 +31,7 @@
       });
   }
 
+  /** Summarise active controls and the number of currently visible rows. */
   function describeFilters(controls, matchingCount) {
     const active = [];
     if (controls.sort !== "none") active.push(`risk ${controls.sort}`);

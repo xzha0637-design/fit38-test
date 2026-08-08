@@ -26,10 +26,14 @@ class Settings(BaseSettings):
 
     @property
     def cors_origin_list(self) -> list[str]:
+        """Return configured CORS origins as a cleaned list."""
+
         return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
 
     @property
     def authorised_role_set(self) -> set[str]:
+        """Return normalised project roles allowed to read protected records."""
+
         return {
             role.strip().lower()
             for role in self.authorised_roles.split(",")

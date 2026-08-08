@@ -65,8 +65,15 @@ def test_ac3_ac4_page_exposes_progress_counts_and_no_action_wording() -> None:
         'id="batch-progress"',
         'id="batch-completed-count"',
         'id="batch-failed-count"',
+        'class="file-picker-input"',
+        'aria-describedby="batch-file-hint batch-file-name"',
+        "Choose file",
+        "No file selected",
         "No platform action",
     ]:
         assert expected in page
+    script = client.get("/static/app.js").text
+    assert 'batchFile.addEventListener("change"' in script
+    assert 'batchFile.files[0]?.name || "No file selected"' in script
     response = _upload("accounts.csv", "account_id\ndemo_medium_01\n")
     assert "No platform action" in response.json()["acknowledgement"]

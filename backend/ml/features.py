@@ -167,6 +167,8 @@ def build_feature_row(record: Mapping[str, Any]) -> FeatureResult:
 
 
 def build_feature_matrix(frame: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
+    """Build the model matrix and per-row completeness for a dataset frame."""
+
     results = [build_feature_row(row) for row in frame.to_dict(orient="records")]
     matrix = pd.concat([result.frame for result in results], ignore_index=True)
     completeness = pd.Series(
@@ -179,6 +181,8 @@ def build_feature_matrix(frame: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
 
 
 def is_sufficient(completeness: float) -> bool:
+    """Apply the inclusive 50% evidence gate used before scoring."""
+
     return completeness >= MINIMUM_COMPLETENESS
 
 

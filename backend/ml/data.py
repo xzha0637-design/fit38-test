@@ -29,6 +29,8 @@ def _normalise_account_id(value: object) -> str | None:
 
 
 def load_source_data(dataset_dir: Path) -> list[pd.DataFrame]:
+    """Load both required training datasets with account IDs kept as text."""
+
     frames: list[pd.DataFrame] = []
     for filename in SOURCE_FILENAMES:
         path = dataset_dir / filename
@@ -95,6 +97,8 @@ def split_accounts(
     frame: pd.DataFrame,
     random_state: int = RANDOM_STATE,
 ) -> dict[str, pd.DataFrame]:
+    """Create deterministic stratified 70/15/15 account-level splits."""
+
     train, remaining = train_test_split(
         frame,
         test_size=0.30,
@@ -119,6 +123,8 @@ def create_demo_accounts(
     per_class: int = 50,
     random_state: int = RANDOM_STATE,
 ) -> pd.DataFrame:
+    """Sample a balanced, label-free demo catalogue from the test split."""
+
     samples = []
     for label in (0, 1):
         candidates = test_frame.loc[test_frame["label"] == label]
@@ -139,6 +145,8 @@ def write_generated_data(
     demo: pd.DataFrame,
     generated_dir: Path,
 ) -> None:
+    """Write deterministic splits and the safe demo catalogue to disk."""
+
     generated_dir.mkdir(parents=True, exist_ok=True)
     for name, frame in splits.items():
         frame.to_csv(generated_dir / f"{name}.csv", index=False)

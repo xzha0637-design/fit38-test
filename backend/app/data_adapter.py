@@ -16,6 +16,8 @@ class DatasetAdapter:
         self.load()
 
     def load(self) -> None:
+        """Load and validate the label-free demo CSV into an alias index."""
+
         try:
             if not self.demo_data_path.is_file():
                 raise FileNotFoundError(f"Demo data not found: {self.demo_data_path}")
@@ -52,9 +54,13 @@ class DatasetAdapter:
 
     @property
     def account_count(self) -> int:
+        """Return the number of usable offline accounts currently loaded."""
+
         return 0 if self._accounts is None else int(len(self._accounts))
 
     def get_account(self, account_id: str) -> dict[str, Any] | None:
+        """Resolve an account ID or username alias to its canonical demo record."""
+
         if not self.ready or self._accounts is None:
             return None
         lookup = str(account_id).strip().lower().removeprefix("@")
@@ -65,6 +71,8 @@ class DatasetAdapter:
         return row.to_dict()
 
     def list_accounts(self, limit: int) -> list[dict[str, str | None]]:
+        """Return safe selector metadata for at most ``limit`` demo accounts."""
+
         if not self.ready or self._accounts is None:
             return []
         output: list[dict[str, str | None]] = []

@@ -45,6 +45,8 @@ class ScoreResult:
 
 
 class ModelService:
+    """Load the versioned artifact and expose safe score/explanation operations."""
+
     def __init__(self, artifact_dir: Path) -> None:
         self.artifact_dir = Path(artifact_dir)
         self.ready = False
@@ -58,19 +60,27 @@ class ModelService:
 
     @property
     def missing_artifacts(self) -> list[str]:
+        """List required artifact files that are absent from the model directory."""
+
         return [
             name for name in REQUIRED_ARTIFACTS if not (self.artifact_dir / name).is_file()
         ]
 
     @property
     def model_id(self) -> str:
+        """Return the artifact model identifier or a safe unknown fallback."""
+
         return str(self.metadata.get("model_id", "unknown_model"))
 
     @property
     def threshold_version(self) -> str:
+        """Return the version of the Low/Medium/High threshold policy."""
+
         return str(self.metadata.get("threshold_version", "unknown_threshold"))
 
     def load(self) -> None:
+        """Validate and load metadata, preprocessing, model, and SHAP explainer."""
+
         missing = self.missing_artifacts
         if missing:
             self.error = f"Missing model artifacts: {', '.join(missing)}"
@@ -106,6 +116,8 @@ class ModelService:
             self.error = str(exc)
 
     def score(self, features: pd.DataFrame, completeness: float) -> ScoreResult:
+        """Score one feature row and attach a band plus confidence rationale."""
+
         if not self.ready or self.model is None or self.preprocessor is None:
             raise ModelUnavailableError(self.error or "Model artifacts are unavailable.")
         transformed = self.preprocessor.transform(features)
@@ -135,6 +147,8 @@ class ModelService:
         return ScoreResult(probability=probability, band=band, confidence=confidence)
 
     def explain(self, features: pd.DataFrame) -> list[TopFactor]:
+        """Return up to three strongest SHAP factors in analyst-readable form."""
+
         if not self.ready or self.preprocessor is None:
             raise ModelUnavailableError(self.error or "Model artifacts are unavailable.")
         if self.explainer is None:

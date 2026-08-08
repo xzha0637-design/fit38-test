@@ -11,23 +11,25 @@ Open the home page. Say:
 > human-review aid. It never makes a final bot determination or takes platform
 > action.
 
-Point to “Triage evidence, not a verdict.”
+Point to “Decision support only. The final judgement remains with you.” and the
+permanent **Understand this review tool** link.
 
 ## 2. Single-account path (2 minutes)
 
-Choose **High · Elevated model score** and begin assessment.
+Choose **High example — @everyletterbot (project dataset)** and begin assessment.
 
 - Point out the source-data preview and missing-value handling.
 - Show feature completeness before the score.
 - Show the High text label, score, model and threshold versions, time, ordered
   top factors and uncertainty caveat.
-- Open **Review model information and limitations**. Highlight verified
-  evaluation metrics, lack of a formal calibration metric, cross-dataset risk,
-  concept drift, false positives and prohibited automated enforcement.
+- Open **Review model information and limitations**. Show the three
+  plain-language guidance sections first, then expand **Technical model and
+  evaluation record** for the verified metrics and limitations.
 
 ## 3. Human accountability and reset (1 minute)
 
-Return to the result. Record **Override** with reason `context reviewed`.
+Return and show that the same 91% High result is still present. Record
+**Override** with reason `context reviewed`.
 Flag for follow-up with reason `second review`.
 
 Read the two no-platform-action acknowledgements. Select **Start new

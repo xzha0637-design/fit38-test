@@ -8,6 +8,7 @@ const statusPanel = document.querySelector("#intake-status");
 const submitButton = document.querySelector("#assess-button");
 const buttonLabel = submitButton.querySelector(".button-label");
 const buttonLoading = submitButton.querySelector(".button-loading");
+const assessmentResults = document.querySelector("#assessment-results");
 const previewPanel = document.querySelector("#preview-panel");
 const previewIdentifier = document.querySelector("#preview-identifier");
 const previewGroups = document.querySelector("#preview-groups");
@@ -61,6 +62,7 @@ const batchReviewFilter = document.querySelector("#batch-review-filter");
 const batchClearFilters = document.querySelector("#batch-clear-filters");
 const batchFilterSummary = document.querySelector("#batch-filter-summary");
 let batchSourceResults = [];
+const ASSESSMENT_STATE_KEY = "signal-review.current-assessment.v1";
 
 const previewDefinitions = [
   ["Profile", [["Username", "username"], ["Description", "description"], ["Location", "location"]]],
@@ -89,16 +91,15 @@ function showRecovery(canRetry = true) {
   recoveryActions.hidden = false;
 }
 
-/** Clear all single-assessment state and return focus to the first input. */
-function startNewAssessment() {
-  form.reset();
+/** Clear rendered single-assessment output without changing the intake value. */
+function clearRenderedAssessment() {
   decisionForm.reset();
   followUpForm.reset();
   currentAssessmentId = null;
-  errorMessage.textContent = "";
-  statusPanel.hidden = true;
   decisionAcknowledgement.textContent = "";
   decisionAcknowledgement.hidden = true;
+  decisionSubmit.disabled = false;
+  decisionForm.hidden = false;
   followUpStatus.textContent = "";
   followUpStatus.hidden = true;
   previewPanel.hidden = true;
@@ -107,7 +108,45 @@ function startNewAssessment() {
   decisionPanel.hidden = true;
   followUpPanel.hidden = true;
   recoveryActions.hidden = true;
+}
+
+/** Persist only the whitelisted preview and current result for this browser tab. */
+function persistAssessmentState(snapshot) {
+  try {
+    sessionStorage.setItem(ASSESSMENT_STATE_KEY, JSON.stringify(snapshot));
+  } catch {
+    // Storage may be disabled; the current page remains fully usable.
+  }
+}
+
+/** Remove the transient assessment snapshot when it is no longer current. */
+function clearPersistedAssessmentState() {
+  try {
+    sessionStorage.removeItem(ASSESSMENT_STATE_KEY);
+  } catch {
+    // Storage may be disabled; there is no retained state to clear.
+  }
+}
+
+/** Remove a result-only return target when no restorable result exists. */
+function clearUnusedResultHash() {
+  if (window.location.hash !== "#assessment-results") return;
+  history.replaceState(null, "", window.location.pathname);
+  requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0 }));
+}
+
+/** Clear all single-assessment state and return focus to the first input. */
+function startNewAssessment() {
+  form.reset();
+  clearRenderedAssessment();
+  clearPersistedAssessmentState();
+  errorMessage.textContent = "";
+  statusPanel.textContent = "";
+  statusPanel.hidden = true;
   identifierInput.removeAttribute("aria-invalid");
+  if (window.location.hash === "#assessment-results") {
+    history.replaceState(null, "", window.location.pathname);
+  }
   identifierInput.focus();
 }
 
@@ -213,6 +252,59 @@ function renderRiskResult(result) {
   decisionAcknowledgement.hidden = true;
 }
 
+/** Render the valid no-score path while keeping human follow-up available. */
+function renderInsufficientResult(result) {
+  currentAssessmentId = result.assessment_id;
+  riskPanel.hidden = true;
+  decisionPanel.hidden = true;
+  followUpPanel.hidden = false;
+}
+
+/** Restore a completed current assessment after returning from model information. */
+function restoreAssessmentState() {
+  let saved = null;
+  try {
+    const stored = sessionStorage.getItem(ASSESSMENT_STATE_KEY);
+    saved = stored ? JSON.parse(stored) : null;
+  } catch {
+    clearPersistedAssessmentState();
+    clearUnusedResultHash();
+    return;
+  }
+  if (
+    !saved?.identifier ||
+    !saved?.preview ||
+    !saved?.completeness ||
+    !saved?.assessment?.payload
+  ) {
+    clearUnusedResultHash();
+    return;
+  }
+
+  identifierInput.value = saved.identifier;
+  statusPanel.textContent = saved.status || "The current offline assessment is restored.";
+  statusPanel.hidden = false;
+  renderPreview(saved.preview);
+  renderCompleteness(saved.completeness);
+  if (saved.assessment.kind === "scored") {
+    renderRiskResult(saved.assessment.payload);
+  } else if (saved.assessment.kind === "insufficient") {
+    renderInsufficientResult(saved.assessment.payload);
+  } else {
+    clearPersistedAssessmentState();
+    clearRenderedAssessment();
+    return;
+  }
+  showRecovery(false);
+
+  if (window.location.hash === "#assessment-results") {
+    requestAnimationFrame(() => {
+      assessmentResults.scrollIntoView({ block: "start" });
+      assessmentResults.focus({ preventScroll: true });
+    });
+  }
+}
+
 /** Request one score and handle the valid Insufficient-data response path. */
 async function scoreAccount(accountId) {
   const response = await fetch("/api/v1/assessments", {
@@ -222,15 +314,14 @@ async function scoreAccount(accountId) {
   });
   const payload = await response.json();
   if (response.status === 422 && payload.status === "insufficient_data") {
-    currentAssessmentId = payload.assessment_id;
-    decisionPanel.hidden = true;
-    followUpPanel.hidden = false;
-    return;
+    renderInsufficientResult(payload);
+    return { kind: "insufficient", payload };
   }
   if (!response.ok) {
     throw new Error(payload.error?.message || "Risk scoring is unavailable.");
   }
   renderRiskResult(payload);
+  return { kind: "scored", payload };
 }
 
 /** Return a user-facing validation message, or an empty string when valid. */
@@ -285,6 +376,9 @@ form.addEventListener("submit", async (event) => {
     return;
   }
 
+  clearRenderedAssessment();
+  clearPersistedAssessmentState();
+  statusPanel.hidden = true;
   setLoading(true);
   try {
     const response = await fetch("/api/v1/intake", {
@@ -306,7 +400,8 @@ form.addEventListener("submit", async (event) => {
     if (!previewResponse.ok) {
       throw new Error("The public account preview could not be loaded.");
     }
-    renderPreview(await previewResponse.json());
+    const preview = await previewResponse.json();
+    renderPreview(preview);
     const completenessResponse = await fetch(
       `/api/v1/accounts/${encodeURIComponent(payload.account_id)}/completeness`,
     );
@@ -316,9 +411,17 @@ form.addEventListener("submit", async (event) => {
     const completeness = await completenessResponse.json();
     renderCompleteness(completeness);
     riskPanel.hidden = true;
-    await scoreAccount(payload.account_id);
+    const assessment = await scoreAccount(payload.account_id);
+    persistAssessmentState({
+      identifier: payload.display_identifier,
+      status: statusPanel.textContent,
+      preview,
+      completeness,
+      assessment,
+    });
     showRecovery(false);
   } catch (error) {
+    clearRenderedAssessment();
     showError(error.message);
     showRecovery(true);
   } finally {
@@ -326,6 +429,7 @@ form.addEventListener("submit", async (event) => {
   }
 });
 
+restoreAssessmentState();
 loadDemoAccounts();
 
 retryButton.addEventListener("click", () => form.requestSubmit());

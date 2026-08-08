@@ -53,6 +53,26 @@ def test_ac2_ac4_representative_fixtures_are_deterministic_across_bands(tmp_path
         assert first["risk_band_label"] == second["risk_band_label"] == band
 
 
+def test_tutor_feedback_dataset_selector_examples_match_documented_bands(tmp_path) -> None:
+    """Tutor feedback: the three real dataset rows give stable browser examples."""
+    client = _real_client(tmp_path)
+    expected = {
+        "20611469": (2, "Low"),
+        "396039913": (30, "Medium"),
+        "2250581388": (91, "High"),
+    }
+
+    for account_id, (score, band) in expected.items():
+        response = client.post(
+            "/api/v1/assessments",
+            json={"platform": "x", "account_id": account_id},
+        )
+        assert response.status_code == 200
+        body = response.json()
+        assert body["risk_score"] == score
+        assert body["risk_band_label"] == band
+
+
 def test_ac5_ac6_ui_uses_text_plus_contrast_classes_and_no_definitive_label(
     tmp_path,
 ) -> None:

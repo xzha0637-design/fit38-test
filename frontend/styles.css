@@ -98,6 +98,11 @@ h2 {
   padding-block: clamp(3rem, 8vw, 7rem);
 }
 
+.hero h2 {
+  max-width: 20ch;
+  font-size: clamp(2.5rem, 6vw, 4.8rem);
+}
+
 .hero-copy {
   max-width: 42rem;
   color: var(--muted);
@@ -113,6 +118,31 @@ h2 {
   border-left: 0.3rem solid var(--accent);
   background: var(--surface);
   box-shadow: 0 0.75rem 2.5rem rgba(23, 33, 43, 0.08);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem 1rem;
+  align-items: center;
+  margin-top: 1.25rem;
+}
+
+.hero-actions span {
+  max-width: 34rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.section-anchor {
+  scroll-margin-top: 1rem;
+  outline: none;
+}
+
+.section-anchor:focus-visible {
+  outline: 3px solid #6b9f93;
+  outline-offset: 0.4rem;
 }
 
 .workspace-shell {
@@ -706,6 +736,10 @@ button:disabled {
   margin-block: 1rem 3rem;
 }
 
+.information-grid--plain .information-card {
+  padding: clamp(1.25rem, 3vw, 2rem);
+}
+
 .information-card {
   padding: 1.25rem;
   border: 1px solid var(--line);
@@ -766,6 +800,92 @@ button:disabled {
   padding: 1rem;
   border-left: 0.25rem solid var(--brand);
   background: var(--brand-soft);
+}
+
+.plain-checklist {
+  display: grid;
+  gap: 0.7rem;
+  padding-left: 1.2rem;
+}
+
+.caution-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.caution-grid > div {
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  background: var(--paper);
+}
+
+.caution-grid h3 {
+  margin: 0 0 0.45rem;
+  font-size: 1rem;
+}
+
+.caution-grid p {
+  margin-bottom: 0;
+  color: var(--muted);
+}
+
+.verdict-reminder {
+  margin: 1rem 0 0;
+  padding: 1rem;
+  border-left: 0.3rem solid var(--accent);
+  background: #fff3ed;
+}
+
+.technical-record {
+  margin-block: 1rem 3rem;
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  background: white;
+}
+
+.technical-record > summary {
+  display: grid;
+  gap: 0.3rem;
+  padding: 1.1rem 1.25rem;
+  color: var(--brand);
+  cursor: pointer;
+  font-weight: 750;
+}
+
+.technical-record > summary:hover,
+.technical-record > summary:focus-visible {
+  background: var(--brand-soft);
+}
+
+.technical-record > summary small {
+  color: var(--muted);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.technical-record[open] > summary {
+  border-bottom: 1px solid var(--line);
+}
+
+.technical-record__content {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.technical-record__content .information-card--wide {
+  grid-column: 1 / -1;
+}
+
+.model-return-note {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 3rem;
 }
 
 .plain-language-note h3 {
@@ -899,8 +1019,19 @@ footer {
   }
 
   .reading-steps,
-  .feature-glossary {
+  .feature-glossary,
+  .caution-grid,
+  .technical-record__content {
     grid-template-columns: 1fr;
+  }
+
+  .technical-record__content .information-card--wide {
+    grid-column: auto;
+  }
+
+  .hero-actions {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .batch-progress {

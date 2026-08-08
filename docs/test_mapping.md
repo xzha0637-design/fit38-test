@@ -21,7 +21,7 @@ docstring or in this mapping.
 | AC1 valid input starts one intake and UI shows loading | `test_ac1_ac3_valid_identifier_starts_exactly_one_normalised_intake`, `test_ac1_ac2_ac6_page_has_loading_validation_and_accessible_labels` |
 | AC2 blank/unsupported input blocked with adjacent message | `test_ac2_blank_unsupported_and_unknown_identifiers_are_controlled`, `test_ac1_ac2_ac6_page_has_loading_validation_and_accessible_labels` |
 | AC3 optional @ normalisation | `test_ac1_ac3_valid_identifier_starts_exactly_one_normalised_intake` |
-| AC4 representative Low/Medium/High demos | `test_ac4_ac5_demo_selector_has_representative_deterministic_scenarios` |
+| AC4 representative Low/Medium/High demos | `test_ac4_ac5_demo_selector_has_representative_deterministic_scenarios`, `test_tutor_feedback_home_page_states_purpose_and_fixed_model_information_link` |
 | AC5 deterministic and offline path | `test_ac4_ac5_demo_selector_has_representative_deterministic_scenarios` |
 | AC6 labelled, keyboard-native controls | `test_ac1_ac2_ac6_page_has_loading_validation_and_accessible_labels` |
 
@@ -48,7 +48,7 @@ docstring or in this mapping.
 | Acceptance criterion | Automated evidence |
 |---|---|
 | AC1 0–100 score | `test_ac1_ac2_ac3_real_model_returns_versioned_score_band_and_time` |
-| AC2 exactly one versioned band/boundaries | `test_ac1_ac2_ac3_real_model_returns_versioned_score_band_and_time`, `test_ac2_ac4_representative_fixtures_are_deterministic_across_bands` |
+| AC2 exactly one versioned band/boundaries | `test_ac1_ac2_ac3_real_model_returns_versioned_score_band_and_time`, `test_ac2_ac4_representative_fixtures_are_deterministic_across_bands`, `test_tutor_feedback_dataset_selector_examples_match_documented_bands` |
 | AC3 model version and time | `test_ac1_ac2_ac3_real_model_returns_versioned_score_band_and_time` |
 | AC4 deterministic input/model result | `test_ac2_ac4_representative_fixtures_are_deterministic_across_bands` |
 | AC5 text plus accessible colour classes | `test_ac5_ac6_ui_uses_text_plus_contrast_classes_and_no_definitive_label` |
@@ -101,6 +101,7 @@ docstring or in this mapping.
 | AC1–AC2 verified scope, versions, datasets, metrics and dates | `test_ac1_ac2_page_reports_verified_scope_versions_and_evidence` |
 | AC3 exclusions, shift/drift, false positives and enforcement prohibition | `test_ac3_page_discloses_required_risks_and_prohibition` |
 | AC4 direct link from scored and Insufficient data results | `test_ac4_scored_and_insufficient_result_sections_link_directly` |
+| Tutor usability: plain guidance before optional technical record | `test_tutor_feedback_explains_features_and_metrics_in_plain_language`, `test_tutor_feedback_leads_with_plain_language_and_folds_technical_record` |
 
 ## Stage 11 — US5.1 Batch assessment
 
@@ -130,3 +131,4 @@ docstring or in this mapping.
 | Accessibility landmarks and labels | `test_release_shell_has_required_accessibility_landmarks_and_labels` |
 | Controlled error matrix | `test_release_controlled_error_matrix_has_no_traceback` |
 | No stale single/batch UI state | `test_release_reset_code_clears_single_and_batch_stale_state` |
+| Model-information return restores the current assessment | `test_tutor_feedback_preserves_current_assessment_across_model_information` |

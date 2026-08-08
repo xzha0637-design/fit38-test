@@ -81,4 +81,24 @@ def test_tutor_feedback_explains_features_and_metrics_in_plain_language() -> Non
     assert 'href="#feature-guide"' in body
     assert 'href="#performance-guide"' in body
     assert 'href="#risks-title"' in body
-    assert 'href="/"' in body
+    assert 'href="/#assessment-results"' in body
+
+
+def test_tutor_feedback_leads_with_plain_language_and_folds_technical_record() -> None:
+    """Tutor feedback: ordinary guidance precedes a collapsed technical record."""
+
+    body = TestClient(app).get("/model-information").text
+    for expected in [
+        "How to understand an account risk result",
+        "What this tool checks",
+        "How to read the result",
+        "When the result needs extra care",
+        "Technical model and evaluation record",
+    ]:
+        assert expected in body
+
+    details_start = body.index('<details class="technical-record"')
+    assert "<details open" not in body
+    assert body.index("What this tool checks") < details_start
+    assert body.index("xgb-offline-v1") > details_start
+    assert 'href="/#assessment-results"' in body

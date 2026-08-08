@@ -6,13 +6,17 @@
 
 ```json
 {
-  "identifier": "@civic_updates"
+  "identifier": "@DeFotis"
 }
 ```
 
 The endpoint removes one optional `@`, normalises case, validates supported
 characters, and resolves the value against the offline fixture index. It returns
 one canonical account reference and does not score or retain a raw profile.
+
+The first three selector records are label-free static rows from the two tracked
+project datasets. The demo endpoint returns their safe selector metadata but
+never returns the source training label.
 
 `POST /api/v1/assessments`
 

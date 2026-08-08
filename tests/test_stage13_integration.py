@@ -154,3 +154,21 @@ def test_release_reset_code_clears_single_and_batch_stale_state() -> None:
         "batchSourceResults = [];",
     ]:
         assert expected in script
+
+
+def test_tutor_feedback_preserves_current_assessment_across_model_information() -> None:
+    """Tutor feedback: session restoration keeps the completed result on return."""
+    script = (PROJECT_ROOT / "frontend" / "app.js").read_text(encoding="utf-8")
+
+    for expected in [
+        "sessionStorage.setItem",
+        "sessionStorage.getItem",
+        "sessionStorage.removeItem",
+        "persistAssessmentState",
+        "restoreAssessmentState",
+        "renderPreview(saved.preview)",
+        "renderCompleteness(saved.completeness)",
+        "renderRiskResult(saved.assessment.payload)",
+        'window.location.hash === "#assessment-results"',
+    ]:
+        assert expected in script

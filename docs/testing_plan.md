@@ -4,8 +4,8 @@
 **Primary audience:** External Social Media Safety Analyst
 **Scope:** Iteration 1 MVP - 5 Features and 12 User Stories
 **Document purpose:** Direct, browser-based verification plus existing automated checks
-**Code baseline:** `379b52a` from GitLab `main`
-**Working branch:** `fix/iteration1-testing-ui-hardening`
+**Code baseline:** GitHub commit `0afce9d`
+**Working branch:** `fix/tutor-feedback-real-accounts-ux`
 **Document status:** Ready for team/tutor execution; browser results not yet recorded
 **Last updated:** 8 August 2026
 
@@ -42,7 +42,8 @@ The plan covers:
 - Work from the repository root.
 - Use the project Conda environment `fit5238-backend`.
 - Use the tracked offline fixture and model artifact.
-- Do not enter real personal or customer account data.
+- Use only the tracked project-dataset samples or synthetic boundary fixtures;
+  do not add live/current account data.
 - Test current Chrome and Edge and record their exact versions.
 - Use a clean browser tab at <http://127.0.0.1:8000/>.
 
@@ -79,17 +80,23 @@ No screenshot, HAR, Console export or shared-folder link is required.
 
 | Browser input | Scenario | Expected visible baseline |
 |---|---|---|
-| `demo_low_01` or the Low selector option | Complete lower-risk fixture | `@civic_updates`; 100% completeness; 2% Low |
-| `demo_medium_01` or the Medium selector option | Complete medium-risk fixture | `@market_watch_au`; 100% completeness; 30% Medium |
-| `demo_high_01` or the High selector option | Complete higher-risk fixture | `@rapid_signal_feed`; 100% model-feature completeness; 91% High |
+| `20611469`, `@DeFotis`, or the Low selector option | Static row from `Twitter Human Bots` | `@DeFotis`; 100% completeness; 2% Low |
+| `396039913`, `@OGLexa`, or the Medium selector option | Static row from `Twitter Human Bots` | `@OGLexa`; 100% completeness; 30% Medium |
+| `2250581388`, `@everyletterbot`, or the High selector option | Static row from `Twitter Bot Training Data 2` | `@everyletterbot`; 100% completeness; 91% High; missing location shown |
 | `demo_exact_50` | Inclusive completeness boundary | `@half_evidence`; exactly 50%; eligible; caveat remains; 53% Medium |
 | `demo_incomplete_01` | Insufficient evidence | `@limited_record`; 25%; Insufficient data; no score or risk band |
 | `bad identifier!` | Invalid local input | Adjacent validation message; assessment does not start |
 | `not_in_offline_fixture` | Valid format but unavailable offline | Controlled unavailable-account message |
 
+The first three rows are copied from the two tracked project datasets without
+their training label. Dataset names show provenance only; the interface does
+not present a bot/human label. The previous `demo_low_01`, `demo_medium_01` and
+`demo_high_01` fixtures remain after these rows for regression and batch-file
+compatibility, but they are no longer the landing-page selector examples.
+
 The numeric expectations are version-bound to `xgb-offline-v1`,
-`threshold-v1` and `data/fixtures/demo_accounts.csv`. Re-baseline them if
-the model, thresholds or fixture changes.
+`threshold-v1` and `data/fixtures/demo_accounts.csv`. Re-baseline them if the
+model, thresholds or fixture changes.
 
 ### 3.2 Browser-upload files
 
@@ -112,10 +119,13 @@ the model, thresholds or fixture changes.
 2. Read the header, offline badge, human-oversight notice and form labels.
 3. Confirm single-account and batch sections are available.
 
-**Expected visible result:** the page clearly says the tool uses offline
-fixtures and supports human review. The account input, demonstration selector,
-Begin assessment control, CSV control and model-information access are labelled.
-No wording promises live Twitter/X access or automated enforcement.
+**Expected visible result:** the first view says `Review Twitter/X accounts for
+possible bot activity.` and explains the score, risk level, contributing
+factors and data-quality warnings. It states that final judgement remains with
+the user and no account is reported, suspended or moderated. The account input,
+demonstration selector, Begin assessment control, CSV control and the permanent
+**Understand this review tool** link are labelled. No wording promises live
+Twitter/X access or automated enforcement.
 
 **Status:** Not executed.
 
@@ -125,7 +135,7 @@ No wording promises live Twitter/X access or automated enforcement.
 
 1. Submit a blank identifier.
 2. Enter `bad identifier!` and select **Begin assessment**.
-3. Correct the value by typing `demo_low_01`.
+3. Correct the value by typing `@DeFotis`.
 
 **Expected visible result:** blank and malformed values show an adjacent,
 actionable message and do not start an assessment. The invalid state clears when
@@ -137,11 +147,11 @@ the value is corrected. The identifier remains reachable and labelled.
 
 **Maps to:** US1.1, US1.2, US2.1, US2.2, US3.1
 
-1. Select the Low demonstration scenario or enter `demo_low_01`.
+1. Select the Low demonstration scenario or enter `@DeFotis`.
 2. Select **Begin assessment**.
 3. Inspect the Source data, completeness and Model-generated output sections.
 
-**Expected visible result:** the preview identifies `@civic_updates` and groups
+**Expected visible result:** the preview identifies `@DeFotis` and groups
 profile, activity and network fields. Completeness is 100%. The result is 2%
 Low and uses the word Low as well as colour. Model version, threshold version,
 assessment time, uncertainty, no-verdict wording and up to three factor rows are
@@ -155,11 +165,11 @@ visible. Every factor uses a plain label, direction and observed value.
 
 1. Complete WEB-EX-03.
 2. Select **Start new assessment**.
-3. Run `demo_medium_01`.
+3. Run `@OGLexa`.
 
 **Expected visible result:** the previous Low preview, score, factors, decision
 and follow-up state clear. Focus returns to the first assessment control. The
-new preview identifies `@market_watch_au`, completeness is 100%, and the result
+new preview identifies `@OGLexa`, completeness is 100%, and the result
 is 30% Medium with no stale Low content.
 
 **Status:** Not executed.
@@ -168,16 +178,16 @@ is 30% Medium with no stale Low content.
 
 **Maps to:** US1.2, US2.2, US3.1, US3.2
 
-1. Run `demo_high_01`.
+1. Run `@everyletterbot`.
 2. Compare the source preview with the model output.
 3. Read the factor rows from top to bottom.
 4. Open **Review model information and limitations**.
 
-**Expected visible result:** the preview identifies `@rapid_signal_feed` and
-clearly names unavailable source values rather than inventing them. The result
-is 91% High. No more than three factors appear strongest-first with direction
-and observed value. The uncertainty and `Triage evidence, not a verdict.`
-statement remain visible. A direct link opens model information.
+**Expected visible result:** the preview identifies `@everyletterbot` and shows
+its unavailable location as `Not available` rather than inventing a value. The
+result is 91% High. No more than three factors appear strongest-first with
+direction and observed value. The uncertainty and `Triage evidence, not a
+verdict.` statement remain visible. A direct link opens model information.
 
 **Status:** Not executed.
 
@@ -231,12 +241,12 @@ identifier is not described as malformed input.
 **Maps to:** US1.3 AC1-AC3/AC6, US2.2 AC7
 
 1. Keep the web page open and stop Uvicorn.
-2. Submit `demo_low_01`.
+2. Submit `@DeFotis`.
 3. Confirm the error contains no partial or old score.
 4. Restart Uvicorn and select **Retry** once.
 
 **Expected visible result:** a plain-language local-service error offers recovery.
-After restart, Retry reuses the identifier and produces one Low 2% result.
+After restart, Retry reuses `@DeFotis` and produces one Low 2% result.
 No duplicate decision or follow-up state appears.
 
 **Status:** Not executed.
@@ -261,7 +271,7 @@ Confirm does not require an override reason.
 
 **Maps to:** US4.3 AC1-AC5, US1.3 AC4-AC6
 
-1. Complete `demo_medium_01`.
+1. Complete `@OGLexa`.
 2. Save a flag with `initial human review`.
 3. Change it to `updated human review` and save again.
 4. Select **Clear flag**.
@@ -341,24 +351,27 @@ The summary reports no active filters and the correct new count.
 
 **Maps to:** US3.2 AC1-AC4, tutor usability feedback
 
-1. Open model information from a scored result and from an Insufficient result.
-2. Read **How to use this page** and follow its three links.
-3. Read all twelve entries under **What the 12 public-data features mean**.
-4. Compare the plain-language F1, precision, recall and risk-score guidance with
-   the recorded technical values.
-5. Select **Return to assessment**.
+1. From the initial home-page view, open **Understand this review tool** and
+   confirm the ordinary-language guidance is visible before technical details.
+2. Return, run `@everyletterbot`, then open model information from the scored result.
+3. Read **How to use this page** and follow its three links to **What this tool
+   checks**, **How to read the result**, and **When the result needs extra care**.
+4. Confirm **Technical model and evaluation record** is collapsed by default,
+   then expand it and read all twelve public-data feature entries.
+5. Compare the plain-language risk-score guidance with the recorded technical
+   F1, precision, recall and calibration evidence.
+6. Select **Return to assessment**.
 
-**Expected visible result:** the page first explains that it is reference
-material and does not change the current assessment. The three-step guide links
-to feature meaning, evaluation meaning and safe-use limits. Every model feature
-has a plain-language definition; risk score is explicitly not described as a
-probability; precision and recall include human-readable examples. The page
-still reports `xgb-offline-v1`, `threshold-v1`, both evaluation files,
-evaluation date, F1 0.5859, precision 0.4158, recall 0.9915 and validation mean
-cost 0.266149. It names excluded graph evidence, cross-dataset limits,
-prevalence shift, concept drift, false-positive risk and prohibited automated
-enforcement. Card headings do not clip or dominate their contents, and Return
-to assessment opens the main assessment page.
+**Expected visible result:** the page first explains the tool without requiring
+machine-learning knowledge and says the reference does not change the current
+assessment. Technical terms and exact evidence are available on demand rather
+than dominating the first view. The expanded record reports
+`xgb-offline-v1`, `threshold-v1`, both evaluation files, evaluation date, F1
+0.5859, precision 0.4158, recall 0.9915 and validation mean cost 0.266149. It
+names excluded graph evidence, cross-dataset limits, prevalence shift, concept
+drift, false-positive risk and prohibited automated enforcement. Return restores
+the same `@everyletterbot` 91% High assessment and moves back to its result; the
+score, band, factors and assessment time do not disappear or change.
 
 **Status:** Not executed.
 
@@ -383,7 +396,8 @@ not colour-only.
 
 **Maps to:** accessibility and all visible workflows
 
-Repeat Low, High, Insufficient and WEB-EX-12 in current Chrome and Edge at:
+Repeat the `@DeFotis` Low, `@everyletterbot` High, Insufficient and WEB-EX-12
+paths in current Chrome and Edge at:
 
 | Viewport | Zoom |
 |---|---|
@@ -447,6 +461,7 @@ they remain automated fault-injection cases rather than teacher click examples.
 | Decision | Only completed scored result; Override reason required; duplicate prevented |
 | Follow-up | Completed or Insufficient result; reason/status visible; update and clear |
 | Privacy/oversight | Offline fixtures; minimal record; no platform action or definitive verdict |
+| Return-state privacy | Only the displayed whitelisted preview/result is kept for the current tab; no training label or raw source payload; Start new clears it |
 | Accessibility | Text plus colour; labelled controls; keyboard path; no clipping at 200% |
 
 A case passes only when every stated expected result is visibly true. Partial
@@ -456,6 +471,7 @@ success is recorded as Fail and must not be silently marked Pass.
 
 This Testing Plan is ready for handover when:
 
+- the first three selector options match the documented label-free dataset rows;
 - all six tracked browser-upload files open and contain the documented rows;
 - the PDF matches the latest Markdown and is readable in monochrome;
 - all original automated tests, JavaScript syntax and Run Sheet checks pass;

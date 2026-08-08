@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Verified model information, evaluation evidence, and limitations for Signal Review.">
-    <title>Model information | Signal Review</title>
-    <link rel="stylesheet" href="/static/styles.css?v=20260808-feedback">
+    <meta name="description" content="Plain-language guidance, verified model evidence, and limitations for Signal Review.">
+    <title>Understand the result | Signal Review</title>
+    <link rel="stylesheet" href="/static/styles.css?v=20260808-real-accounts-ux">
   </head>
   <body class="model-information-page">
     <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -14,25 +14,24 @@
         <p class="eyebrow">Group 34 · Iteration 1</p>
         <h1>Signal Review</h1>
       </div>
-      <a class="secondary-link" href="/">Return to assessment</a>
+      <a class="secondary-link" href="/#assessment-results">Return to assessment</a>
     </header>
     <main id="main-content" tabindex="-1">
       <section class="hero" aria-labelledby="model-info-title">
-        <p class="eyebrow">Model card · Offline demonstration</p>
-        <h2 id="model-info-title">Model information and limitations</h2>
+        <p class="eyebrow">Account review guide · Offline demonstration</p>
+        <h2 id="model-info-title">How to understand an account risk result</h2>
         <p class="hero-copy">
-          Read this evidence before relying on an assessment. Signal Review is a
-          human-review aid for public Twitter/X account data, not an enforcement
-          or account-classification system.
+          This page explains what Signal Review checks, how to read its result,
+          and why a person must make the final judgement.
         </p>
         <p class="page-orientation">
           <strong>This reference page does not change your assessment.</strong>
-          Use the guide below to understand the result, then select
-          <strong>Return to assessment</strong> to go back to the main page.
+          After reading it, select <strong>Return to assessment</strong>. Your
+          current account result will still be available in this browser tab.
         </p>
         <div class="notice" role="note">
           <strong>Automated enforcement is prohibited.</strong>
-          Results must not suspend, restrict, report, or otherwise act on an account.
+          A result must not suspend, restrict, report, or otherwise act on an account.
         </div>
       </section>
 
@@ -40,177 +39,183 @@
         <p class="eyebrow">Start here</p>
         <h2 id="reading-guide-title">How to use this page</h2>
         <p>
-          You do not need technical or machine-learning knowledge. Read these
-          three sections in order before using a risk result to prioritise a
-          human review.
+          No machine-learning knowledge is required. Read these three short
+          sections before using a result to decide what needs closer human review.
         </p>
         <ol class="reading-steps">
           <li>
-            <a href="#feature-guide">Understand what the model looks at</a>
-            <span>See a plain-language meaning for each of the 12 public-data features.</span>
+            <a href="#feature-guide">See what is checked</a>
+            <span>Understand the public account information used by the tool.</span>
           </li>
           <li>
-            <a href="#performance-guide">Understand what the numbers mean</a>
-            <span>Read F1, precision, recall and the risk score without treating them as certainty.</span>
+            <a href="#performance-guide">Read the result correctly</a>
+            <span>Use the score and risk level for prioritisation, not proof.</span>
           </li>
           <li>
-            <a href="#risks-title">Check the limits before acting</a>
-            <span>Confirm why the result needs human judgement and cannot trigger enforcement.</span>
+            <a href="#risks-title">Check when to be cautious</a>
+            <span>Look for missing data, changing behaviour, and false alarms.</span>
           </li>
         </ol>
       </section>
 
-      <div class="information-grid">
-        <section class="information-card" aria-labelledby="identity-title">
-          <h2 id="identity-title">Scope and identity</h2>
-          <dl>
-            <dt>Platform scope</dt>
-            <dd>Twitter/X public account data, demonstrated with offline fixtures only.</dd>
-            <dt>Model version</dt>
-            <dd><code>xgb-offline-v1</code></dd>
-            <dt>Threshold version</dt>
-            <dd><code>threshold-v1</code></dd>
-            <dt>Evaluation datasets</dt>
-            <dd><code>twitter_human_bots_cleaned.csv</code> and <code>twitter_bot_training_data2_cleaned.csv</code>.</dd>
-            <dt>Evaluation date</dt>
-            <dd>24 July 2026 (artifact creation and recorded test evaluation).</dd>
-          </dl>
-        </section>
-
-        <section
-          id="feature-guide"
-          class="information-card information-card--wide"
-          aria-labelledby="schema-title"
-        >
-          <p class="eyebrow">
-            What the model looks at (Public-data feature schema)
-          </p>
-          <h2 id="schema-title">What the 12 public-data features mean</h2>
-          <p class="section-intro">
-            These are signals used together by the model. No single feature
-            proves that an account is automated, harmful or genuine.
-          </p>
-          <dl class="feature-glossary">
-            <div>
-              <dt>Account age</dt>
-              <dd>Days since the public account creation date. A newer or older account is context, not proof.</dd>
-            </div>
-            <div>
-              <dt>Follower count</dt>
-              <dd>How many accounts follow this account. It gives scale but does not show follower quality.</dd>
-            </div>
-            <div>
-              <dt>Following count</dt>
-              <dd>How many accounts this account follows. The model compares it with other activity signals.</dd>
-            </div>
-            <div>
-              <dt>Follower-to-following ratio</dt>
-              <dd>Follower count divided by following count. It shows balance between audience and connections.</dd>
-            </div>
-            <div>
-              <dt>Tweet count</dt>
-              <dd>The recorded total number of public posts made by the account.</dd>
-            </div>
-            <div>
-              <dt>Posting frequency</dt>
-              <dd>Average public posts per day over the account's recorded age.</dd>
-            </div>
-            <div>
-              <dt>Description length</dt>
-              <dd>Number of characters in the public biography, not an analysis of what the biography says.</dd>
-            </div>
-            <div>
-              <dt>Username length</dt>
-              <dd>Number of characters in the public username. The wording of the username is not analysed.</dd>
-            </div>
-            <div>
-              <dt>Profile completeness</dt>
-              <dd>How many required model fields are available. Below 50% stops scoring as Insufficient data.</dd>
-            </div>
-            <div>
-              <dt>Verified status</dt>
-              <dd>Whether the public verified flag is present. Verification alone does not determine risk.</dd>
-            </div>
-            <div>
-              <dt>Default profile image</dt>
-              <dd>Whether the account still uses the platform's default profile image.</dd>
-            </div>
-            <div>
-              <dt>Description present</dt>
-              <dd>Whether a public biography is present, without judging its content.</dd>
-            </div>
-          </dl>
+      <div class="information-grid information-grid--plain">
+        <section id="feature-guide" class="information-card" aria-labelledby="feature-guide-title">
+          <p class="eyebrow">1 · Public account information</p>
+          <h2 id="feature-guide-title">What this tool checks</h2>
           <p>
-            Full follower/following graph features, graph topology, private data,
-            and content-semantic features are excluded.
+            Signal Review compares basic public account signals that are available
+            in the offline project data. These include account age, follower and
+            following counts, posting activity, and whether common profile fields
+            are present.
           </p>
-        </section>
-
-        <section
-          id="performance-guide"
-          class="information-card"
-          aria-labelledby="performance-title"
-        >
-          <p class="eyebrow">What the numbers mean</p>
-          <h2 id="performance-title">Available evaluation evidence</h2>
           <p>
-            Held-out test split: 5,929 records. At the recorded XGBoost binary
-            threshold of 0.10:
-          </p>
-          <dl>
-            <dt>F1</dt>
-            <dd>0.5859</dd>
-            <dt>Precision</dt>
-            <dd>0.4158</dd>
-            <dt>Recall</dt>
-            <dd>0.9915</dd>
-            <dt>Calibration evidence</dt>
-            <dd>
-              Low/Medium/High boundaries were selected on a separate validation
-              split of 5,929 records (recorded validation mean cost: 0.266149).
-              No formal probability-calibration or reliability metric is
-              currently available.
-            </dd>
-          </dl>
-          <div class="plain-language-note" role="note">
-            <h3>Plain-language reading</h3>
-            <ul>
-              <li><strong>F1:</strong> one summary of the balance between precision and recall; higher is better, but it does not show which errors occurred.</li>
-              <li><strong>Precision:</strong> about 42 of every 100 accounts assigned the recorded positive class matched the positive label in this test data.</li>
-              <li><strong>Recall:</strong> about 99 of every 100 positive-labelled accounts in this test data were found at the recorded threshold.</li>
-            </ul>
-            <p>
-              <strong>A risk score is a ranking signal, not a probability.</strong>
-              For example, a score of 91% does not mean there is a 91% chance
-              that the account is a bot.
-            </p>
-          </div>
-          <p class="field-hint">
-            These figures describe the bundled datasets and are not evidence of
-            performance on current live or external populations.
+            It does not read private messages, decide whether profile text is true,
+            or inspect the account's full relationship network. No single item proves
+            that an account is automated or harmful.
           </p>
         </section>
 
-        <section class="information-card" aria-labelledby="risks-title">
-          <h2 id="risks-title">Known risks and unsupported uses</h2>
-          <ul>
-            <li><strong>Cross-dataset limits:</strong> performance has not been validated on an independent external dataset.</li>
-            <li><strong>Prevalence shift:</strong> different bot/human proportions can change precision and error rates.</li>
-            <li><strong>Concept drift:</strong> account behaviour and platform conventions can change after the evaluation data period.</li>
-            <li><strong>False positives:</strong> legitimate accounts may receive elevated scores; the recorded precision shows this risk is material.</li>
-            <li><strong>Excluded graph evidence:</strong> coordinated-network signals cannot be inferred from this feature set.</li>
+        <section id="performance-guide" class="information-card" aria-labelledby="result-guide-title">
+          <p class="eyebrow">2 · Score and risk level</p>
+          <h2 id="result-guide-title">How to read the result</h2>
+          <ul class="plain-checklist">
+            <li><strong>Risk score:</strong> use it to compare which accounts may need attention first.</li>
+            <li><strong>Low, Medium, or High:</strong> this is a review priority band, not a bot/human label.</li>
+            <li><strong>Contributing factors:</strong> these show which available signals moved the score up or down.</li>
+            <li><strong>Data-quality warning:</strong> check whether important fields are missing before relying on the result.</li>
           </ul>
-          <p>
-            Do not use the output as proof that an account is automated, harmful,
-            fraudulent, or policy-violating. Do not use it for automated
-            moderation, sanctions, reporting, or enforcement.
+          <p class="plain-language-note">
+            <strong>A risk score is a ranking signal, not a probability.</strong>
+            A score of 91% does not mean there is a 91% chance that the account is a bot.
+          </p>
+        </section>
+
+        <section class="information-card information-card--wide" aria-labelledby="risks-title">
+          <p class="eyebrow">3 · Human judgement</p>
+          <h2 id="risks-title">When the result needs extra care</h2>
+          <div class="caution-grid">
+            <div>
+              <h3>When account behaviour changes</h3>
+              <p>Patterns on Twitter/X can change after the project data were collected, so current accounts may behave differently.</p>
+            </div>
+            <div>
+              <h3>When the account population is different</h3>
+              <p>Results may be less reliable for accounts that differ from those represented in the two bundled datasets.</p>
+            </div>
+            <div>
+              <h3>When a legitimate account looks unusual</h3>
+              <p>High activity or uncommon follower patterns can raise a score even when an account is legitimate.</p>
+            </div>
+            <div>
+              <h3>When useful evidence is missing</h3>
+              <p>The tool does not include full network relationships, private data, or the meaning of posts and profile text.</p>
+            </div>
+          </div>
+          <p class="verdict-reminder">
+            <strong>Your review is the decision.</strong> Never use this result as
+            proof or as a reason for automatic reporting, suspension, or moderation.
           </p>
         </section>
       </div>
+
+      <details class="technical-record">
+        <summary>
+          <span>Technical model and evaluation record</span>
+          <small>For assessors who need exact versions, fields, datasets, and performance figures</small>
+        </summary>
+        <div class="technical-record__content">
+          <section class="information-card" aria-labelledby="identity-title">
+            <h2 id="identity-title">Scope and identity</h2>
+            <dl>
+              <dt>Platform scope</dt>
+              <dd>Twitter/X public account data, demonstrated with offline fixtures only.</dd>
+              <dt>Model version</dt>
+              <dd><code>xgb-offline-v1</code></dd>
+              <dt>Threshold version</dt>
+              <dd><code>threshold-v1</code></dd>
+              <dt>Evaluation datasets</dt>
+              <dd><code>twitter_human_bots_cleaned.csv</code> and <code>twitter_bot_training_data2_cleaned.csv</code>.</dd>
+              <dt>Evaluation date</dt>
+              <dd>24 July 2026 (artifact creation and recorded test evaluation).</dd>
+            </dl>
+          </section>
+
+          <section class="information-card information-card--wide" aria-labelledby="schema-title">
+            <p class="eyebrow">Public-data feature schema</p>
+            <h2 id="schema-title">What the 12 public-data features mean</h2>
+            <p class="section-intro">
+              The model uses these signals together. Training labels are not shown
+              in the account selector or assessment interface.
+            </p>
+            <dl class="feature-glossary">
+              <div><dt>Account age</dt><dd>Days since the public account creation date.</dd></div>
+              <div><dt>Follower count</dt><dd>How many accounts follow this account.</dd></div>
+              <div><dt>Following count</dt><dd>How many accounts this account follows.</dd></div>
+              <div><dt>Follower-to-following ratio</dt><dd>The balance between audience and connections.</dd></div>
+              <div><dt>Tweet count</dt><dd>The recorded total number of public posts.</dd></div>
+              <div><dt>Posting frequency</dt><dd>Average public posts per day over the recorded account age.</dd></div>
+              <div><dt>Description length</dt><dd>Number of characters in the public biography, not its meaning.</dd></div>
+              <div><dt>Username length</dt><dd>Number of characters in the public username, not its wording.</dd></div>
+              <div><dt>Profile completeness</dt><dd>How many required model fields are available; below 50% stops scoring.</dd></div>
+              <div><dt>Verified status</dt><dd>Whether the public verified flag is present.</dd></div>
+              <div><dt>Default profile image</dt><dd>Whether the platform's default profile image is still used.</dd></div>
+              <div><dt>Description present</dt><dd>Whether a public biography is present.</dd></div>
+            </dl>
+            <p>
+              Full follower/following graph features, graph topology, private data,
+              and content-semantic features are excluded.
+            </p>
+          </section>
+
+          <section class="information-card" aria-labelledby="performance-title">
+            <h2 id="performance-title">Available evaluation evidence</h2>
+            <p>Held-out test split: 5,929 records. At the recorded XGBoost binary threshold of 0.10:</p>
+            <dl>
+              <dt>F1</dt><dd>0.5859</dd>
+              <dt>Precision</dt><dd>0.4158</dd>
+              <dt>Recall</dt><dd>0.9915</dd>
+              <dt>Calibration evidence</dt>
+              <dd>
+                Low/Medium/High boundaries were selected on a separate validation
+                split of 5,929 records (recorded validation mean cost: 0.266149).
+                No formal probability-calibration or reliability metric is available.
+              </dd>
+            </dl>
+            <div class="plain-language-note" role="note">
+              <h3>Plain-language reading</h3>
+              <ul>
+                <li><strong>F1:</strong> one summary of the balance between precision and recall.</li>
+                <li><strong>Precision:</strong> about 42 of every 100 accounts assigned the recorded positive class matched the positive label in this test data.</li>
+                <li><strong>Recall:</strong> about 99 of every 100 positive-labelled accounts in this test data were found at the recorded threshold.</li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="information-card" aria-labelledby="technical-risks-title">
+            <h2 id="technical-risks-title">Recorded limitations and unsupported uses</h2>
+            <ul>
+              <li><strong>Cross-dataset limits:</strong> performance has not been validated on an independent external dataset.</li>
+              <li><strong>Prevalence shift:</strong> different bot/human proportions can change precision and error rates.</li>
+              <li><strong>Concept drift:</strong> account behaviour and platform conventions can change over time.</li>
+              <li><strong>False positives:</strong> legitimate accounts may receive elevated scores.</li>
+              <li><strong>Excluded graph evidence:</strong> coordinated-network signals cannot be inferred from this feature set.</li>
+            </ul>
+            <p>
+              Do not use the output as proof that an account is automated, harmful,
+              fraudulent, or policy-violating. Automated moderation, sanctions,
+              reporting, and enforcement are prohibited.
+            </p>
+          </section>
+        </div>
+      </details>
+
+      <p class="model-return-note">
+        <a class="secondary-link" href="/#assessment-results">Return to assessment</a>
+      </p>
     </main>
     <footer>
       <span>Twitter/X scope · Offline fixtures · Human oversight</span>
-      <span>Model information for <code>xgb-offline-v1</code></span>
+      <span>Technical record available on demand</span>
     </footer>
   </body>
 </html>

@@ -53,7 +53,7 @@ def test_ac2_blank_unsupported_and_unknown_identifiers_are_controlled(tmp_path) 
 
 
 def test_ac4_ac5_demo_selector_has_representative_deterministic_scenarios(tmp_path) -> None:
-    """US1.1 AC4/AC5: Low, Medium, High fixtures are stable and offline."""
+    """US1.1 AC4/AC5: selector examples are stable, label-free dataset rows."""
     client = _client(tmp_path)
 
     first = client.get("/api/v1/demo/accounts", params={"limit": 3})
@@ -62,8 +62,17 @@ def test_ac4_ac5_demo_selector_has_representative_deterministic_scenarios(tmp_pa
     assert first.status_code == 200
     assert first.json() == second.json()
     accounts = first.json()["accounts"]
+    assert [account["account_id"] for account in accounts] == [
+        "20611469",
+        "396039913",
+        "2250581388",
+    ]
     assert {account["scenario"] for account in accounts} == {"low", "medium", "high"}
-    assert all(account["source_dataset"] == "offline_fixture" for account in accounts)
+    assert {account["source_dataset"] for account in accounts} == {
+        "Twitter Human Bots",
+        "Twitter Bot Training Data 2",
+    }
+    assert all("label" not in account for account in accounts)
 
 
 def test_ac1_ac2_ac6_page_has_loading_validation_and_accessible_labels(tmp_path) -> None:
@@ -77,3 +86,24 @@ def test_ac1_ac2_ac6_page_has_loading_validation_and_accessible_labels(tmp_path)
     assert 'aria-live="polite"' in page.text
     assert "Preparing offline data" in page.text
     assert 'id="identifier-error" class="field-error" role="alert"' in page.text
+
+
+def test_tutor_feedback_home_page_states_purpose_and_fixed_model_information_link(
+    tmp_path,
+) -> None:
+    """Tutor feedback: the first view directly explains the tool and its limits."""
+    body = _client(tmp_path).get("/").text
+
+    for expected in [
+        "AI-assisted social media account review",
+        "Review Twitter/X accounts for possible bot activity.",
+        "Enter an account or upload a CSV",
+        "Decision support only. The final judgement remains with you.",
+        "No account is reported, suspended, or moderated.",
+        "Understand this review tool",
+    ]:
+        assert expected in body
+
+    hero_end = body.index("</section>", body.index('class="hero"'))
+    assert 'href="/model-information"' in body[:hero_end]
+    assert 'id="assessment-results"' in body

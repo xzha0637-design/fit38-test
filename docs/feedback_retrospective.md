@@ -2,6 +2,17 @@
 
 ## Engineering feedback incorporated
 
+- Tutor review showed that scenario labels looked synthetic, so the primary
+  selector now uses three stable, label-free rows from the project datasets.
+- The original landing headline did not explain the task to a non-technical
+  reviewer; the first view now states the account-review purpose, outputs and
+  decision boundary directly.
+- Exact model terms and metrics obscured the user guidance, so ordinary-language
+  explanations now lead and the technical record is optional and collapsed.
+- Returning from model information previously discarded the visible assessment;
+  the same-tab whitelisted result is now restored without persisting raw source
+  payloads or training labels.
+
 - A decorative non-ASCII status separator was not portable across the Windows
   test process; status text now uses an ASCII separator.
 - Treating a missing score numerically made ascending results misleading; null

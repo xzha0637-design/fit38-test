@@ -13,12 +13,19 @@ Decision feedback contains exactly the pseudonymous assessment reference, model
 version, recommendation, analyst decision, reason, and timestamp. No decision
 endpoint is connected to Twitter/X or any moderation action.
 
-Assessment context exists only in process memory. SQLite contains only
-`decision_feedback` and `follow_up_records`. Reading decision feedback requires
-the simple project-role header `X-Project-Role` with an allowed value (`analyst`
-or `admin` by default). Unexpected-error logs record only a correlation ID and
-exception type; exception messages, payloads, tokens and identifiers are
-excluded.
+Backend assessment context exists only in process memory. To preserve the
+current result while the same browser tab visits Model Information, the frontend
+keeps one transient `sessionStorage` snapshot containing only the already
+whitelisted preview, completeness response and assessment result. It contains no
+training label or raw source payload, is never written to `localStorage` or the
+feedback database, and is removed by **Start new assessment** or when the tab's
+session ends.
+
+SQLite contains only `decision_feedback` and `follow_up_records`. Reading
+decision feedback requires the simple project-role header `X-Project-Role` with
+an allowed value (`analyst` or `admin` by default). Unexpected-error logs record
+only a correlation ID and exception type; exception messages, payloads, tokens
+and identifiers are excluded.
 
 Follow-up persistence is a separate minimal pseudonymous record containing only
 assessment reference, model version, status, reason and timestamp.

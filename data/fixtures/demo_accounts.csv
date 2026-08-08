@@ -1,4 +1,7 @@
 source_dataset,account_id,username,display_label,scenario,description,location,account_age_days,followers_count,following_count,tweet_count,verified,default_profile_image,description_length,username_length
+Twitter Human Bots,20611469,DeFotis,Low example — @DeFotis (project dataset),low,"Writer & Editor, Marketing & Communications. Was Barron's columnist focused on #investing #energy #EmergingMarkets. Early digital #journalist @ Chicago Tribune.","New York, NY",4206,3089,1637,6505,True,False,160,7
+Twitter Human Bots,396039913,OGLexa,Medium example — @OGLexa (project dataset),medium,Disney Enthusiast • Wessley ❣💍,Disney World,3223,238,149,59919,False,False,30,6
+Twitter Bot Training Data 2,2250581388,everyletterbot,High example — @everyletterbot (project dataset),high,Tweeting every letter in the english language.,,1199,142,14,26,False,False,46,14
 offline_fixture,demo_low_01,civic_updates,Civic updates — lower-risk example,low,Local service and community updates,Melbourne,3200,25000,420,5200,True,False,35,13
 offline_fixture,demo_medium_01,market_watch_au,Market watch — medium-risk example,medium,Market headlines and public summaries,Sydney,820,920,1100,8400,False,False,36,15
 offline_fixture,demo_high_01,rapid_signal_feed,Rapid signal feed — higher-risk example,high,,Unknown,90,18,1800,9000,False,True,0,17

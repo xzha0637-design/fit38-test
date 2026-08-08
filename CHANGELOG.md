@@ -1,5 +1,18 @@
 # Changelog
 
+## Tutor-feedback usability hardening
+
+- Replaced the first three selector choices with label-free static accounts from
+  the two project datasets while retaining synthetic fixtures for regression.
+- Rewrote the landing page to state the task, outputs, human-decision boundary
+  and no-enforcement rule in plain language.
+- Added a first-view model-guidance link and reorganised model information so
+  ordinary guidance precedes a collapsed technical record.
+- Preserved the current whitelisted preview and assessment result in the same
+  browser tab when an analyst visits and returns from model information.
+- Expanded the Testing Plan, demo instructions, privacy/data documentation and
+  regression suite for the tutor-facing interactive walkthrough.
+
 ## Stage 13 — Integrated MVP RC1
 
 - Added cross-story integration, batch/single consistency, privacy,

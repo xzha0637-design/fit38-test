@@ -42,12 +42,14 @@ human-oversight notice are visible. Stop with `Ctrl+C`.
 
 ## Manual smoke sequence
 
-1. Select the High demonstration scenario and begin the assessment.
+1. Select **High example — @everyletterbot (project dataset)** and begin the assessment.
 2. Confirm source preview, completeness, High risk result, top factors,
    uncertainty and the model-information link appear.
-3. Open model information and confirm `xgb-offline-v1`, `threshold-v1`,
+3. Open model information. Confirm the ordinary-language sections appear first;
+   expand the technical record and confirm `xgb-offline-v1`, `threshold-v1`,
    evaluation evidence, limitations and the enforcement prohibition.
-4. Return, record an Override with a reason, then flag the assessment for
+4. Return and confirm the same 91% High result remains. Record an Override with
+   a reason, then flag the assessment for
    follow-up. Confirm both acknowledgements state that no platform action
    occurred.
 5. Start a new assessment. Confirm old decision and follow-up state is absent.

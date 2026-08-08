@@ -1,12 +1,13 @@
 # FIT5238 Team SA34 — Signal Review
 
-**Current delivery branch:** `stage/13-integrated-mvp-rc1`
+**Current delivery branch:** `fix/tutor-feedback-real-accounts-ux`
 
-**Stage owner:** Wei Zhang
+**Update owner:** Team SA34
 
-**Current stage:** Iteration 1 Integrated MVP Release Candidate
+**Current update:** Tutor-feedback usability hardening for the Iteration 1 MVP
 
-**Stage status:** release-candidate verified; see `STAGE_HANDOVER.md`.
+**Update status:** verified; 70 automated tests, Run Sheet, browser walkthrough,
+JavaScript syntax and black-and-white PDF checks passed on 8 August 2026.
 
 This repository contains the cumulative Iteration 1 implementation for
 account-level Twitter/X risk triage. Stage 00 adds a runnable, accessible browser
@@ -37,6 +38,8 @@ is triage evidence for human review, not a bot verdict and not an enforcement ac
 - SQLite storage containing only pseudonymous assessment references and minimal
   decision/follow-up records.
 - Accessible browser paths for single and CSV-batch review.
+- Plain-language landing/model guidance and same-tab assessment restoration when
+  returning from model information.
 - Automated data, feature, artifact, API, privacy, accessibility, error,
   consistency and integration tests.
 
@@ -96,9 +99,10 @@ The command:
 4. trains the baseline and XGBoost models and selects risk thresholds; and
 5. creates 100 label-free research demo candidates from the test split.
 
-The analyst interface uses the three tracked, curated offline fixtures in
-`data/fixtures/demo_accounts.csv` by default so Low/Medium/High demonstration
-choices remain stable across clean checkouts.
+The analyst selector uses three tracked, label-free static rows from the two
+project datasets in `data/fixtures/demo_accounts.csv` so Low/Medium/High choices
+remain stable across clean checkouts. Synthetic Low/Medium/High and boundary
+fixtures remain later in the same file for regression and batch examples.
 
 Generated data splits and runtime state remain local:
 

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Offline AI-assisted Twitter/X account triage for external social media safety analysts.">
     <title>Signal Review | Account triage</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/styles.css?v=20260808-real-accounts-ux">
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -18,16 +18,19 @@
     </header>
     <main id="main-content" tabindex="-1">
       <section class="hero" aria-labelledby="hero-title">
-        <p class="eyebrow">AI-assisted account triage</p>
-        <h2 id="hero-title">Evidence for careful human review.</h2>
+        <p class="eyebrow">AI-assisted social media account review</p>
+        <h2 id="hero-title">Review Twitter/X accounts for possible bot activity.</h2>
         <p class="hero-copy">
-          Review simulated public Twitter/X account signals without live platform
-          access. The system supports prioritisation only and never performs
-          moderation.
+          Enter an account or upload a CSV to view its bot-risk score, risk level,
+          key contributing factors, and data-quality warnings.
         </p>
         <div class="notice" role="note">
-          <strong>Triage evidence, not a verdict.</strong>
-          The analyst’s recorded decision is final.
+          <strong>Decision support only. The final judgement remains with you.</strong>
+          No account is reported, suspended, or moderated.
+        </div>
+        <div class="hero-actions">
+          <a class="secondary-link" href="/model-information">Understand this review tool</a>
+          <span>What the score means, what data are checked, and when to be cautious.</span>
         </div>
       </section>
       <section class="workspace-shell" aria-labelledby="workspace-title">
@@ -173,6 +176,7 @@
           </div>
         </div>
       </section>
+      <div id="assessment-results" class="section-anchor" tabindex="-1"></div>
       <section id="preview-panel" class="preview-panel" aria-labelledby="preview-title" hidden>
         <div class="panel-heading">
           <div>

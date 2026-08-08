@@ -83,3 +83,47 @@ def test_ac5_acknowledgement_and_duplicate_prevention(tmp_path) -> None:
     assert first.status_code == 201
     assert first.json()["status"] == "recorded"
     assert duplicate.status_code == 409
+
+
+def test_assessment_context_survives_application_restart(tmp_path) -> None:
+    """A displayed assessment remains actionable after the server is recreated."""
+
+    first_client, _ = _client(tmp_path)
+    assessment_id = _assessment(first_client)
+    assert len(assessment_id) == 37
+
+    restarted_client, _ = _client(tmp_path)
+    response = restarted_client.post(
+        f"/api/v1/assessments/{assessment_id}/decision",
+        json={"decision": "confirm", "reason": ""},
+    )
+
+    assert response.status_code == 201
+
+
+def test_expired_assessment_contexts_are_purged_and_rejected(tmp_path) -> None:
+    """Expired transient contexts are bounded without deleting decision evidence."""
+
+    client, database = _client(tmp_path)
+    expired_id = _assessment(client)
+    with sqlite3.connect(database) as connection:
+        connection.execute(
+            "UPDATE assessment_contexts SET expires_at = ? WHERE assessment_reference = ?",
+            ("2000-01-01T00:00:00+00:00", expired_id),
+        )
+
+    active_id = _assessment(client)
+    with sqlite3.connect(database) as connection:
+        contexts = {
+            row[0]
+            for row in connection.execute(
+                "SELECT assessment_reference FROM assessment_contexts"
+            )
+        }
+
+    assert contexts == {active_id}
+    rejected = client.post(
+        f"/api/v1/assessments/{expired_id}/decision",
+        json={"decision": "confirm", "reason": ""},
+    )
+    assert rejected.status_code == 404

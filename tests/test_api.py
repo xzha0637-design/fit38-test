@@ -1,8 +1,10 @@
+import inspect
 from pathlib import Path
 
 import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
+from fastapi.routing import APIRoute
 
 from backend.app.config import Settings
 from backend.app.errors import ExplanationUnavailableError
@@ -176,3 +178,28 @@ def test_missing_model_returns_503(tmp_path) -> None:
     )
     assert response.status_code == 503
     assert response.json()["error"]["code"] == "model_unavailable"
+
+
+def test_blocking_model_batch_and_sqlite_routes_use_fastapi_threadpool(tmp_path) -> None:
+    """Synchronous CPU and SQLite handlers must not run on the async event loop."""
+
+    client = _client(tmp_path)
+    routes = {
+        route.path: route
+        for route in client.app.routes
+        if isinstance(route, APIRoute)
+    }
+    blocking_paths = {
+        "/api/v1/assessments",
+        "/api/v1/batch-assessments",
+        "/api/v1/assessments/{assessment_id}/decision",
+        "/api/v1/assessments/{assessment_id}/follow-up",
+        "/api/v1/assessments/{assessment_id}/override",
+        "/api/v1/feedback",
+    }
+
+    assert blocking_paths <= routes.keys()
+    assert all(
+        not inspect.iscoroutinefunction(routes[path].endpoint)
+        for path in blocking_paths
+    )

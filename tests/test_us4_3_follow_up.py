@@ -86,3 +86,20 @@ def test_ac4_ac5_minimal_record_and_no_platform_action(tmp_path) -> None:
         "reason",
         "timestamp",
     ]
+
+
+def test_follow_up_context_survives_application_restart(tmp_path) -> None:
+    """A follow-up remains available when the server restarts after assessment."""
+
+    first_client, _ = _client(tmp_path)
+    assessment_id = _assessment(first_client, "demo_medium_01")
+
+    restarted_client, _ = _client(tmp_path)
+    response = restarted_client.put(
+        f"/api/v1/assessments/{assessment_id}/follow-up",
+        headers={"X-Project-Role": "analyst"},
+        json={"status": "flagged", "reason": "restart recovery"},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "flagged"

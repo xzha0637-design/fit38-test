@@ -85,6 +85,13 @@ override requires a reason. `PUT /api/v1/assessments/{assessment_id}/follow-up`
 requires an authorised `X-Project-Role` and can flag, update or clear a record.
 Both contracts explicitly acknowledge that no platform action occurred.
 
-SQLite is restricted to `decision_feedback` and `follow_up_records`. These tables
-contain pseudonymous assessment references, model version, workflow state,
-reason and timestamp. Raw profile or uploaded CSV fields are excluded.
+SQLite is restricted to `assessment_contexts`, `decision_feedback` and
+`follow_up_records`. The first table retains only expiring model/recommendation
+context for 24 hours so a displayed assessment remains actionable across a
+local service restart. The other tables contain pseudonymous assessment
+references, model version, workflow state, reason and timestamp. Raw profile,
+account identifier and uploaded CSV fields are excluded from all three tables.
+
+New assessment references use the full `asmt_` plus 32 hexadecimal UUID
+characters. The API continues accepting the earlier eight-character references
+so an existing Iteration 1 record does not break during the transition.

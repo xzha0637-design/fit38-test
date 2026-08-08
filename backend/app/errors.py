@@ -1,4 +1,6 @@
 class ApiError(Exception):
+    """Controlled public API failure with a stable status and error code."""
+
     def __init__(
         self,
         status_code: int,
@@ -6,6 +8,8 @@ class ApiError(Exception):
         message: str,
         retryable: bool = False,
     ) -> None:
+        """Store safe response fields without retaining request payloads."""
+
         super().__init__(message)
         self.status_code = status_code
         self.code = code

@@ -15,6 +15,11 @@
   box-sizing: border-box;
 }
 
+/* Keep the native hidden contract authoritative over component layout rules. */
+[hidden] {
+  display: none !important;
+}
+
 body {
   min-height: 100vh;
   margin: 0;

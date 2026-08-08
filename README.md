@@ -1,13 +1,13 @@
 # FIT5238 Team SA34 — Signal Review
 
-**Current delivery branch:** `fix/tutor-screenshot-feedback-follow-up`
+**Current delivery branch:** `fix/full-robustness-audit-findings`
 
 **Update owner:** Team SA34
 
-**Current update:** Tutor screenshot-feedback traceability follow-up
+**Current update:** Post-feedback robustness and maintainability follow-up
 
-**Update status:** the six supplied screenshot findings are implemented and
-verified; this follow-up records their visible outcomes for review.
+**Update status:** the supplied tutor feedback and the subsequent full-code
+audit findings are implemented locally and covered by the cumulative suite.
 
 This repository contains the cumulative Iteration 1 implementation for
 account-level Twitter/X risk triage. Stage 00 adds a runnable, accessible browser
@@ -37,8 +37,24 @@ is triage evidence for human review, not a bot verdict and not an enforcement ac
 | 15 | The unclear “Evidence for careful human review” headline is replaced by **Review Twitter/X accounts for possible bot activity.** |
 
 These outcomes were delivered in commit `c4543a5` and checked through the
-70-test suite, Run Sheet, JavaScript syntax checks, and a real browser
+86-test suite, Run Sheet, JavaScript syntax checks, and a real browser
 walkthrough. Detailed results are recorded in [Iteration 1 Test Results](docs/test_results.md).
+
+## Robustness follow-up
+
+The current branch also allows cross-origin follow-up `PUT` requests, rejects
+out-of-range model probabilities, deduplicates batch aliases by canonical
+account ID, and keeps expiring minimal assessment context in SQLite so a server
+restart does not invalidate an assessment already shown to the analyst. Browser
+requests have bounded timeouts and safe response parsing; decision and follow-up
+UI state survives a same-tab Model Information visit after strict snapshot
+validation.
+
+Application assembly, assessment logic and route groups are separated under
+`backend/app/`. The browser entry controller delegates API access, validated
+session state, rendering, review actions and batch work to focused files under
+`frontend/`. Blocking model, SHAP, batch and SQLite handlers are synchronous
+FastAPI routes and therefore run in the framework thread pool.
 
 ## What is included
 
@@ -50,8 +66,8 @@ walkthrough. Detailed results are recorded in [Iteration 1 Test Results](docs/te
 - TreeSHAP top-three explanations with a safe degraded result if SHAP fails.
 - FastAPI endpoints for health, intake, preview, completeness, single/batch
   assessment, analyst decisions, follow-up and authorised feedback reads.
-- SQLite storage containing only pseudonymous assessment references and minimal
-  decision/follow-up records.
+- SQLite storage containing expiring pseudonymous assessment context and minimal
+  decision/follow-up records, never raw profiles.
 - Accessible browser paths for single and CSV-batch review.
 - Plain-language landing/model guidance and same-tab assessment restoration when
   returning from model information.
@@ -230,6 +246,12 @@ or:
 Tests use temporary fixtures and do not depend on locally generated model or demo
 files. To verify a clean first-run state, remove only the ignored generated
 directories, run training again, and repeat the smoke flow.
+
+JavaScript syntax verification covers every browser module:
+
+```powershell
+Get-ChildItem frontend -Filter *.js | ForEach-Object { node --check $_.FullName }
+```
 
 ## Release evidence
 

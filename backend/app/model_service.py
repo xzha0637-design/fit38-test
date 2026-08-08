@@ -11,7 +11,7 @@ from xgboost import XGBClassifier
 
 from backend.app.errors import ExplanationUnavailableError, ModelUnavailableError
 from backend.app.schemas import Confidence, TopFactor
-from backend.ml.features import FEATURE_NAMES
+from backend.ml.features import FEATURE_LABELS, FEATURE_NAMES
 from backend.ml.pipeline import probability_to_band
 
 
@@ -21,24 +21,10 @@ REQUIRED_ARTIFACTS = (
     "model_metadata.json",
 )
 
-FEATURE_LABELS = {
-    "account_age_days": "Account age",
-    "followers_count": "Follower count",
-    "following_count": "Following count",
-    "follower_following_ratio": "The follower-to-following pattern",
-    "tweet_count": "Tweet count",
-    "posting_frequency": "Posting frequency",
-    "description_length": "Description length",
-    "username_length": "Username length",
-    "profile_completeness": "Profile completeness",
-    "verified": "Verification status",
-    "uses_default_profile_image": "Use of a default profile image",
-    "has_description": "Description availability",
-}
-
-
 @dataclass(frozen=True)
 class ScoreResult:
+    """Validated model probability, risk band, and confidence explanation."""
+
     probability: float
     band: str
     confidence: Confidence
@@ -48,6 +34,8 @@ class ModelService:
     """Load the versioned artifact and expose safe score/explanation operations."""
 
     def __init__(self, artifact_dir: Path) -> None:
+        """Load the approved model bundle from ``artifact_dir``."""
+
         self.artifact_dir = Path(artifact_dir)
         self.ready = False
         self.error: str | None = None

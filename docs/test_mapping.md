@@ -9,7 +9,9 @@
 | Offline fixture/model interfaces | `tests/test_data_pipeline.py`, `tests/test_model_service.py` |
 | Error-handling foundation | `tests/test_scaffold.py::test_unknown_route_uses_controlled_http_error`, `tests/test_api.py` |
 | Deterministic preprocessing | `tests/test_data_pipeline.py`, `tests/test_features.py` |
+| Invalid/empty threshold inputs rejected | `test_threshold_selection_rejects_invalid_validation_inputs` |
 | Minimal feedback persistence | `tests/test_api.py::test_health_demo_assessment_and_override_flow` |
+| Blocking model/SQLite handlers use worker threads | `test_blocking_model_batch_and_sqlite_routes_use_fastapi_threadpool` |
 
 All future User Story tests must identify the User Story and AC in their test
 docstring or in this mapping.
@@ -53,7 +55,7 @@ docstring or in this mapping.
 | AC4 deterministic input/model result | `test_ac2_ac4_representative_fixtures_are_deterministic_across_bands` |
 | AC5 text plus accessible colour classes | `test_ac5_ac6_ui_uses_text_plus_contrast_classes_and_no_definitive_label` |
 | AC6 no definitive bot/human label | `test_ac5_ac6_ui_uses_text_plus_contrast_classes_and_no_definitive_label` |
-| AC7 recoverable failure without partial score | `test_ac7_scoring_failure_is_recoverable_without_partial_score` |
+| AC7 recoverable failure without partial score | `test_ac7_scoring_failure_is_recoverable_without_partial_score`, `test_finite_out_of_range_probabilities_use_malformed_model_contract` |
 
 ## Stage 05 — US3.1 Explanation and uncertainty
 
@@ -70,6 +72,7 @@ docstring or in this mapping.
 | AC1–AC2 completed assessment and override reason | `test_ac1_ac2_decision_requires_assessment_and_override_reason` |
 | AC3–AC4 human final/no action/minimal fields | `test_ac3_ac4_minimal_feedback_and_no_platform_action` |
 | AC5 acknowledgement/duplicate prevention | `test_ac5_acknowledgement_and_duplicate_prevention` |
+| Server restart and bounded assessment context | `test_assessment_context_survives_application_restart`, `test_expired_assessment_contexts_are_purged_and_rejected` |
 
 ## Stage 07 — US1.3 Recovery and reset
 
@@ -77,6 +80,7 @@ docstring or in this mapping.
 |---|---|
 | AC1–AC2 controlled/distinct errors and actions | `test_ac1_ac2_controlled_source_timeout_and_unknown_states`, `test_ac1_model_timeout_and_malformed_response_are_controlled` |
 | AC3–AC6 retry, stale-state clearing, reset focus/continuity | `test_ac3_ac4_ac5_ac6_ui_retry_reset_clears_state_and_restores_focus` |
+| Cross-origin Follow-up preflight | `test_follow_up_cors_preflight_allows_put` |
 
 ## Stage 08 — US4.2 Data protection
 
@@ -93,6 +97,7 @@ docstring or in this mapping.
 | AC1 completed/insufficient eligibility | `test_ac1_completed_and_insufficient_assessments_can_be_flagged` |
 | AC2–AC3 reason, status, update/clear, role | `test_ac2_ac3_reason_update_clear_and_authorisation` |
 | AC4–AC5 minimal record/no platform action | `test_ac4_ac5_minimal_record_and_no_platform_action` |
+| Follow-up remains actionable after restart | `test_follow_up_context_survives_application_restart` |
 
 ## Stage 10 — US3.2 Model information
 
@@ -110,6 +115,7 @@ docstring or in this mapping.
 | AC1 file type, exact header and row limit | `test_ac1_file_type_header_and_row_limit_are_validated` |
 | AC1–AC2 duplicates, identifiers and partial success | `test_ac1_ac2_duplicates_and_invalid_rows_do_not_block_valid_rows` |
 | AC2 Insufficient data and unavailable-row isolation | `test_ac2_insufficient_and_unknown_rows_are_reported_independently` |
+| Account ID/username aliases deduplicate canonically | `test_account_id_and_username_alias_are_one_batch_account` |
 | AC3–AC4 visible progress/counts and no platform action | `test_ac3_ac4_page_exposes_progress_counts_and_no_action_wording` |
 
 ## Stage 12 — US5.2 Sort and filter
@@ -132,3 +138,5 @@ docstring or in this mapping.
 | Controlled error matrix | `test_release_controlled_error_matrix_has_no_traceback` |
 | No stale single/batch UI state | `test_release_reset_code_clears_single_and_batch_stale_state` |
 | Model-information return restores the current assessment | `test_tutor_feedback_preserves_current_assessment_across_model_information` |
+| Strict session schema, nullable factor fallback and review-state restoration | `test_versioned_snapshot_restores_review_state_and_rejects_corruption` |
+| Browser timeout/non-JSON/follow-up/hidden-state safeguards | `test_api_client_handles_non_json_and_timeout_failures`, `test_follow_up_controller_exposes_busy_and_persistence_guards` |

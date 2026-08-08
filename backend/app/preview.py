@@ -24,6 +24,8 @@ MISSING_LABELS = {
 
 
 def _text(value: Any) -> str | None:
+    """Normalise one optional public text value without inventing content."""
+
     if value is None or pd.isna(value):
         return None
     text = str(value).strip()
@@ -33,6 +35,8 @@ def _text(value: Any) -> str | None:
 
 
 def _number(value: Any) -> float | None:
+    """Return one finite non-negative public number or ``None``."""
+
     if value is None or pd.isna(value):
         return None
     try:

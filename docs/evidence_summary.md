@@ -55,12 +55,13 @@ Stage 13 adds the final integration commit on
 
 ## RC quality result
 
-- Automated regression: **63 passed, 0 failed**
+- Automated regression: **86 passed, 0 failed**
 - Repeatable Run Sheet: **PASS**
 - JavaScript syntax: **PASS**
 - Open critical/high defects: **0**
 - `git diff --check`: recorded in the Stage 13 handover after final review
-- Privacy: only approved pseudonymous decision/follow-up tables persist
+- Privacy: only expiring pseudonymous assessment context and approved
+  decision/follow-up tables persist
 - Accessibility: labelled primary inputs, keyboard skip link, live status
   regions, semantic table headers and text risk labels
 - Batch/single consistency: same fixture produces the same status, score and band

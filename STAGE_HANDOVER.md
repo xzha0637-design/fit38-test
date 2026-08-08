@@ -45,13 +45,16 @@ Files removed: none.
 All User Story AC mappings remain cumulative in `docs/test_mapping.md`. Stage 13
 adds six release checks covering the main path, single/batch consistency,
 minimal persistence, accessibility, error contracts and stale-state reset.
-Those six tests are added in `tests/test_stage13_integration.py`.
+Those original six tests remain in `tests/test_stage13_integration.py`; the
+current robustness follow-up adds focused regression coverage for cross-origin
+Follow-up, restart-safe assessment context, canonical batch deduplication,
+bounded model output, strict browser state and request failures.
 
-- **Automated tests executed:** 63 in 5.47 seconds.
-- **Passed:** 63.
+- **Automated tests executed:** 86 in the current cumulative suite.
+- **Passed:** 86.
 - **Failed:** 0.
 - **Run Sheet:** PASS.
-- **JavaScript syntax checks:** PASS.
+- **JavaScript syntax checks:** PASS for all seven browser modules.
 - **Open critical/high defects:** 0.
 
 ## Manual verification

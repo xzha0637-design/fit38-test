@@ -38,12 +38,16 @@ FEATURE_LABELS = {
 
 @dataclass(frozen=True)
 class FeatureResult:
+    """One model-ready feature row plus its evidence-completeness metadata."""
+
     frame: pd.DataFrame
     completeness: float
     usable_feature_count: int
 
 
 def _is_missing(value: Any) -> bool:
+    """Recognise Python, pandas, and NumPy missing-value representations."""
+
     if value is None:
         return True
     try:
@@ -53,6 +57,8 @@ def _is_missing(value: Any) -> bool:
 
 
 def _number(value: Any, *, positive: bool = False) -> float:
+    """Parse one finite non-negative number or return NumPy missing data."""
+
     if _is_missing(value):
         return np.nan
     try:
@@ -65,6 +71,8 @@ def _number(value: Any, *, positive: bool = False) -> float:
 
 
 def _boolean(value: Any) -> float:
+    """Map supported Boolean representations to 0/1 or NumPy missing data."""
+
     if _is_missing(value):
         return np.nan
     if isinstance(value, (bool, np.bool_)):
@@ -80,6 +88,8 @@ def _boolean(value: Any) -> float:
 
 
 def _text_length(record: Mapping[str, Any], text_key: str, length_key: str) -> float:
+    """Use a supplied length or derive it from the corresponding public text."""
+
     supplied = _number(record.get(length_key))
     if not np.isnan(supplied):
         return supplied
@@ -90,6 +100,8 @@ def _text_length(record: Mapping[str, Any], text_key: str, length_key: str) -> f
 
 
 def _present(value: Any, *, unknown_is_missing: bool = False) -> float:
+    """Return a numeric presence indicator without interpreting text meaning."""
+
     if _is_missing(value):
         return 0.0
     text = str(value).strip()
@@ -101,6 +113,8 @@ def _present(value: Any, *, unknown_is_missing: bool = False) -> float:
 
 
 def _profile_completeness(record: Mapping[str, Any], default_image: float) -> float:
+    """Calculate availability across the approved public profile fields."""
+
     indicators = [
         _present(record.get("username")),
         _present(record.get("description")),

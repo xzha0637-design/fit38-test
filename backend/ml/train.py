@@ -32,6 +32,8 @@ from backend.ml.pipeline import (
 
 
 def _prepared_split(frame: pd.DataFrame) -> tuple[pd.DataFrame, np.ndarray, int]:
+    """Build deployable features and remove rows below the evidence gate."""
+
     features, completeness = build_feature_matrix(frame)
     usable = completeness.map(is_sufficient).to_numpy()
     removed = int((~usable).sum())

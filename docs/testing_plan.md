@@ -4,9 +4,9 @@
 **Primary audience:** External Social Media Safety Analyst
 **Scope:** Iteration 1 MVP - 5 Features and 12 User Stories
 **Document purpose:** Direct, browser-based verification plus existing automated checks
-**Code baseline:** GitHub commit `0afce9d`
-**Working branch:** `fix/tutor-feedback-real-accounts-ux`
-**Document status:** Ready for team/tutor execution; browser results not yet recorded
+**Code baseline:** GitHub commit `ee6a923` plus the uncommitted robustness follow-up
+**Working branch:** `fix/full-robustness-audit-findings`
+**Document status:** Ready for team/tutor execution; selected walkthrough results are recorded in `docs/test_results.md`
 **Last updated:** 8 August 2026
 
 > A written test is not a passed test. The executor must record the actual
@@ -41,7 +41,7 @@ The plan covers:
 
 - Work from the repository root.
 - Use the project Conda environment `fit5238-backend`.
-- Use the tracked offline fixture and model artifact.
+- Use the tracked offline demonstration records and model artifact.
 - Use only the tracked project-dataset samples or synthetic boundary fixtures;
   do not add live/current account data.
 - Test current Chrome and Edge and record their exact versions.
@@ -155,7 +155,8 @@ the value is corrected. The identifier remains reachable and labelled.
 profile, activity and network fields. Completeness is 100%. The result is 2%
 Low and uses the word Low as well as colour. Model version, threshold version,
 assessment time, uncertainty, no-verdict wording and up to three factor rows are
-visible. Every factor uses a plain label, direction and observed value.
+visible. The source badge says **Offline demonstration record**. Every factor
+uses a plain label, direction and observed value.
 
 **Status:** Not executed.
 
@@ -273,14 +274,16 @@ Confirm does not require an override reason.
 
 1. Complete `@OGLexa`.
 2. Save a flag with `initial human review`.
-3. Change it to `updated human review` and save again.
-4. Select **Clear flag**.
-5. Start new, run `demo_incomplete_01`, save and clear another flag.
+3. Open Model Information, return, and confirm the flag reason/status remains.
+4. Change it to `updated human review` and save again.
+5. Select **Clear flag**.
+6. Start new, run `demo_incomplete_01`, save and clear another flag.
 
 **Expected visible result:** status changes through Flagged, updated Flagged and
 Cleared without duplicate visible state. Every acknowledgement states that no
 platform action occurred. Insufficient data supports follow-up but never shows
-Confirm/Override. Start new clears the old reason/status.
+Confirm/Override. Return navigation preserves the visible flag and reason;
+Start new clears the old reason/status.
 
 **Status:** Not executed.
 
@@ -419,12 +422,17 @@ Run these after the documentation/sample-file change:
 ```powershell
 python -m pytest --basetemp ".pytest-tmp"
 node --check frontend/app.js
+node --check frontend/api-client.js
+node --check frontend/assessment-state.js
+node --check frontend/assessment-view.js
 node --check frontend/batch-results.js
+node --check frontend/batch-controller.js
+node --check frontend/review-controller.js
 python -m scripts.verify_run_sheet
 git diff --check
 ```
 
-Expected: all currently collected tests pass, both JavaScript files parse, the
+Expected: all 86 currently collected tests pass, all seven JavaScript files parse, the
 Run Sheet prints its PASS line, and Git reports no whitespace errors.
 
 The existing automated suite covers data cleaning, feature mapping, exact
@@ -461,7 +469,7 @@ they remain automated fault-injection cases rather than teacher click examples.
 | Decision | Only completed scored result; Override reason required; duplicate prevented |
 | Follow-up | Completed or Insufficient result; reason/status visible; update and clear |
 | Privacy/oversight | Offline fixtures; minimal record; no platform action or definitive verdict |
-| Return-state privacy | Only the displayed whitelisted preview/result is kept for the current tab; no training label or raw source payload; Start new clears it |
+| Return-state privacy | Only the displayed whitelisted preview/result and visible review UI state are kept for the current tab after strict schema validation; no training label or raw source payload; Start new clears it |
 | Accessibility | Text plus colour; labelled controls; keyboard path; no clipping at 200% |
 
 A case passes only when every stated expected result is visibly true. Partial

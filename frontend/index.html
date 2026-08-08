@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Offline AI-assisted Twitter/X account triage for external social media safety analysts.">
     <title>Signal Review | Account triage</title>
-    <link rel="stylesheet" href="/static/styles.css?v=20260808-real-accounts-ux">
+    <link rel="stylesheet" href="/static/styles.css?v=20260808-robustness">
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -183,7 +183,7 @@
             <p class="step-label">Public account preview</p>
             <h2 id="preview-title">Confirm the source evidence</h2>
           </div>
-          <span class="source-badge">Source data · Offline fixture</span>
+          <span class="source-badge">Source data · Offline demonstration record</span>
         </div>
         <p id="preview-identifier" class="preview-identifier"></p>
         <div id="preview-groups" class="preview-groups"></div>
@@ -297,7 +297,12 @@
       <span>Twitter/X scope · Offline fixtures · Human oversight</span>
       <span>Application v0.1.0</span>
     </footer>
-    <script src="/static/batch-results.js"></script>
-    <script src="/static/app.js" defer></script>
+    <script src="/static/batch-results.js?v=20260808-robustness"></script>
+    <script src="/static/api-client.js?v=20260808-robustness"></script>
+    <script src="/static/assessment-state.js?v=20260808-robustness"></script>
+    <script src="/static/assessment-view.js?v=20260808-robustness"></script>
+    <script src="/static/review-controller.js?v=20260808-robustness"></script>
+    <script src="/static/batch-controller.js?v=20260808-robustness"></script>
+    <script src="/static/app.js?v=20260808-robustness" defer></script>
   </body>
 </html>

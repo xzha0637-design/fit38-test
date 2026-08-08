@@ -1,33 +1,81 @@
 import sqlite3
-from datetime import datetime, timezone
+from dataclasses import dataclass
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 
 class AssessmentNotFoundError(LookupError):
-    pass
+    """Raised when an action references no active assessment context."""
 
 
 class DuplicateOverrideError(RuntimeError):
-    pass
+    """Raised when a final decision already exists for an assessment."""
 
 
 class StoreUnavailableError(RuntimeError):
-    pass
+    """Raised when the minimal SQLite feedback store cannot be used safely."""
+
+
+@dataclass(frozen=True)
+class AssessmentContext:
+    """Minimal model context required by later human-review actions."""
+
+    model_version: str
+    recommendation: str
+
+
+ASSESSMENT_CONTEXT_TTL = timedelta(hours=24)
 
 
 class FeedbackStore:
     """Persist only assessment references and analyst overrides, never raw profiles."""
 
     def __init__(self, database_path: Path) -> None:
+        """Initialise the store at an explicit local SQLite path."""
+
         self.database_path = Path(database_path)
         self.ready = False
         self.error: str | None = None
-        self._pending_assessments: dict[str, tuple[str, str]] = {}
         self.initialize()
 
     def _connect(self) -> sqlite3.Connection:
+        """Open one short-lived SQLite connection with a bounded lock wait."""
+
         connection = sqlite3.connect(self.database_path, timeout=5.0)
         return connection
+
+    @staticmethod
+    def _purge_expired_contexts(
+        connection: sqlite3.Connection,
+        now: datetime,
+    ) -> None:
+        """Delete expired transient contexts while retaining audit feedback."""
+
+        connection.execute(
+            "DELETE FROM assessment_contexts WHERE expires_at <= ?",
+            (now.isoformat(),),
+        )
+
+    def _get_context(
+        self,
+        connection: sqlite3.Connection,
+        assessment_id: str,
+        now: datetime,
+    ) -> AssessmentContext | None:
+        """Load one unexpired assessment context within the caller transaction."""
+
+        self._purge_expired_contexts(connection, now)
+        row = connection.execute(
+            """
+            SELECT model_version, recommendation
+            FROM assessment_contexts
+            WHERE assessment_reference = ?
+            """,
+            (assessment_id,),
+        ).fetchone()
+        if row is None:
+            return None
+        return AssessmentContext(model_version=str(row[0]), recommendation=str(row[1]))
 
     def initialize(self) -> None:
         """Create the minimal feedback tables and publish store readiness."""
@@ -52,7 +100,20 @@ class FeedbackStore:
                         reason TEXT NOT NULL,
                         timestamp TEXT NOT NULL
                     );
+                    CREATE TABLE IF NOT EXISTS assessment_contexts (
+                        assessment_reference TEXT PRIMARY KEY,
+                        model_version TEXT NOT NULL,
+                        recommendation TEXT NOT NULL,
+                        created_at TEXT NOT NULL,
+                        expires_at TEXT NOT NULL
+                    );
+                    CREATE INDEX IF NOT EXISTS idx_assessment_context_expiry
+                    ON assessment_contexts(expires_at);
                     """
+                )
+                self._purge_expired_contexts(
+                    connection,
+                    datetime.now(timezone.utc),
                 )
                 connection.execute("SELECT 1")
             self.ready = True
@@ -67,11 +128,32 @@ class FeedbackStore:
         model_id: str,
         recommendation: str,
     ) -> None:
-        """Keep transient model context needed for a later human action."""
+        """Persist expiring model context needed for a later human action."""
 
         if not self.ready:
             raise StoreUnavailableError(self.error or "Feedback store is unavailable.")
-        self._pending_assessments[assessment_id] = (model_id, recommendation)
+        now = datetime.now(timezone.utc)
+        expires_at = now + ASSESSMENT_CONTEXT_TTL
+        try:
+            with self._connect() as connection:
+                self._purge_expired_contexts(connection, now)
+                connection.execute(
+                    """
+                    INSERT INTO assessment_contexts
+                        (assessment_reference, model_version, recommendation,
+                         created_at, expires_at)
+                    VALUES (?, ?, ?, ?, ?)
+                    """,
+                    (
+                        assessment_id,
+                        model_id,
+                        recommendation,
+                        now.isoformat(),
+                        expires_at.isoformat(),
+                    ),
+                )
+        except sqlite3.Error as exc:
+            raise StoreUnavailableError("Assessment context could not be recorded.") from exc
 
     def record_decision(
         self,
@@ -83,22 +165,21 @@ class FeedbackStore:
 
         if not self.ready:
             raise StoreUnavailableError(self.error or "Feedback store is unavailable.")
-        created_at = datetime.now(timezone.utc).isoformat()
-        with self._connect() as connection:
-            duplicate = connection.execute(
-                """
-                SELECT 1 FROM decision_feedback
-                WHERE assessment_reference = ?
-                """,
-                (assessment_id,),
-            ).fetchone()
-        if duplicate is not None:
-            raise DuplicateOverrideError(assessment_id)
-        context = self._pending_assessments.get(assessment_id)
-        if context is None:
-            raise AssessmentNotFoundError(assessment_id)
-        with self._connect() as connection:
-            try:
+        now = datetime.now(timezone.utc)
+        try:
+            with self._connect() as connection:
+                duplicate = connection.execute(
+                    """
+                    SELECT 1 FROM decision_feedback
+                    WHERE assessment_reference = ?
+                    """,
+                    (assessment_id,),
+                ).fetchone()
+                if duplicate is not None:
+                    raise DuplicateOverrideError(assessment_id)
+                context = self._get_context(connection, assessment_id, now)
+                if context is None:
+                    raise AssessmentNotFoundError(assessment_id)
                 connection.execute(
                     """
                     INSERT INTO decision_feedback
@@ -108,15 +189,19 @@ class FeedbackStore:
                     """,
                     (
                         assessment_id,
-                        context[0],
-                        context[1],
+                        context.model_version,
+                        context.recommendation,
                         analyst_decision,
                         reason,
-                        created_at,
+                        now.isoformat(),
                     ),
                 )
-            except sqlite3.IntegrityError as exc:
-                raise DuplicateOverrideError(assessment_id) from exc
+        except (AssessmentNotFoundError, DuplicateOverrideError):
+            raise
+        except sqlite3.IntegrityError as exc:
+            raise DuplicateOverrideError(assessment_id) from exc
+        except sqlite3.Error as exc:
+            raise StoreUnavailableError("Decision feedback could not be recorded.") from exc
 
     def list_decisions(self) -> list[dict[str, str]]:
         """Return persisted decision records in reverse chronological order."""
@@ -143,35 +228,43 @@ class FeedbackStore:
     ) -> None:
         """Create, update, or clear the follow-up flag for an assessment."""
 
-        context = self._pending_assessments.get(assessment_id)
-        if context is None:
-            raise AssessmentNotFoundError(assessment_id)
-        with self._connect() as connection:
-            if status == "cleared":
+        if not self.ready:
+            raise StoreUnavailableError(self.error or "Feedback store is unavailable.")
+        now = datetime.now(timezone.utc)
+        try:
+            with self._connect() as connection:
+                context = self._get_context(connection, assessment_id, now)
+                if context is None:
+                    raise AssessmentNotFoundError(assessment_id)
+                if status == "cleared":
+                    connection.execute(
+                        "DELETE FROM follow_up_records WHERE assessment_reference = ?",
+                        (assessment_id,),
+                    )
+                    return
                 connection.execute(
-                    "DELETE FROM follow_up_records WHERE assessment_reference = ?",
-                    (assessment_id,),
+                    """
+                    INSERT INTO follow_up_records
+                        (assessment_reference, model_version, follow_up_status,
+                         reason, timestamp)
+                    VALUES (?, ?, ?, ?, ?)
+                    ON CONFLICT(assessment_reference) DO UPDATE SET
+                        follow_up_status = excluded.follow_up_status,
+                        reason = excluded.reason,
+                        timestamp = excluded.timestamp
+                    """,
+                    (
+                        assessment_id,
+                        context.model_version,
+                        status,
+                        reason,
+                        now.isoformat(),
+                    ),
                 )
-                return
-            connection.execute(
-                """
-                INSERT INTO follow_up_records
-                    (assessment_reference, model_version, follow_up_status,
-                     reason, timestamp)
-                VALUES (?, ?, ?, ?, ?)
-                ON CONFLICT(assessment_reference) DO UPDATE SET
-                    follow_up_status = excluded.follow_up_status,
-                    reason = excluded.reason,
-                    timestamp = excluded.timestamp
-                """,
-                (
-                    assessment_id,
-                    context[0],
-                    status,
-                    reason,
-                    datetime.now(timezone.utc).isoformat(),
-                ),
-            )
+        except AssessmentNotFoundError:
+            raise
+        except sqlite3.Error as exc:
+            raise StoreUnavailableError("Follow-up status could not be recorded.") from exc
 
     def record_override(
         self,

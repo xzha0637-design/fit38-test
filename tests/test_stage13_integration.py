@@ -94,10 +94,14 @@ def test_release_persistence_remains_minimal_and_pseudonymous(tmp_path) -> None:
             ]
             for table in tables
         }
-    assert tables == {"decision_feedback", "follow_up_records"}
+    assert tables == {
+        "assessment_contexts",
+        "decision_feedback",
+        "follow_up_records",
+    }
     persisted_names = set(columns["decision_feedback"]) | set(
         columns["follow_up_records"]
-    )
+    ) | set(columns["assessment_contexts"])
     assert not persisted_names.intersection(
         {"username", "description", "location", "followers_count", "tweet_count"}
     )
@@ -146,24 +150,40 @@ def test_release_controlled_error_matrix_has_no_traceback(tmp_path) -> None:
 
 
 def test_release_reset_code_clears_single_and_batch_stale_state() -> None:
-    script = (PROJECT_ROOT / "frontend" / "app.js").read_text(encoding="utf-8")
+    review = (PROJECT_ROOT / "frontend" / "review-controller.js").read_text(
+        encoding="utf-8"
+    )
+    batch = (PROJECT_ROOT / "frontend" / "batch-controller.js").read_text(
+        encoding="utf-8"
+    )
     for expected in [
         "followUpForm.reset();",
         'followUpStatus.textContent = "";',
-        "resetBatchControls();",
+    ]:
+        assert expected in review
+    for expected in [
+        "resetControls();",
         "batchSourceResults = [];",
     ]:
-        assert expected in script
+        assert expected in batch
 
 
 def test_tutor_feedback_preserves_current_assessment_across_model_information() -> None:
     """Tutor feedback: session restoration keeps the completed result on return."""
     script = (PROJECT_ROOT / "frontend" / "app.js").read_text(encoding="utf-8")
+    state_module = (PROJECT_ROOT / "frontend" / "assessment-state.js").read_text(
+        encoding="utf-8"
+    )
 
     for expected in [
-        "sessionStorage.setItem",
-        "sessionStorage.getItem",
-        "sessionStorage.removeItem",
+        "globalObject.sessionStorage",
+        ".setItem(",
+        ".getItem(",
+        ".removeItem(",
+        "validateSnapshot",
+    ]:
+        assert expected in state_module
+    for expected in [
         "persistAssessmentState",
         "restoreAssessmentState",
         "renderPreview(saved.preview)",

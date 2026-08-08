@@ -6,10 +6,14 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 
 class StrictModel(BaseModel):
+    """Base request model that rejects undocumented input fields."""
+
     model_config = ConfigDict(extra="forbid")
 
 
 class AssessmentRequest(StrictModel):
+    """Validated request for one offline X account assessment."""
+
     platform: Literal["x"]
     account_id: str
 
@@ -22,6 +26,7 @@ class AssessmentRequest(StrictModel):
 
 
 OFFLINE_IDENTIFIER_PATTERN = re.compile(r"^[A-Za-z0-9_]{1,32}$")
+ASSESSMENT_ID_PATTERN = re.compile(r"^asmt_(?:[0-9a-f]{8}|[0-9a-f]{32})$")
 
 
 def normalise_offline_identifier(value: str) -> str:
@@ -37,7 +42,15 @@ def normalise_offline_identifier(value: str) -> str:
     return normalised
 
 
+def is_valid_assessment_id(value: str) -> bool:
+    """Accept current full UUID references and legacy eight-character IDs."""
+
+    return bool(ASSESSMENT_ID_PATTERN.fullmatch(value))
+
+
 class IntakeRequest(StrictModel):
+    """Raw account identifier submitted to the intake validation step."""
+
     identifier: str
 
     @field_validator("identifier", mode="before")
@@ -49,6 +62,8 @@ class IntakeRequest(StrictModel):
 
 
 class IntakeResponse(BaseModel):
+    """Canonical offline identifier and display context for one assessment."""
+
     status: Literal["ready"] = "ready"
     account_id: str
     normalised_identifier: str
@@ -58,23 +73,31 @@ class IntakeResponse(BaseModel):
 
 
 class PublicProfile(BaseModel):
+    """Whitelisted public profile text shown before scoring."""
+
     username: str | None = None
     description: str | None = None
     location: str | None = None
 
 
 class PublicActivity(BaseModel):
+    """Whitelisted public account-activity values shown before scoring."""
+
     account_age_days: int | None = Field(default=None, ge=0)
     post_count: int | None = Field(default=None, ge=0)
     posts_per_day: float | None = Field(default=None, ge=0)
 
 
 class PublicNetwork(BaseModel):
+    """Whitelisted public follower-network counts shown before scoring."""
+
     followers_count: int | None = Field(default=None, ge=0)
     following_count: int | None = Field(default=None, ge=0)
 
 
 class AccountPreview(BaseModel):
+    """Public source-data preview that deliberately excludes model output."""
+
     account_id: str
     display_identifier: str
     data_source: Literal["offline_fixture"] = "offline_fixture"
@@ -87,6 +110,8 @@ class AccountPreview(BaseModel):
 
 
 class CompletenessResponse(BaseModel):
+    """Evidence-coverage result used by the inclusive scoring gate."""
+
     account_id: str
     completeness: float = Field(ge=0, le=1)
     completeness_percentage: int = Field(ge=0, le=100)
@@ -98,6 +123,8 @@ class CompletenessResponse(BaseModel):
 
 
 class Confidence(BaseModel):
+    """Plain confidence level and the bounded reason supporting it."""
+
     level: Literal["low", "high"]
     basis: Literal[
         "limited_feature_coverage",
@@ -107,6 +134,8 @@ class Confidence(BaseModel):
 
 
 class TopFactor(BaseModel):
+    """One model factor rendered with label, direction, and observed value."""
+
     feature: str
     label: str | None = None
     direction: Literal["increases_risk", "decreases_risk"]
@@ -116,6 +145,8 @@ class TopFactor(BaseModel):
 
 
 class AssessmentResponse(BaseModel):
+    """Complete scored or insufficient-data assessment response contract."""
+
     assessment_id: str
     status: Literal["completed", "completed_with_warning", "insufficient_data"]
     platform: Literal["x"] = "x"
@@ -140,11 +171,15 @@ class AssessmentResponse(BaseModel):
 
 
 class BatchUploadRequest(StrictModel):
+    """Bounded CSV filename and content submitted for offline assessment."""
+
     filename: str = Field(min_length=1, max_length=255)
     content: str = Field(max_length=100_000)
 
 
 class BatchRowResult(BaseModel):
+    """Independent outcome for one source row in an uploaded CSV batch."""
+
     row_number: int = Field(ge=2)
     account_id: str
     processing_status: Literal["completed", "failed"]
@@ -159,6 +194,8 @@ class BatchRowResult(BaseModel):
 
 
 class BatchUploadResponse(BaseModel):
+    """Ordered batch results and completed/failed summary counts."""
+
     status: Literal["completed"] = "completed"
     total_rows: int = Field(ge=0)
     completed_count: int = Field(ge=0)
@@ -170,21 +207,27 @@ class BatchUploadResponse(BaseModel):
 
 
 class OverrideRequest(StrictModel):
+    """Legacy analyst-override request retained for compatibility."""
+
     override_label: Literal["legitimate", "suspicious", "uncertain"]
     reason_code: str = Field(min_length=1, max_length=64, pattern=r"^[a-z0-9_]+$")
 
 
 class OverrideResponse(BaseModel):
+    """Acknowledgement for a successfully persisted legacy override."""
+
     status: Literal["recorded"] = "recorded"
     assessment_id: str
 
 
 class DecisionRequest(StrictModel):
+    """Final analyst confirm/override decision with conditional reason."""
+
     decision: Literal["confirm", "override"]
     reason: str = Field(default="", max_length=240)
 
     @model_validator(mode="after")
-    def require_override_reason(self):
+    def require_override_reason(self) -> "DecisionRequest":
         """Require a concise reason only when the analyst overrides."""
 
         self.reason = self.reason.strip()
@@ -194,6 +237,8 @@ class DecisionRequest(StrictModel):
 
 
 class DecisionResponse(BaseModel):
+    """Safe acknowledgement for a persisted final analyst decision."""
+
     status: Literal["recorded"] = "recorded"
     assessment_id: str
     analyst_decision: Literal["confirm", "override"]
@@ -203,6 +248,8 @@ class DecisionResponse(BaseModel):
 
 
 class DecisionFeedback(BaseModel):
+    """Minimal pseudonymous decision record exposed to authorised roles."""
+
     assessment_reference: str
     model_version: str
     recommendation: str
@@ -212,16 +259,20 @@ class DecisionFeedback(BaseModel):
 
 
 class DecisionFeedbackList(BaseModel):
+    """Authorised collection of minimal analyst decision records."""
+
     count: int
     records: list[DecisionFeedback]
 
 
 class FollowUpRequest(StrictModel):
+    """Authorised request to flag or clear another human review."""
+
     status: Literal["flagged", "cleared"]
     reason: str = Field(default="", max_length=240)
 
     @model_validator(mode="after")
-    def require_flag_reason(self):
+    def require_flag_reason(self) -> "FollowUpRequest":
         """Require a reason while allowing a cleared flag to omit one."""
 
         self.reason = self.reason.strip()
@@ -231,6 +282,8 @@ class FollowUpRequest(StrictModel):
 
 
 class FollowUpResponse(BaseModel):
+    """Acknowledgement for a persisted or cleared follow-up flag."""
+
     assessment_id: str
     status: Literal["flagged", "cleared"]
     acknowledgement: Literal[
@@ -239,6 +292,8 @@ class FollowUpResponse(BaseModel):
 
 
 class DemoAccount(BaseModel):
+    """Label-free selector metadata for one offline demonstration account."""
+
     account_id: str
     source_dataset: str | None = None
     username: str | None = None
@@ -247,11 +302,15 @@ class DemoAccount(BaseModel):
 
 
 class DemoAccountsResponse(BaseModel):
+    """Bounded list of label-free offline account choices."""
+
     count: int
     accounts: list[DemoAccount]
 
 
 class HealthResponse(BaseModel):
+    """Readiness state for model, data adapter, and feedback store."""
+
     status: Literal["ok", "degraded"]
     api: Literal["available"] = "available"
     model: Literal["loaded", "unavailable"]
@@ -262,10 +321,14 @@ class HealthResponse(BaseModel):
 
 
 class ErrorDetail(BaseModel):
+    """Stable public error code, safe message, and retry guidance."""
+
     code: str
     message: str
     retryable: bool = False
 
 
 class ErrorResponse(BaseModel):
+    """Top-level envelope for controlled API failures."""
+
     error: ErrorDetail

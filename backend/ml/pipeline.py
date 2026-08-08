@@ -10,6 +10,36 @@ from sklearn.preprocessing import FunctionTransformer, StandardScaler
 from backend.ml.features import BOOLEAN_FEATURES, NUMERIC_FEATURES
 
 
+def _validated_binary_inputs(
+    labels: np.ndarray,
+    probabilities: np.ndarray,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Return aligned one-dimensional binary labels and bounded probabilities."""
+
+    label_values = np.asarray(labels)
+    probability_values = np.asarray(probabilities, dtype=float)
+    if label_values.ndim != 1 or probability_values.ndim != 1:
+        raise ValueError("Validation labels and probabilities must be one-dimensional.")
+    if label_values.size == 0 or probability_values.size == 0:
+        raise ValueError("Validation labels and probabilities must not be empty.")
+    if label_values.size != probability_values.size:
+        raise ValueError("Validation labels and probabilities must have equal length.")
+    try:
+        numeric_labels = label_values.astype(float)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Validation labels must contain only 0 or 1.") from exc
+    if not np.isfinite(numeric_labels).all() or not np.isin(
+        numeric_labels,
+        [0.0, 1.0],
+    ).all():
+        raise ValueError("Validation labels must contain only 0 or 1.")
+    if not np.isfinite(probability_values).all():
+        raise ValueError("Validation probabilities must all be finite.")
+    if ((probability_values < 0.0) | (probability_values > 1.0)).any():
+        raise ValueError("Validation probabilities must be between 0 and 1.")
+    return numeric_labels.astype(int), probability_values
+
+
 def make_preprocessor() -> ColumnTransformer:
     """Build the versioned numeric and Boolean preprocessing pipeline."""
 
@@ -67,8 +97,7 @@ def select_risk_thresholds(
 ) -> dict[str, float]:
     """Choose action bands using the agreed false-negative-heavy cost preference."""
 
-    labels = np.asarray(labels, dtype=int)
-    probabilities = np.asarray(probabilities, dtype=float)
+    labels, probabilities = _validated_binary_inputs(labels, probabilities)
     best: tuple[float, float, float, float] | None = None
     for medium in np.arange(0.10, 0.66, 0.05):
         for high in np.arange(max(0.40, medium + 0.10), 0.91, 0.05):
@@ -87,8 +116,8 @@ def select_risk_thresholds(
             candidate = (mean_cost, -float(binary_recall), float(medium), float(high))
             if best is None or candidate < best:
                 best = candidate
-    if best is None:
-        raise ValueError("Validation labels and probabilities must not be empty.")
+    if best is None:  # Defensive: the fixed threshold grid is expected to be non-empty.
+        raise RuntimeError("The risk-threshold search grid is empty.")
     return {
         "medium": round(best[2], 4),
         "high": round(best[3], 4),
@@ -103,8 +132,7 @@ def classification_metrics(
 ) -> dict[str, Any]:
     """Calculate the recorded binary evaluation metrics at one threshold."""
 
-    labels = np.asarray(labels, dtype=int)
-    probabilities = np.asarray(probabilities, dtype=float)
+    labels, probabilities = _validated_binary_inputs(labels, probabilities)
     predictions = (probabilities >= threshold).astype(int)
     return {
         "threshold": float(threshold),

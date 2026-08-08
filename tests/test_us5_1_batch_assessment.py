@@ -59,6 +59,25 @@ def test_ac2_insufficient_and_unknown_rows_are_reported_independently() -> None:
     assert "offline demonstration dataset" in body["results"][1]["error"]
 
 
+def test_account_id_and_username_alias_are_one_batch_account() -> None:
+    """Canonical account resolution prevents aliases bypassing duplicate checks."""
+
+    response = _upload(
+        "accounts.csv",
+        "account_id\n20611469\n@DeFotis\n",
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["completed_count"] == 1
+    assert body["failed_count"] == 1
+    assert [row["account_id"] for row in body["results"]] == [
+        "20611469",
+        "20611469",
+    ]
+    assert body["results"][1]["error"] == "Duplicate account identifier."
+
+
 def test_ac3_ac4_page_exposes_progress_counts_and_no_action_wording() -> None:
     page = client.get("/").text
     for expected in [
@@ -72,7 +91,7 @@ def test_ac3_ac4_page_exposes_progress_counts_and_no_action_wording() -> None:
         "No platform action",
     ]:
         assert expected in page
-    script = client.get("/static/app.js").text
+    script = client.get("/static/batch-controller.js").text
     assert 'batchFile.addEventListener("change"' in script
     assert 'batchFile.files[0]?.name || "No file selected"' in script
     response = _upload("accounts.csv", "account_id\ndemo_medium_01\n")

@@ -3,6 +3,7 @@ import json
 import joblib
 import numpy as np
 import pandas as pd
+import pytest
 from xgboost import XGBClassifier
 
 from backend.app.model_service import ModelService
@@ -16,6 +17,28 @@ def test_threshold_selection_returns_ordered_thresholds() -> None:
         np.array([0.05, 0.2, 0.7, 0.3, 0.75, 0.95]),
     )
     assert 0 < thresholds["medium"] < thresholds["high"] < 1
+
+
+@pytest.mark.parametrize(
+    ("labels", "probabilities", "message"),
+    [
+        (np.array([]), np.array([]), "must not be empty"),
+        (np.array([0, 1]), np.array([0.2]), "equal length"),
+        (np.array([[0, 1]]), np.array([0.2, 0.8]), "one-dimensional"),
+        (np.array([0, 2]), np.array([0.2, 0.8]), "only 0 or 1"),
+        (np.array([0, 1]), np.array([0.2, 1.2]), "between 0 and 1"),
+        (np.array([0, 1]), np.array([0.2, np.nan]), "all be finite"),
+    ],
+)
+def test_threshold_selection_rejects_invalid_validation_inputs(
+    labels,
+    probabilities,
+    message,
+) -> None:
+    """Invalid validation arrays fail before producing NaN threshold metadata."""
+
+    with pytest.raises(ValueError, match=message):
+        select_risk_thresholds(labels, probabilities)
 
 
 def test_model_artifacts_load_score_and_explain(tmp_path) -> None:

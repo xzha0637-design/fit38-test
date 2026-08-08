@@ -78,5 +78,5 @@ def test_ac4_source_data_is_explicitly_separate_from_model_output(tmp_path) -> N
     assert body["content_type"] == "source_data"
     assert body["data_source"] == "offline_fixture"
     assert body["model_output_included"] is False
-    assert "Source data · Offline fixture" in page
+    assert "Source data · Offline demonstration record" in page
     assert "No model output is displayed" in page

@@ -1,5 +1,23 @@
 # Changelog
 
+## Robustness audit hardening
+
+- Allowed cross-origin Follow-up `PUT` requests and converted blocking model,
+  SHAP, batch and SQLite handlers to FastAPI worker-thread routes.
+- Persisted expiring minimal assessment context across service restarts, moved
+  new references to full UUIDs and added automatic expiry cleanup.
+- Deduplicated batch aliases after canonical account resolution and rejected
+  finite model probabilities outside 0–1.
+- Added a shared browser timeout/JSON client, safe Follow-up busy/error states,
+  strict versioned session validation and review-state restoration.
+- Kept native hidden states authoritative over component layout, cache-busted
+  release assets and aligned restored factor validation with the nullable API
+  label contract.
+- Rejected empty or malformed threshold-selection arrays before metric
+  calculation.
+- Split backend application assembly/assessment/routes and browser API/state/
+  view/review/batch responsibilities into focused documented modules.
+
 ## Tutor-feedback usability hardening
 
 - Replaced the first three selector choices with label-free static accounts from

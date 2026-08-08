@@ -8,6 +8,8 @@ class DatasetAdapter:
     """Local replacement for Module A while live X API access is out of scope."""
 
     def __init__(self, demo_data_path: Path) -> None:
+        """Load the label-free fixture at ``demo_data_path`` into memory."""
+
         self.demo_data_path = Path(demo_data_path)
         self.ready = False
         self.error: str | None = None
@@ -90,6 +92,8 @@ class DatasetAdapter:
 
     @staticmethod
     def _optional_text(value: Any) -> str | None:
+        """Normalise an optional CSV cell to stripped text or ``None``."""
+
         if value is None or pd.isna(value):
             return None
         text = str(value).strip()

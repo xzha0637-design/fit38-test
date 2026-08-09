@@ -21,6 +21,7 @@
   const modelVersion = document.querySelector("#model-version");
   const thresholdVersion = document.querySelector("#threshold-version");
   const assessmentTime = document.querySelector("#assessment-time");
+  const reviewRecommendation = document.querySelector("#review-recommendation");
   const riskWarning = document.querySelector("#risk-warning");
   const factorList = document.querySelector("#factor-list");
   const uncertaintyText = document.querySelector("#uncertainty-text");
@@ -33,11 +34,35 @@
     ["Network", [["Followers", "followers_count"], ["Following", "following_count"]]],
   ];
 
+  const recommendationLabels = Object.freeze({
+    no_concern: "No immediate concern — retain normal human review.",
+    monitor: "Continue monitoring — review again if evidence changes.",
+    prioritise: "Prioritise this account for human review.",
+  });
+  const booleanFactorFeatures = new Set([
+    "verified",
+    "uses_default_profile_image",
+    "has_description",
+  ]);
+
   /** Convert missing source values to the visible, non-imputed placeholder. */
   function displayValue(value) {
     return value === null || value === undefined || value === ""
       ? "Not available"
       : String(value);
+  }
+
+  /** Translate encoded binary model inputs into values a reviewer can read. */
+  function displayFactorValue(factor) {
+    const value = factor.observed_value;
+    if (value === null || value === undefined || value === "") {
+      return "Not available";
+    }
+    if (booleanFactorFeatures.has(factor.feature)) {
+      if (["1", "1.0", "true"].includes(String(value).toLowerCase())) return "Yes";
+      if (["0", "0.0", "false"].includes(String(value).toLowerCase())) return "No";
+    }
+    return String(value);
   }
 
   /** Hide all single-assessment result panels before a new request. */
@@ -111,10 +136,12 @@
   function renderRiskResult(result) {
     riskBand.textContent = `${result.risk_band_label} risk`;
     riskBand.className = `risk-band ${result.risk_band}`;
-    riskScore.textContent = `${result.risk_score}%`;
+    riskScore.textContent = `${result.risk_score} / 100`;
     modelVersion.textContent = result.model_version;
     thresholdVersion.textContent = result.threshold_version;
     assessmentTime.textContent = new Date(result.assessment_time).toLocaleString();
+    reviewRecommendation.textContent =
+      recommendationLabels[result.recommendation] || "Human review is required.";
     riskWarning.textContent = result.warning;
     factorList.replaceChildren();
     for (const factor of result.top_factors) {
@@ -126,7 +153,7 @@
       const direction =
         factor.direction === "increases_risk" ? "Increases risk" : "Decreases risk";
       detail.textContent =
-        `${direction} · Observed value: ${factor.observed_value ?? "Not available"}`;
+        `${direction} · Observed value: ${displayFactorValue(factor)}`;
       item.append(label, detail);
       factorList.append(item);
     }

@@ -1,4 +1,4 @@
-# Iteration 1 Demo Script
+# Iteration 2 Demo Script
 
 Target duration: 6–8 minutes.
 
@@ -20,17 +20,20 @@ Choose **High example — @everyletterbot (project dataset)** and begin assessme
 
 - Point out the source-data preview and missing-value handling.
 - Show feature completeness before the score.
-- Show the High text label, score, model and threshold versions, time, ordered
-  top factors and uncertainty caveat.
+- Show the High text label, score out of 100, suggested human-review priority,
+  model and threshold versions, time, ordered top factors and uncertainty caveat.
 - Open **Review model information and limitations**. Show the three
   plain-language guidance sections first, then expand **Technical model and
   evaluation record** for the verified metrics and limitations.
 
 ## 3. Human accountability and reset (1 minute)
 
-Return and show that the same 91% High result is still present. Record
+Return and show that the same 91 / 100 High result is still present. Record
 **Override** with reason `context reviewed`.
 Flag for follow-up with reason `second review`.
+
+Point out that both reason fields warn reviewers not to enter private or
+sensitive information.
 
 Read the two no-platform-action acknowledgements. Select **Start new
 assessment** and show that the previous result, decision and follow-up state no

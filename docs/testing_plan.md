@@ -1,13 +1,13 @@
-# Iteration 1 Testing Plan
+# Iteration 2 Testing Plan
 
 **Project:** AI-Assisted Social Media Bot Risk Scoring Tool
 **Primary audience:** External Social Media Safety Analyst
-**Scope:** Iteration 1 MVP - 5 Features and 12 User Stories
+**Scope:** Iteration 2 hardening of the 5-Feature, 12-User-Story MVP
 **Document purpose:** Direct, browser-based verification plus existing automated checks
-**Code baseline:** GitHub commit `ee6a923` plus the uncommitted robustness follow-up
-**Working branch:** `fix/full-robustness-audit-findings`
+**Code baseline:** the submitted commit on `fix/iteration2-ui-audit-findings` (record its SHA before execution)
+**Working branch:** `fix/iteration2-ui-audit-findings`
 **Document status:** Ready for team/tutor execution; selected walkthrough results are recorded in `docs/test_results.md`
-**Last updated:** 8 August 2026
+**Last updated:** 9 August 2026
 
 > A written test is not a passed test. The executor must record the actual
 > visible result and Pass/Fail. Screenshots, HAR files, Console exports and
@@ -17,7 +17,7 @@
 
 ## 1. Purpose and Scope
 
-This plan verifies the visible Iteration 1 MVP as a tutor or target-user proxy
+This plan verifies the visible Iteration 2 MVP as a tutor or target-user proxy
 would use it: open the local website, select or enter a sample account, click
 the controls, upload tracked CSV examples, and compare the page with an explicit
 expected result.
@@ -80,10 +80,10 @@ No screenshot, HAR, Console export or shared-folder link is required.
 
 | Browser input | Scenario | Expected visible baseline |
 |---|---|---|
-| `20611469`, `@DeFotis`, or the Low selector option | Static row from `Twitter Human Bots` | `@DeFotis`; 100% completeness; 2% Low |
-| `396039913`, `@OGLexa`, or the Medium selector option | Static row from `Twitter Human Bots` | `@OGLexa`; 100% completeness; 30% Medium |
-| `2250581388`, `@everyletterbot`, or the High selector option | Static row from `Twitter Bot Training Data 2` | `@everyletterbot`; 100% completeness; 91% High; missing location shown |
-| `demo_exact_50` | Inclusive completeness boundary | `@half_evidence`; exactly 50%; eligible; caveat remains; 53% Medium |
+| `20611469`, `@DeFotis`, or the Low selector option | Static row from `Twitter Human Bots` | `@DeFotis`; 100% completeness; 2 / 100 Low |
+| `396039913`, `@OGLexa`, or the Medium selector option | Static row from `Twitter Human Bots` | `@OGLexa`; 100% completeness; 30 / 100 Medium |
+| `2250581388`, `@everyletterbot`, or the High selector option | Static row from `Twitter Bot Training Data 2` | `@everyletterbot`; 100% completeness; 91 / 100 High; missing location shown |
+| `demo_exact_50` | Inclusive completeness boundary | `@half_evidence`; exactly 50%; eligible; caveat remains; 53 / 100 Medium |
 | `demo_incomplete_01` | Insufficient evidence | `@limited_record`; 25%; Insufficient data; no score or risk band |
 | `bad identifier!` | Invalid local input | Adjacent validation message; assessment does not start |
 | `not_in_offline_fixture` | Valid format but unavailable offline | Controlled unavailable-account message |
@@ -108,6 +108,7 @@ model, thresholds or fixture changes.
 | `tests/fixtures/browser_not_csv.txt` | Wrong type: controlled file-type error |
 | `tests/fixtures/browser_batch_100_rows.csv` | Exact limit accepted; 100 unknown rows reported independently |
 | `tests/fixtures/browser_batch_101_rows.csv` | Limit exceeded; controlled error and no partial table |
+| Local-only `browser_batch_over_100kb.csv` generated in WEB-EX-13 | Browser rejects the file before reading or submitting it |
 
 ## 4. Hands-on Web Interaction Examples
 
@@ -125,7 +126,8 @@ factors and data-quality warnings. It states that final judgement remains with
 the user and no account is reported, suspended or moderated. The account input,
 demonstration selector, Begin assessment control, CSV control and the permanent
 **Understand this review tool** link are labelled. No wording promises live
-Twitter/X access or automated enforcement.
+Twitter/X access or automated enforcement. The technical **Developer API** link
+is available in the footer without competing with the account-intake controls.
 
 **Status:** Not executed.
 
@@ -152,11 +154,14 @@ the value is corrected. The identifier remains reachable and labelled.
 3. Inspect the Source data, completeness and Model-generated output sections.
 
 **Expected visible result:** the preview identifies `@DeFotis` and groups
-profile, activity and network fields. Completeness is 100%. The result is 2%
-Low and uses the word Low as well as colour. Model version, threshold version,
-assessment time, uncertainty, no-verdict wording and up to three factor rows are
-visible. The source badge says **Offline demonstration record**. Every factor
-uses a plain label, direction and observed value.
+profile, activity and network fields. Completeness is 100%. The result is
+**2 / 100 Low** and uses the word Low as well as colour. It is explicitly an
+out-of-100 review score, not a probability percentage. The page moves to the
+new result and shows a plain-language suggested human-review priority. Model version, threshold
+version, assessment time, uncertainty, no-verdict wording and up to three factor
+rows are visible. The source badge says **Offline demonstration record**. Every
+factor uses a plain label, direction and observed value; encoded Boolean values
+appear as Yes/No rather than 1/0.
 
 **Status:** Not executed.
 
@@ -171,7 +176,7 @@ uses a plain label, direction and observed value.
 **Expected visible result:** the previous Low preview, score, factors, decision
 and follow-up state clear. Focus returns to the first assessment control. The
 new preview identifies `@OGLexa`, completeness is 100%, and the result
-is 30% Medium with no stale Low content.
+is 30 / 100 Medium with no stale Low content.
 
 **Status:** Not executed.
 
@@ -186,7 +191,7 @@ is 30% Medium with no stale Low content.
 
 **Expected visible result:** the preview identifies `@everyletterbot` and shows
 its unavailable location as `Not available` rather than inventing a value. The
-result is 91% High. No more than three factors appear strongest-first with
+result is 91 / 100 High. No more than three factors appear strongest-first with
 direction and observed value. The uncertainty and `Triage evidence, not a
 verdict.` statement remain visible. A direct link opens model information.
 
@@ -201,7 +206,7 @@ verdict.` statement remain visible. A direct link opens model information.
 3. Compare completeness, missing-feature caveat and result.
 
 **Expected visible result:** completeness is exactly 50% and remains eligible.
-Missing features and the caveat stay visible. The model result is 53% Medium.
+Missing features and the caveat stay visible. The model result is 53 / 100 Medium.
 This confirms that the 50% boundary is inclusive.
 
 **Status:** Not executed.
@@ -231,7 +236,7 @@ available.
 3. Submit again.
 
 **Expected visible result:** a controlled unavailable-account message appears.
-The old preview, completeness, 91% score, factors, decision and follow-up panels
+The old preview, completeness, 91 / 100 score, factors, decision and follow-up panels
 are no longer actionable. Start new remains available. A valid-format unknown
 identifier is not described as malformed input.
 
@@ -247,7 +252,7 @@ identifier is not described as malformed input.
 4. Restart Uvicorn and select **Retry** once.
 
 **Expected visible result:** a plain-language local-service error offers recovery.
-After restart, Retry reuses `@DeFotis` and produces one Low 2% result.
+After restart, Retry reuses `@DeFotis` and produces one Low 2 / 100 result.
 No duplicate decision or follow-up state appears.
 
 **Status:** Not executed.
@@ -257,14 +262,16 @@ No duplicate decision or follow-up state appears.
 **Maps to:** US4.1 AC1-AC5
 
 1. Complete WEB-EX-05.
-2. Select **Override recommendation** and try an empty reason.
+2. Select **Override suggested review priority** and try an empty reason.
 3. Enter `manual browser review` and select **Record decision** twice rapidly.
 4. In a fresh Medium assessment, record Confirm once.
 
 **Expected visible result:** empty Override is blocked. A valid decision produces
 one acknowledgement that the human decision is final and no platform action was
 taken. The submit control prevents a second decision for the same assessment.
-Confirm does not require an override reason.
+Confirm does not require an override reason. Both stored-note areas visibly warn
+the reviewer not to enter private or sensitive information such as passwords,
+private messages, phone numbers or email addresses.
 
 **Status:** Not executed.
 
@@ -296,26 +303,35 @@ Start new clears the old reason/status.
 3. Select **Assess batch offline** and observe the busy state.
 4. Inspect all result rows.
 
-**Expected visible result:** while processing, the button is disabled, the
-offline-processing label is visible, counts start at 0/0 and an old table is
-hidden. Completion shows 7 total, 4 Completed and 3 Failed. Low 2%, Medium 30%,
-High 91% and Insufficient rows complete. Invalid, duplicate and unknown rows
-fail independently. No platform action is claimed.
+**Expected visible result:** while processing, the button and file picker are
+disabled, the offline-processing label is visible, counts start at 0/0 and an old table is
+hidden. Completion shows 7 total, 4 Completed and 3 Failed. Low 2 / 100, Medium
+30 / 100, High 91 / 100 and Insufficient rows complete. Invalid, duplicate and
+unknown rows fail independently. No platform action is claimed.
 
 **Status:** Not executed.
 
-### WEB-EX-13 - File type, header and 0/100/101 boundaries
+### WEB-EX-13 - File size, type, header and 0/100/101 boundaries
 
 **Maps to:** US5.1 AC1/AC2
 
-Submit each file from section 3.2 in order. If the picker filters out TXT, select
-All files before choosing `browser_not_csv.txt`.
+1. Submit each tracked file from section 3.2 in order. If the picker filters out
+   TXT, select All files before choosing `browser_not_csv.txt`.
+2. Create one local-only size-boundary file, then select it in the browser:
 
-**Expected visible result:** wrong type and wrong header show controlled errors;
+```powershell
+$oversizeCsv = Join-Path $env:TEMP "browser_batch_over_100kb.csv"
+$content = "account_id`n" + ("x" * 100001)
+Set-Content -LiteralPath $oversizeCsv -Value $content -NoNewline -Encoding ascii
+```
+
+**Expected visible result:** wrong type, oversize file and wrong header show
+controlled errors;
 the empty file shows 0/0/0; the 100-row file is accepted and reports all 100
 unknown rows; the 101-row file is rejected without a partial results table. The
 busy state clears after every attempt and the visible filename matches the file
-chosen.
+chosen. The oversize message names the 100 KB limit and no processing request
+starts.
 
 **Status:** Not executed.
 
@@ -329,7 +345,7 @@ chosen.
 4. Combine High + Eligible + Unreviewed.
 5. Select **Clear filters**.
 
-**Expected visible result:** scored order is 91/30/2 or 2/30/91 and unscored rows
+**Expected visible result:** scored order is 91/30/2 or 2/30/91 (each out of 100) and unscored rows
 remain last. Matching counts are High 1, Insufficient 1, Not reviewable 3 and
 combined 1. Active filters are described. Clear restores the original seven rows
 and values without showing a new processing run.
@@ -372,8 +388,10 @@ than dominating the first view. The expanded record reports
 `xgb-offline-v1`, `threshold-v1`, both evaluation files, evaluation date, F1
 0.5859, precision 0.4158, recall 0.9915 and validation mean cost 0.266149. It
 names excluded graph evidence, cross-dataset limits, prevalence shift, concept
-drift, false-positive risk and prohibited automated enforcement. Return restores
-the same `@everyletterbot` 91% High assessment and moves back to its result; the
+drift, false-positive risk and prohibited automated enforcement. The Profile
+completeness definition distinguishes that single model input from the overall
+50% scoring gate. Return restores the same `@everyletterbot` 91 / 100 High
+assessment and moves back to its result; the
 score, band, factors and assessment time do not disappear or change.
 
 **Status:** Not executed.
@@ -429,11 +447,17 @@ node --check frontend/batch-results.js
 node --check frontend/batch-controller.js
 node --check frontend/review-controller.js
 python -m scripts.verify_run_sheet
+python -m pip check
 git diff --check
 ```
 
-Expected: all 86 currently collected tests pass, all seven JavaScript files parse, the
-Run Sheet prints its PASS line, and Git reports no whitespace errors.
+Expected: all 91 currently collected tests pass, all seven JavaScript files
+parse, the Run Sheet prints its PASS line, dependencies are consistent, and Git
+reports no whitespace errors.
+
+The tracked GitHub Actions and GitLab CI configurations run the same pytest,
+JavaScript, Run Sheet and `pip check` gates after repository delivery. A local
+pass remains the evidence for this document; a remote CI badge is not assumed.
 
 The existing automated suite covers data cleaning, feature mapping, exact
 completeness logic, deterministic scoring, error contracts, privacy,
@@ -464,8 +488,8 @@ they remain automated fault-injection cases rather than teacher click examples.
 | Boundary | Pass rule |
 |---|---|
 | Completeness | Below 50% is Insufficient with no band; exactly 50% is eligible with caveat |
-| Risk bands | Low below 10%; Medium 10% to below 60%; High at or above 60% |
-| CSV | Exact `account_id` header; 0-100 rows accepted by current contract; 101 rejected |
+| Risk bands | Low 0-9 / 100; Medium 10-59 / 100; High 60-100 / 100 |
+| CSV | Maximum 100 KB in the browser; exact `account_id` header; 0-100 rows accepted by current contract; 101 rejected |
 | Decision | Only completed scored result; Override reason required; duplicate prevented |
 | Follow-up | Completed or Insufficient result; reason/status visible; update and clear |
 | Privacy/oversight | Offline fixtures; minimal record; no platform action or definitive verdict |

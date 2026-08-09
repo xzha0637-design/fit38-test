@@ -1,16 +1,17 @@
 # FIT5238 Team SA34 — Signal Review
 
-**Current delivery branch:** `fix/full-robustness-audit-findings`
+**Current delivery branch:** `fix/iteration2-ui-audit-findings`
 
 **Update owner:** Team SA34
 
-**Current update:** Post-feedback robustness and maintainability follow-up
+**Current update:** Iteration 2 tutor-feedback, UI and verification hardening
 
-**Update status:** the supplied tutor feedback and the subsequent full-code
-audit findings are implemented locally and covered by the cumulative suite.
+**Update status:** the supplied tutor feedback and subsequent UI/robustness audit
+findings are implemented on this branch and covered by the cumulative suite.
 
-This repository contains the cumulative Iteration 1 implementation for
-account-level Twitter/X risk triage. Stage 00 adds a runnable, accessible browser
+This repository contains the cumulative Iteration 2 implementation for
+account-level Twitter/X risk triage. It builds on the complete Iteration 1 stage
+history. Stage 00 adds a runnable, accessible browser
 shell to the supplied backend foundation. Stage 01 adds validated offline account
 intake and representative demonstration selection. Stage 02 adds a whitelisted
 public-data preview with clear missing-value and content-origin labels.
@@ -29,7 +30,7 @@ is triage evidence for human review, not a bot verdict and not an enforcement ac
 
 | Screenshot item | Visible outcome in the current interface |
 |---:|---|
-| 1 | The first three selector choices are static, label-free project-dataset accounts: `@DeFotis` (2% Low), `@OGLexa` (30% Medium), and `@everyletterbot` (91% High). |
+| 1 | The first three selector choices are static, label-free project-dataset accounts: `@DeFotis` (2 / 100 Low), `@OGLexa` (30 / 100 Medium), and `@everyletterbot` (91 / 100 High). |
 | 2 | The landing page directly states that the tool reviews Twitter/X accounts for possible bot activity and names the score, risk level, factors, warnings, human decision boundary, and no-enforcement rule. |
 | 3 | Model Information begins with three ordinary-language sections; exact versions, feature names, datasets, metrics, and limitations remain available in a collapsed technical record. |
 | 4 | **Return to assessment** restores the same account, score, band, assessment time, and contributing factors in the current browser tab. |
@@ -37,8 +38,9 @@ is triage evidence for human review, not a bot verdict and not an enforcement ac
 | 15 | The unclear “Evidence for careful human review” headline is replaced by **Review Twitter/X accounts for possible bot activity.** |
 
 These outcomes were delivered in commit `c4543a5` and checked through the
-86-test suite, Run Sheet, JavaScript syntax checks, and a real browser
-walkthrough. Detailed results are recorded in [Iteration 1 Test Results](docs/test_results.md).
+then-current 86-test suite, Run Sheet, JavaScript syntax checks, and a real
+browser walkthrough. The current branch extends that evidence to 91 automated
+tests; detailed results are recorded in [Iteration 2 Test Results](docs/test_results.md).
 
 ## Robustness follow-up
 
@@ -49,6 +51,15 @@ restart does not invalidate an assessment already shown to the analyst. Browser
 requests have bounded timeouts and safe response parsing; decision and follow-up
 UI state survives a same-tab Model Information visit after strict snapshot
 validation.
+
+Iteration 2 also shows a plain-language suggested human-review priority, moves
+focus to each completed result, displays risk as a score out of 100 rather than
+a probability, and translates encoded binary factor values into Yes/No. Batch
+upload is limited to 100 KB and 100 rows, locks the file input while processing,
+and keeps the wide table inside its own mobile scroll region. Review-note fields
+warn against private or sensitive information, while technical API access is
+kept in the footer. GitHub Actions and GitLab CI run the same offline quality
+checks documented below.
 
 Application assembly, assessment logic and route groups are separated under
 `backend/app/`. The browser entry controller delegates API access, validated
@@ -215,7 +226,7 @@ Invoke-RestMethod `
 | `POST` | `/api/v1/assessments/{assessment_id}/decision` | Record confirm/override |
 | `PUT` | `/api/v1/assessments/{assessment_id}/follow-up` | Flag, update or clear follow-up |
 | `POST` | `/api/v1/assessments/{assessment_id}/override` | Record one minimal analyst override |
-| `GET` | `/api/v1/feedback/decisions` | Authorised pseudonymous feedback read |
+| `GET` | `/api/v1/feedback` | Authorised pseudonymous decision-feedback read |
 | `GET` | `/model-information` | Model evidence, limitations and prohibited uses |
 
 Assessment request:
@@ -253,13 +264,19 @@ JavaScript syntax verification covers every browser module:
 Get-ChildItem frontend -Filter *.js | ForEach-Object { node --check $_.FullName }
 ```
 
+The same regression suite, JavaScript syntax checks, Run Sheet and dependency
+consistency check run automatically through `.github/workflows/quality.yml` and
+`.gitlab-ci.yml`. Neither pipeline requires an API credential or live account
+data.
+
 ## Release evidence
 
 - [MVP definition](docs/mvp_definition.md)
 - [Product Backlog and User Stories](docs/product_backlog.md)
 - [AI Usage Statement](docs/ai_usage_statement.md)
 - [Testing plan](docs/testing_plan.md)
-- [Printable monochrome Testing Plan (PDF)](output/pdf/Iteration1_Testing_Plan.pdf)
+- [Printable monochrome Iteration 2 Testing Plan (PDF)](output/pdf/Iteration2_Testing_Plan.pdf)
+- [Historical Iteration 1 Testing Plan (PDF)](output/pdf/Iteration1_Testing_Plan.pdf)
 - [UX and technical design](docs/ux_technical_design.md)
 - [Run Sheet](docs/run_sheet.md)
 - [Demo script](docs/demo_script.md)

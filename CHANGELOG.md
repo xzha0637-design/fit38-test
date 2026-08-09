@@ -1,5 +1,18 @@
 # Changelog
 
+## Iteration 2 UI and verification hardening
+
+- Added a plain-language suggested human-review priority and directed focus to
+  each completed assessment result.
+- Presented risk as a score out of 100 and translated encoded binary factor
+  values into Yes/No.
+- Bounded CSV uploads to 100 KB, locked the picker during processing and kept
+  mobile batch-table scrolling inside its labelled region.
+- Corrected the Profile completeness definition, moved the developer API link
+  to the footer and added privacy guidance to stored-note fields.
+- Updated the application to `0.2.0`, refreshed the Iteration 2 Testing Plan and
+  added matching GitHub Actions and GitLab CI quality checks.
+
 ## Robustness audit hardening
 
 - Allowed cross-origin Follow-up `PUT` requests and converted blocking model,

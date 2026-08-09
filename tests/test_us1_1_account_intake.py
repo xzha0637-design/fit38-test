@@ -107,3 +107,14 @@ def test_tutor_feedback_home_page_states_purpose_and_fixed_model_information_lin
     hero_end = body.index("</section>", body.index('class="hero"'))
     assert 'href="/model-information"' in body[:hero_end]
     assert 'id="assessment-results"' in body
+
+
+def test_developer_api_link_is_available_without_competing_with_account_intake(
+    tmp_path,
+) -> None:
+    """Technical API documentation remains available in the page footer."""
+
+    body = _client(tmp_path).get("/").text
+
+    assert "Developer API" in body
+    assert body.index('href="/docs"') > body.index("</main>")

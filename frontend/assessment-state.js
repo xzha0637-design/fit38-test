@@ -111,6 +111,7 @@
       isText(payload.threshold_version, 120) &&
       isText(payload.assessment_time, 80) &&
       !Number.isNaN(Date.parse(payload.assessment_time)) &&
+      ["no_concern", "monitor", "prioritise"].includes(payload.recommendation) &&
       isText(payload.warning, 500) &&
       isText(payload.uncertainty, 500) &&
       factorsValid

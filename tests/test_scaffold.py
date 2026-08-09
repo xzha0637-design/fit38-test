@@ -14,6 +14,7 @@ def test_application_shell_and_versioned_contract_are_available() -> None:
     assert "Signal Review" in page.text
     assert "Triage evidence, not a verdict." in page.text
     assert schema.status_code == 200
+    assert APP_VERSION == "0.2.0"
     assert schema.json()["info"]["version"] == APP_VERSION
     assert MODEL_CONTRACT_VERSION == "model-contract-v1"
 

@@ -88,11 +88,15 @@ def test_ac3_ac4_page_exposes_progress_counts_and_no_action_wording() -> None:
         'aria-describedby="batch-file-hint batch-file-name"',
         "Choose file",
         "No file selected",
+        "Maximum 100 KB",
         "No platform action",
     ]:
         assert expected in page
     script = client.get("/static/batch-controller.js").text
     assert 'batchFile.addEventListener("change"' in script
     assert 'batchFile.files[0]?.name || "No file selected"' in script
+    assert "MAX_BATCH_FILE_BYTES = 100_000" in script
+    assert "batchFile.disabled = true" in script
+    assert "batchFile.disabled = false" in script
     response = _upload("accounts.csv", "account_id\ndemo_medium_01\n")
     assert "No platform action" in response.json()["acknowledgement"]

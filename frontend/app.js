@@ -82,6 +82,14 @@ function clearUnusedResultHash() {
   requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0 }));
 }
 
+/** Move keyboard and visual attention to the newly available result. */
+function focusAssessmentResults() {
+  requestAnimationFrame(() => {
+    assessmentView.assessmentResults.scrollIntoView({ block: "start" });
+    assessmentView.assessmentResults.focus({ preventScroll: true });
+  });
+}
+
 /** Clear all single-assessment state and return focus to the first input. */
 function startNewAssessment() {
   form.reset();
@@ -127,10 +135,7 @@ function restoreAssessmentState() {
   showRecovery(false);
 
   if (window.location.hash === "#assessment-results") {
-    requestAnimationFrame(() => {
-      assessmentView.assessmentResults.scrollIntoView({ block: "start" });
-      assessmentView.assessmentResults.focus({ preventScroll: true });
-    });
+    focusAssessmentResults();
   }
 }
 
@@ -232,6 +237,9 @@ async function submitAssessment(event) {
     );
     assessmentView.renderCompleteness(completeness);
     const assessment = await scoreAccount(payload.account_id);
+    statusPanel.textContent =
+      `${payload.display_identifier} assessment completed offline. ` +
+      "Review the evidence and result below; no live platform connection was made.";
     persistAssessmentState({
       identifier: payload.display_identifier,
       status: statusPanel.textContent,
@@ -241,6 +249,7 @@ async function submitAssessment(event) {
       review: { decision: null, followUp: null },
     });
     showRecovery(false);
+    focusAssessmentResults();
   } catch (error) {
     clearRenderedAssessment();
     showError(safeErrorMessage(error, "The assessment could not be completed."));

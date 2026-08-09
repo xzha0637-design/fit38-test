@@ -1,0 +1,22 @@
+image: python:3.10-slim
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  PYTHONNOUSERSITE: "1"
+
+cache:
+  paths:
+    - .cache/pip
+
+quality:
+  stage: test
+  timeout: 20m
+  before_script:
+    - apt-get update
+    - apt-get install --yes --no-install-recommends nodejs
+    - python -m pip install --requirement requirements.txt
+  script:
+    - python -m pytest --basetemp "$CI_PROJECT_DIR/.pytest-tmp"
+    - for file in frontend/*.js; do node --check "$file"; done
+    - python -m scripts.verify_run_sheet
+    - python -m pip check

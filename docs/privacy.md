@@ -1,6 +1,6 @@
 # Privacy and human oversight
 
-- Iteration 1 reads offline, simulated or research-derived public-data fixtures.
+- Iteration 2 reads offline, simulated or research-derived public-data fixtures.
 - Raw source payloads and full profiles are not written to the feedback database.
 - Stored workflow rows contain only a pseudonymous reference, model identifier,
   decision or follow-up state, reason, and timestamp.
@@ -35,3 +35,8 @@ exception messages, payloads, tokens and identifiers are excluded.
 
 Follow-up persistence is a separate minimal pseudonymous record containing only
 assessment reference, model version, status, reason and timestamp.
+
+The visible Override and Follow-up reason fields instruct reviewers not to enter
+private or sensitive information such as passwords, private messages, phone
+numbers or email addresses. The 240-character limit and this guidance reduce
+unnecessary collection; they do not replace team review of stored notes.

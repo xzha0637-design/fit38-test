@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Plain-language guidance, verified model evidence, and limitations for Signal Review.">
     <title>Understand the result | Signal Review</title>
-    <link rel="stylesheet" href="/static/styles.css?v=20260808-real-accounts-ux">
+    <link rel="stylesheet" href="/static/styles.css?v=20260809-iteration2">
   </head>
   <body class="model-information-page">
     <a class="skip-link" href="#main-content">Skip to main content</a>
     <header class="site-header">
       <div>
-        <p class="eyebrow">Group 34 · Iteration 1</p>
+        <p class="eyebrow">Group 34 · Iteration 2</p>
         <h1>Signal Review</h1>
       </div>
       <a class="secondary-link" href="/#assessment-results">Return to assessment</a>
@@ -86,7 +86,7 @@
           </ul>
           <p class="plain-language-note">
             <strong>A risk score is a ranking signal, not a probability.</strong>
-            A score of 91% does not mean there is a 91% chance that the account is a bot.
+            A score of 91 / 100 does not mean there is a 91% chance that the account is a bot.
           </p>
         </section>
 
@@ -156,7 +156,7 @@
               <div><dt>Posting frequency</dt><dd>Average public posts per day over the recorded account age.</dd></div>
               <div><dt>Description length</dt><dd>Number of characters in the public biography, not its meaning.</dd></div>
               <div><dt>Username length</dt><dd>Number of characters in the public username, not its wording.</dd></div>
-              <div><dt>Profile completeness</dt><dd>How many required model fields are available; below 50% stops scoring.</dd></div>
+              <div><dt>Profile completeness</dt><dd>Average availability of the public username, biography, usable location and, when known, a custom rather than default profile image. This is one model input; it is not the separate overall 50% scoring gate.</dd></div>
               <div><dt>Verified status</dt><dd>Whether the public verified flag is present.</dd></div>
               <div><dt>Default profile image</dt><dd>Whether the platform's default profile image is still used.</dd></div>
               <div><dt>Description present</dt><dd>Whether a public biography is present.</dd></div>
@@ -215,7 +215,7 @@
     </main>
     <footer>
       <span>Twitter/X scope · Offline fixtures · Human oversight</span>
-      <span>Technical record available on demand</span>
+      <span>Technical record available on demand · <a class="footer-link" href="/docs">Developer API</a></span>
     </footer>
   </body>
 </html>

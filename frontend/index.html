@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Offline AI-assisted Twitter/X account triage for external social media safety analysts.">
     <title>Signal Review | Account triage</title>
-    <link rel="stylesheet" href="/static/styles.css?v=20260808-robustness">
+    <link rel="stylesheet" href="/static/styles.css?v=20260809-iteration2">
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to main content</a>
     <header class="site-header">
       <div>
-        <p class="eyebrow">Group 34 · Iteration 1</p>
+        <p class="eyebrow">Group 34 · Iteration 2</p>
         <h1>Signal Review</h1>
       </div>
       <span class="offline-badge">Offline demonstration</span>
@@ -40,7 +40,6 @@
             <h2 id="workspace-title">Choose an offline account</h2>
             <p>Enter a supported identifier or select a representative scenario.</p>
           </div>
-          <a class="secondary-link" href="/docs">View API documentation</a>
         </div>
         <form id="intake-form" novalidate>
           <div class="field-group">
@@ -105,7 +104,7 @@
               <span id="batch-file-name" class="file-picker-name" aria-live="polite">No file selected</span>
             </div>
             <span id="batch-file-hint" class="field-hint">
-              Invalid and duplicate rows are reported without stopping valid rows.
+              Maximum 100 KB and 100 rows. Invalid and duplicate rows are reported without stopping valid rows.
             </span>
           </div>
           <button id="batch-submit" type="submit">Assess batch offline</button>
@@ -176,7 +175,12 @@
           </div>
         </div>
       </section>
-      <div id="assessment-results" class="section-anchor" tabindex="-1"></div>
+      <div
+        id="assessment-results"
+        class="section-anchor"
+        tabindex="-1"
+        aria-label="Assessment results"
+      ></div>
       <section id="preview-panel" class="preview-panel" aria-labelledby="preview-title" hidden>
         <div class="panel-heading">
           <div>
@@ -241,6 +245,11 @@
           <div><dt>Threshold version</dt><dd id="threshold-version"></dd></div>
           <div><dt>Assessment time</dt><dd id="assessment-time"></dd></div>
         </dl>
+        <section class="recommendation-card" aria-labelledby="recommendation-title">
+          <h3 id="recommendation-title">Suggested human-review priority</h3>
+          <strong id="review-recommendation"></strong>
+          <p>Use this suggestion only to organise human review. It never triggers platform action.</p>
+        </section>
         <p id="risk-warning" class="risk-warning"></p>
         <div class="explanation-grid">
           <section aria-labelledby="factors-title">
@@ -268,12 +277,14 @@
         <form id="decision-form">
           <fieldset>
             <legend>Decision</legend>
-            <label><input type="radio" name="decision" value="confirm" required> Confirm recommendation</label>
-            <label><input type="radio" name="decision" value="override"> Override recommendation</label>
+            <label><input type="radio" name="decision" value="confirm" required> Confirm suggested review priority</label>
+            <label><input type="radio" name="decision" value="override"> Override suggested review priority</label>
           </fieldset>
           <label for="decision-reason">Override reason</label>
           <input id="decision-reason" name="reason" maxlength="240" aria-describedby="decision-reason-hint">
-          <span id="decision-reason-hint" class="field-hint">Required for Override; use an approved category or concise note.</span>
+          <span id="decision-reason-hint" class="field-hint">
+            Required for Override; use an approved category or concise note. Do not enter private or sensitive information such as passwords, private messages, phone numbers, or email addresses.
+          </span>
           <button id="decision-submit" type="submit">Record decision</button>
         </form>
         <p id="decision-acknowledgement" class="intake-status" role="status" hidden></p>
@@ -283,7 +294,10 @@
         <h2 id="follow-up-title">Flag for another human review</h2>
         <form id="follow-up-form">
           <label for="follow-up-reason">Reason category or concise note</label>
-          <input id="follow-up-reason" maxlength="240" required>
+          <input id="follow-up-reason" maxlength="240" aria-describedby="follow-up-reason-hint" required>
+          <span id="follow-up-reason-hint" class="field-hint">
+            Do not enter private or sensitive information such as passwords, private messages, phone numbers, or email addresses.
+          </span>
           <div class="recovery-actions">
             <button type="submit">Save / update flag</button>
             <button id="clear-follow-up" class="secondary-button" type="button">Clear flag</button>
@@ -295,14 +309,14 @@
     </main>
     <footer>
       <span>Twitter/X scope · Offline fixtures · Human oversight</span>
-      <span>Application v0.1.0</span>
+      <span>Application v0.2.0 · <a class="footer-link" href="/docs">Developer API</a></span>
     </footer>
-    <script src="/static/batch-results.js?v=20260808-robustness"></script>
-    <script src="/static/api-client.js?v=20260808-robustness"></script>
-    <script src="/static/assessment-state.js?v=20260808-robustness"></script>
-    <script src="/static/assessment-view.js?v=20260808-robustness"></script>
-    <script src="/static/review-controller.js?v=20260808-robustness"></script>
-    <script src="/static/batch-controller.js?v=20260808-robustness"></script>
-    <script src="/static/app.js?v=20260808-robustness" defer></script>
+    <script src="/static/batch-results.js?v=20260809-iteration2"></script>
+    <script src="/static/api-client.js?v=20260809-iteration2"></script>
+    <script src="/static/assessment-state.js?v=20260809-iteration2"></script>
+    <script src="/static/assessment-view.js?v=20260809-iteration2"></script>
+    <script src="/static/review-controller.js?v=20260809-iteration2"></script>
+    <script src="/static/batch-controller.js?v=20260809-iteration2"></script>
+    <script src="/static/app.js?v=20260809-iteration2" defer></script>
   </body>
 </html>

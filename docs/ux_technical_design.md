@@ -16,9 +16,18 @@
   guidance and keeps the exact technical record collapsed until requested.
 - Returning from Model Information restores and focuses the current result in
   the same tab; Start new assessment clears it.
+- A plain-language recommendation card states the suggested human-review
+  priority and never implies that the model makes a final decision.
+- Risk is shown as a score out of 100 rather than percentage probability, and
+  encoded Boolean factor values are translated to Yes/No.
 - Batch errors remain on their source row and never block valid rows.
+- The batch picker enforces the documented 100 KB limit, locks during a request,
+  and contains wide-table scrolling inside the labelled results region.
 - Filter state and matching count are visible; clearing uses the existing
   in-memory results and restores input order.
+- Stored-note fields carry explicit guidance against private or sensitive data;
+  the developer API link is available from the footer rather than the primary
+  account-intake action area.
 
 ## Technical choices
 

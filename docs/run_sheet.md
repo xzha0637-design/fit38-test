@@ -1,4 +1,4 @@
-# Iteration 1 Run Sheet
+# Iteration 2 Run Sheet
 
 ## Preconditions
 
@@ -48,7 +48,8 @@ human-oversight notice are visible. Stop with `Ctrl+C`.
 3. Open model information. Confirm the ordinary-language sections appear first;
    expand the technical record and confirm `xgb-offline-v1`, `threshold-v1`,
    evaluation evidence, limitations and the enforcement prohibition.
-4. Return and confirm the same 91% High result remains. Record an Override with
+4. Return and confirm the same 91 / 100 High result and suggested human-review
+   priority remain. Record an Override with
    a reason, then flag the assessment for
    follow-up. Confirm both acknowledgements state that no platform action
    occurred.
@@ -64,7 +65,7 @@ human-oversight notice are visible. Stop with `Ctrl+C`.
 
 - Blank or malformed identifiers show validation guidance.
 - An unknown offline account shows a controlled unavailable state.
-- A non-CSV file, wrong header, or more than 100 rows is rejected.
+- A non-CSV file, file above 100 KB, wrong header, or more than 100 rows is rejected.
 - Removing a required model artifact makes `/api/v1/health` degraded and blocks
   scoring rather than presenting a placeholder score.
 

@@ -152,6 +152,7 @@ h2 {
 
 .workspace-shell {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 2rem;
   margin-bottom: 5rem;
   padding: clamp(1.5rem, 4vw, 2.75rem);
@@ -225,6 +226,14 @@ input.file-picker-input {
   border: 0;
   opacity: 0;
   cursor: pointer;
+}
+
+input.file-picker-input:disabled {
+  cursor: wait;
+}
+
+input.file-picker-input:disabled + .file-picker-button {
+  opacity: 0.65;
 }
 
 .file-picker-button {
@@ -442,6 +451,31 @@ button:disabled {
 
 .result-meta dd {
   margin: 0.25rem 0 0;
+}
+
+.recommendation-card {
+  margin-block: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #6d8984;
+  border-radius: 0.65rem;
+  background: #193b38;
+}
+
+.recommendation-card h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.recommendation-card strong {
+  display: block;
+  color: #ffffff;
+  font-size: 1.1rem;
+}
+
+.recommendation-card p {
+  margin: 0.5rem 0 0;
+  color: #d7e5e2;
+  line-height: 1.5;
 }
 
 .risk-warning {
@@ -934,12 +968,20 @@ button:disabled {
   background: var(--brand-soft);
 }
 
+#batch-results-panel,
 .table-scroll {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.table-scroll {
+  width: 100%;
   overflow-x: auto;
 }
 
 table {
   width: 100%;
+  min-width: 46rem;
   border-collapse: collapse;
   font-size: 0.88rem;
 }
@@ -996,6 +1038,16 @@ footer {
   border-top: 1px solid var(--line);
   color: var(--muted);
   font-size: 0.82rem;
+}
+
+.footer-link {
+  color: inherit;
+  text-underline-offset: 0.18em;
+}
+
+.footer-link:hover,
+.footer-link:focus-visible {
+  color: var(--brand);
 }
 
 @media (max-width: 700px) {

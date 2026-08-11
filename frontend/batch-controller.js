@@ -18,6 +18,7 @@
   const batchClearFilters = document.querySelector("#batch-clear-filters");
   const batchFilterSummary = document.querySelector("#batch-filter-summary");
   const { requestJson } = globalObject.SignalReviewApi;
+  const MAX_BATCH_FILE_BYTES = 100_000;
 
   let batchSourceResults = [];
   let initialised = false;
@@ -55,7 +56,9 @@
         result.account_id || "Not provided",
         result.processing_status,
         result.assessment_status || "Not assessed",
-        result.risk_score === null ? "—" : `${result.risk_score}% ${result.risk_band}`,
+        result.risk_score === null
+          ? "—"
+          : `${result.risk_score} / 100 · ${result.risk_band}`,
         result.completeness_state || "—",
         result.error || "—",
       ];
@@ -82,9 +85,15 @@
       batchProgressLabel.textContent = "Upload a .csv file using the template.";
       return;
     }
+    if (file.size > MAX_BATCH_FILE_BYTES) {
+      batchProgressLabel.textContent =
+        "The CSV is larger than 100 KB. Upload a smaller file with at most 100 rows.";
+      return;
+    }
     resetControls();
     batchSourceResults = [];
     batchSubmit.disabled = true;
+    batchFile.disabled = true;
     batchProgress.setAttribute("aria-busy", "true");
     batchProgressLabel.textContent = "Processing valid rows offline…";
     batchCompletedCount.textContent = "0";
@@ -112,6 +121,7 @@
     } finally {
       batchProgress.removeAttribute("aria-busy");
       batchSubmit.disabled = false;
+      batchFile.disabled = false;
     }
   }
 

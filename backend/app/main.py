@@ -122,7 +122,7 @@ def create_app(
         title="FIT5238 Bot Risk Scoring Tool",
         version=APP_VERSION,
         description=(
-            "Iteration 1 dataset-backed MVP. Results support analyst triage and are "
+            "Iteration 2 dataset-backed MVP. Results support analyst triage and are "
             "not final bot determinations."
         ),
     )

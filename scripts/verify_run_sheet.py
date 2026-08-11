@@ -1,4 +1,4 @@
-"""Repeatable, offline verification of the Iteration 1 demonstration path."""
+"""Repeatable, offline verification of the Iteration 2 demonstration path."""
 
 from tempfile import TemporaryDirectory
 from pathlib import Path

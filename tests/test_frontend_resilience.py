@@ -59,6 +59,7 @@ def _valid_snapshot() -> dict:
                 "risk_score": 20,
                 "risk_band": "low",
                 "risk_band_label": "Low",
+                "recommendation": "no_concern",
                 "model_version": "model-v1",
                 "threshold_version": "threshold-v1",
                 "assessment_time": "2026-08-08T00:00:00Z",

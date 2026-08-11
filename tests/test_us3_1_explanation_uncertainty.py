@@ -53,3 +53,15 @@ def test_ac7_ui_avoids_certainty_guilt_and_enforcement_claims(tmp_path) -> None:
         assert prohibited not in page
     assert "uncertainty" in page
     assert "triage evidence, not a verdict." in page
+
+
+def test_ui_presents_scores_and_binary_factor_values_as_review_aids(tmp_path) -> None:
+    """Scores avoid probability notation and encoded Booleans become plain language."""
+
+    script = _client(tmp_path).get("/static/assessment-view.js").text
+    batch_script = _client(tmp_path).get("/static/batch-controller.js").text
+
+    assert "`${result.risk_score} / 100`" in script
+    assert 'return "Yes"' in script
+    assert 'return "No"' in script
+    assert "`${result.risk_score} / 100 · ${result.risk_band}`" in batch_script

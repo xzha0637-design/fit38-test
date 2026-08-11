@@ -113,3 +113,16 @@ def test_ac4_feedback_requires_authorised_role(tmp_path) -> None:
         "reason",
         "timestamp",
     }
+
+
+def test_free_text_review_fields_warn_against_sensitive_information(tmp_path) -> None:
+    """Reason fields explain what reviewers must not paste into stored notes."""
+
+    client, _ = _client(tmp_path)
+    page = client.get("/").text
+
+    assert 'aria-describedby="decision-reason-hint"' in page
+    assert 'aria-describedby="follow-up-reason-hint"' in page
+    assert page.count("Do not enter private or sensitive information") == 2
+    for example in ["passwords", "private messages", "phone numbers", "email addresses"]:
+        assert example in page

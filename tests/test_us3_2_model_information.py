@@ -68,6 +68,7 @@ def test_tutor_feedback_explains_features_and_metrics_in_plain_language() -> Non
         "Description length",
         "Username length",
         "Profile completeness",
+        "it is not the separate overall 50% scoring gate",
         "Verified status",
         "Default profile image",
         "Description present",

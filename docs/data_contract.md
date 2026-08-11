@@ -40,7 +40,7 @@ human-oversight warning. Raw account profiles are excluded.
 ## Contract versions
 
 - API path version: `v1`
-- Application version: `0.1.0`
+- Application version: `0.2.0`
 - Model contract: `xgb-offline-v1`
 - Threshold contract: `threshold-v1`
 
@@ -63,18 +63,22 @@ the response deliberately carries no risk band.
 
 ## Scored assessment
 
-Eligible accounts submitted to `POST /api/v1/assessments` receive both the raw
-0–1 probability and an analyst-facing integer `risk_score` from 0–100. The
-response includes exactly one title-cased band label, model version, threshold
-version, ISO-8601 time, and the required non-verdict disclaimer. A scoring
-failure returns a retryable error object with no partial score fields.
+Eligible accounts submitted to `POST /api/v1/assessments` receive an
+analyst-facing integer `risk_score` from 0–100; the internal 0–1 model
+probability is not exposed by the public response. The interface displays the
+value as `score / 100`, not as a percentage probability. The response includes
+exactly one title-cased band label, model version, threshold version, ISO-8601
+time, a suggested human-review priority, and the required non-verdict
+disclaimer. A scoring failure returns a retryable error object with no partial
+score fields.
 
 ## Batch assessment
 
 `POST /api/v1/batch-assessments` accepts JSON containing the original `.csv`
 filename and text content. The CSV header must be exactly `account_id` and the
-limit is 100 data rows. `BatchUploadResponse` includes total, completed and
-failed counts plus one ordered `BatchRowResult` per input row. Invalid,
+limit is 100 data rows. The browser additionally rejects a selected file above
+100 KB before reading or submitting it. `BatchUploadResponse` includes total,
+completed and failed counts plus one ordered `BatchRowResult` per input row. Invalid,
 duplicate and unavailable rows have `processing_status: "failed"` and do not
 prevent other rows from completing. Raw CSV content is not persisted.
 

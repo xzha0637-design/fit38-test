@@ -1,8 +1,8 @@
 # AI Usage Statement
 
 **Project:** Signal Review - FIT5238 Team SA34
-**Scope:** Iteration 1 repository and supporting documentation
-**Last updated:** 8 August 2026
+**Scope:** Iteration 1 foundation and Iteration 2 repository/documentation updates
+**Last updated:** 9 August 2026
 
 ## Declaration
 
@@ -21,6 +21,11 @@ for requirements, design decisions, verification or the submitted work.
 - improving technical documentation, plain-language explanations and code
   docstrings/JSDoc; and
 - helping run repeatable checks and prepare the Testing Plan PDF.
+
+For the current Iteration 2 branch, AI assistance also supported the tutor-
+feedback UI review, risk-score wording, mobile batch-layout diagnosis, CSV and
+privacy safeguards, CI configuration, regression tests and documentation
+consistency review.
 
 ## Human control and verification
 

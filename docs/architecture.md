@@ -1,6 +1,6 @@
 # System architecture
 
-## Iteration 1 Release Candidate
+## Iteration 2 Release Candidate
 
 The application is a single offline FastAPI service with a static browser
 interface. It has four explicit boundaries:
@@ -13,7 +13,7 @@ interface. It has four explicit boundaries:
 4. `backend/app/database.py` stores expiring pseudonymous assessment context and
    minimal decision/follow-up references in a local SQLite database.
 
-The dataset adapter is the only account-data source in Iteration 1. There is no
+The dataset adapter is the only account-data source in Iteration 2. There is no
 live Twitter/X client and no enforcement integration.
 
 ```text
@@ -41,7 +41,19 @@ The browser follows the same separation: `app.js` coordinates intake,
 `assessment-state.js` validates versioned session data, and dedicated view,
 review and batch controllers own their respective controls.
 
+The assessment view translates the numeric model contract into reviewer-facing
+language: risk is displayed as a score out of 100, encoded Boolean factor values
+become Yes/No, and the backend recommendation is presented only as a suggested
+human-review priority. Completion moves keyboard and visual attention to the
+new result. The batch controller rejects files above 100 KB before reading,
+locks the picker while processing, and places the wide result table in a bounded
+horizontal-scroll region on narrow screens.
+
 The model-information page presents verified values from the tracked model
 contract. Runtime SQLite data and generated training splits remain ignored.
 Approved model artifacts and curated demo fixtures are tracked for reproducible
 offline execution.
+
+Repository quality checks are mirrored in GitHub Actions and GitLab CI. Both run
+the offline pytest suite, all browser-module syntax checks, the Run Sheet and
+dependency consistency checks without platform credentials.

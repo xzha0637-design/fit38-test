@@ -50,8 +50,8 @@ current robustness follow-up adds focused regression coverage for cross-origin
 Follow-up, restart-safe assessment context, canonical batch deduplication,
 bounded model output, strict browser state and request failures.
 
-- **Automated tests executed:** 86 in the current cumulative suite.
-- **Passed:** 86.
+- **Automated tests executed:** 91 in the current cumulative suite.
+- **Passed:** 91.
 - **Failed:** 0.
 - **Run Sheet:** PASS.
 - **JavaScript syntax checks:** PASS for all seven browser modules.

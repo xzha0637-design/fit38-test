@@ -1,8 +1,8 @@
-# Iteration 1 Evidence Summary
+# Iteration 2 Evidence Summary
 
 ## MVP outcome
 
-The Release Candidate implements all 12 agreed User Stories as a cumulative,
+The Release Candidate preserves all 12 agreed User Stories as a cumulative,
 offline FastAPI and browser MVP. It provides validated single and CSV-batch
 Twitter/X account triage, versioned model output, explainability, model
 limitations, human decisions, follow-up review, protected persistence and
@@ -55,7 +55,7 @@ Stage 13 adds the final integration commit on
 
 ## RC quality result
 
-- Automated regression: **86 passed, 0 failed**
+- Automated regression: **91 passed, 0 failed**
 - Repeatable Run Sheet: **PASS**
 - JavaScript syntax: **PASS**
 - Open critical/high defects: **0**
@@ -65,6 +65,9 @@ Stage 13 adds the final integration commit on
 - Accessibility: labelled primary inputs, keyboard skip link, live status
   regions, semantic table headers and text risk labels
 - Batch/single consistency: same fixture produces the same status, score and band
+- CI: matching offline quality pipelines are tracked for GitHub and GitLab
+- UI audit: visible review priority, result focus, score-out-of-100 wording,
+  privacy hints and contained mobile batch scrolling
 
 Known scientific and product limitations remain explicit in
 `docs/known_limitations.md` and the directly linked model information page.

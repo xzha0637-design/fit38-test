@@ -1,2 +1,3 @@
 models/**/*.json text eol=lf
 models/**/*.joblib binary
+output/pdf/*.pdf binary

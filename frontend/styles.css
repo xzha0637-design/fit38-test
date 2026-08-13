@@ -183,8 +183,8 @@ h2 {
 .workspace-shell {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 2rem;
-  margin-bottom: 5rem;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
   padding: clamp(1.5rem, 4vw, 2.75rem);
   border: 1px solid var(--line);
   border-radius: 1rem;
@@ -193,7 +193,7 @@ h2 {
 
 .workspace-heading {
   display: flex;
-  gap: 2rem;
+  gap: 1rem;
   align-items: flex-start;
   justify-content: space-between;
 }
@@ -355,7 +355,7 @@ button:disabled {
 }
 
 .preview-panel {
-  margin-bottom: 5rem;
+  margin-bottom: 1.5rem;
   padding: clamp(1.5rem, 4vw, 2.75rem);
   border: 1px solid var(--line);
   border-radius: 1rem;
@@ -364,7 +364,7 @@ button:disabled {
 }
 
 .completeness-panel {
-  margin-bottom: 5rem;
+  margin-bottom: 1.5rem;
   padding: clamp(1.5rem, 4vw, 2.75rem);
   border: 1px solid var(--line);
   border-radius: 1rem;
@@ -372,7 +372,7 @@ button:disabled {
 }
 
 .risk-panel {
-  margin-bottom: 5rem;
+  margin-bottom: 1.5rem;
   padding: clamp(1.5rem, 4vw, 2.75rem);
   border: 1px solid var(--line);
   border-radius: 1rem;
@@ -381,7 +381,7 @@ button:disabled {
 }
 
 .decision-panel {
-  margin-bottom: 5rem;
+  margin-bottom: 1.5rem;
   padding: clamp(1.5rem, 4vw, 2.75rem);
   border: 1px solid var(--line);
   border-radius: 1rem;
@@ -599,7 +599,7 @@ button:disabled {
 
 .panel-heading {
   display: flex;
-  gap: 2rem;
+  gap: 1rem;
   align-items: flex-start;
   justify-content: space-between;
 }

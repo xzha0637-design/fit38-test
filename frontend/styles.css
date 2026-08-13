@@ -16,6 +16,36 @@
 }
 
 /* Keep the native hidden contract authoritative over component layout rules. */
+.top-nav {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+  padding: 0.65rem clamp(1rem, 3vw, 1.5rem);
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 0.25rem 0.75rem rgba(23, 33, 43, 0.06);
+}
+
+.top-nav a {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--brand);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.top-nav a:hover,
+.top-nav a:focus-visible {
+  background: var(--brand-soft);
+  outline: none;
+}
+
 [hidden] {
   display: none !important;
 }
@@ -141,7 +171,7 @@ h2 {
 }
 
 .section-anchor {
-  scroll-margin-top: 1rem;
+  scroll-margin-top: 4.5rem;
   outline: none;
 }
 
